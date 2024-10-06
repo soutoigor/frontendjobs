@@ -2,9 +2,7 @@
 	<article class="index">
 		<div class="index__hero">
 			<UContainer class="index__presentation">
-				<h1 class="index__title">
-					Frontend<span>Jobs</span>
-				</h1>
+				<AppLogo class="index__title" />
 				<SearchJobInput />
 			</UContainer>
 
@@ -27,6 +25,7 @@ import SearchJobInput from '~/components/shared/search-job-input.vue';
 import FeaturedTechnologies from '~/components/home/featured-technologies.vue';
 import JobFilters from '~/components/shared/job-filters.vue';
 import JobOpportunities from '~/components/job-opportunities/job-opportunities.vue';
+import AppLogo from '~/components/shared/app-logo.vue';
 </script>
 
 <style scoped>
@@ -48,14 +47,10 @@ import JobOpportunities from '~/components/job-opportunities/job-opportunities.v
 
   &__title {
     @apply text-5xl sm:text-7xl font-light;
-
-    span {
-      @apply font-medium text-purple-500;
-    }
   }
 
 	&__subtitle {
-		@apply font-extralight w-full text-2xl text-center sm:max-w-[70%];
+		@apply font-light w-full text-xl text-center sm:max-w-[60%] tracking-widest;
 	}
 
 	&__content {

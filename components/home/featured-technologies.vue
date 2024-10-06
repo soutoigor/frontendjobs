@@ -4,6 +4,9 @@
 			v-for="tech of FEATURED_TECHNOLOGIES"
 			:key="tech.name"
 			class="featured-technologies__technology"
+			:class="{
+				'-selected': store.filters.technologies.includes(tech.id),
+			}"
 			@click="selectTechnology(tech.id)"
 		>
 			<img
@@ -31,9 +34,9 @@ const FEATURED_TECHNOLOGIES = [
 		image: VueLogo,
 	},
 	{
-		id: '24aea839-572b-4e33-8680-f416fd9b4a04',
-		name: 'React',
-		image: ReactLogo,
+		id: '0f5b5f6d-6821-4184-baf8-8c884a9813ea',
+		name: 'Svelte',
+		image: SvelteLogo,
 	},
 	{
 		id: '99301b7d-2214-4186-a7e7-7cb4539110c2',
@@ -41,9 +44,9 @@ const FEATURED_TECHNOLOGIES = [
 		image: AngularLogo,
 	},
 	{
-		id: '0f5b5f6d-6821-4184-baf8-8c884a9813ea',
-		name: 'Svelte',
-		image: SvelteLogo,
+		id: '24aea839-572b-4e33-8680-f416fd9b4a04',
+		name: 'React',
+		image: ReactLogo,
 	},
 ];
 
@@ -67,6 +70,10 @@ function selectTechnology(technologyId: string) {
 
 		img {
 			@apply h-full transition-transform duration-100;
+		}
+
+		&.-selected {
+			@apply bg-purple-700;
 		}
 
 		&:hover {

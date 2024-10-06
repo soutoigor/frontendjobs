@@ -7,7 +7,6 @@ export function useFilterOptions() {
 	const seniorities = ref(SENIORITIES);
 	const locations = ref([...COUNTRY_LIST, 'Worldwide']);
 	const isLoadingTechnologies = ref(false);
-	let isInitialized = false;
 
 	onMounted(() => {
 		Promise.all([fetchTechnologies()]);

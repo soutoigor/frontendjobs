@@ -40,7 +40,7 @@ const { error, pending } = await useFetch<UseFetchReturn>(
 
 <style scoped>
 .job-opportunity {
-  @apply w-full pt-20 pb-6;
+  @apply w-full;
 
   &__content {
     @apply flex justify-center;
