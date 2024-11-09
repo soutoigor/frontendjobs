@@ -3,3 +3,5 @@ export const COUNTRY_LIST = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'An
 export const SENIORITIES = ['Internship', 'Junior', 'Mid', 'Senior', 'Lead', 'Manager'];
 
 export const EMPLOYMENT_TYPES = ['Full-time', 'Part-time', 'Contract', 'Freelance', 'Internship'];
+
+export const INDUSTRIES = ['Agriculture', 'Automotive', 'Banking', 'Biotechnology', 'Construction', 'Consumer Goods', 'Education', 'Energy', 'Entertainment', 'Fashion', 'Finance', 'Food and Beverage', 'Healthcare', 'Hospitality', 'Information Technology', 'Insurance', 'Logistics', 'Manufacturing', 'Marketing', 'Media', 'Mining', 'Non-profit', 'Pharmaceuticals', 'Real Estate', 'Retail', 'Telecommunications', 'Transportation', 'Utilities', 'Wholesale', 'Government', 'Legal', 'Aerospace', 'Chemical', 'Consulting', 'Defense', 'Electronics', 'Environmental', 'Human Resources', 'Internet', 'Publishing', 'Sports', 'Tourism'];

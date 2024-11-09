@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia';
-import type { IndexJobOpportunitiesResponse, IndexJobOpportunitiesParams, JobOpportunity, ShowJobOpportunityResponse } from '~/types/job-opportunities';
+import type {
+	IndexJobOpportunitiesResponse,
+	JobOpportunityPayload,
+	IndexJobOpportunitiesParams,
+	JobOpportunity,
+	ShowJobOpportunityResponse,
+} from '~/types/job-opportunities';
 
 export interface UseFetchReturn {
 	data: IndexJobOpportunitiesResponse | ShowJobOpportunityResponse | null;
@@ -26,15 +32,17 @@ const initialJobOpportunity: JobOpportunity = {
 	description: '',
 	currency: '',
 	application_link: '',
-	employment_type: '',
+	employment_type: [],
 	technologies: [],
+	seniority: [],
 	company: {
 		id: '',
 		name: '',
 		avatar: '',
 		location: '',
 		user_id: '',
-		company_industry: '',
+		industry: '',
+		socials: {},
 		created_at: '',
 		updated_at: '',
 	},
@@ -42,9 +50,12 @@ const initialJobOpportunity: JobOpportunity = {
 
 export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	const { technologies } = useFilterOptions();
+	const config = useRuntimeConfig();
+  const token = useCookie('token');
 
 	const jobOpportunities = ref<IndexJobOpportunitiesResponse>();
 	const jobOpportunity = ref<JobOpportunity>(initialJobOpportunity);
+	const isSavingJobOpportunity = ref(false);
 	const filters = ref({ ...initialFilters });
 	const filtersLabel = computed(() => {
 		let _filtersLabel = [
@@ -101,12 +112,45 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	// ##region Job Opportunity
 
 	function setJobOpportunity(newJobOpportunity: JobOpportunity) {
-		console.log('----', newJobOpportunity);
 		jobOpportunity.value = newJobOpportunity;
 	}
 
 	function resetJobOpportunity() {
 		jobOpportunity.value = initialJobOpportunity;
+	}
+
+	async function createJobOpportunity(payload: JobOpportunityPayload) {
+		try {
+		isSavingJobOpportunity.value = true
+		await $fetch<{ job_opportunity: JobOpportunity }>('/job-opportunities', {
+				method: 'post',
+        baseURL: config.public.baseURL,
+				headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+				body: payload,
+			});
+		} catch (error) {
+			throw error;
+		} finally {
+			isSavingJobOpportunity.value = false;
+		}
+	}
+
+	async function updateJobOpportunity(payload: JobOpportunityPayload) {
+		try {
+		isSavingJobOpportunity.value = true
+		await $fetch<{ job_opportunity: JobOpportunity }>('/job-opportunities', {
+				method: 'put',
+        baseURL: config.public.baseURL,
+				headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+				body: payload,
+			});
+		} finally {
+			isSavingJobOpportunity.value = false;
+		}
 	}
 
 	// ##endregion
@@ -123,5 +167,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		jobOpportunity,
 		setJobOpportunity,
 		resetJobOpportunity,
+		createJobOpportunity,
+		updateJobOpportunity
 	};
 });

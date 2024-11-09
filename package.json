@@ -12,6 +12,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@nuxt/icon": "^1.6.1",
     "@nuxt/image": "^1.7.0",
     "@nuxt/ui": "^2.15.2",
     "@types/ramda": "^0.30.0",
@@ -28,7 +29,8 @@
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/nuxt": "^10.9.0",
     "ramda": "^0.30.0",
-    "vite-plugin-eslint2": "^4.4.0"
+    "vite-plugin-eslint2": "^4.4.0",
+    "yup": "^1.4.0"
   },
   "overrides": {
     "vue": "^3.4.37"

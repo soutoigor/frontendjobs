@@ -1,3 +1,9 @@
+import {
+	filter,
+	isEmpty,
+	or,
+	isNil,
+ } from 'ramda';
 /**
  * Formats the salary range as a text string.
  * @param currency - The currency symbol or code.
@@ -50,3 +56,17 @@ export function timeAgo(dateString: string): string {
 
 	return 'just now';
 }
+
+
+/**
+ * Filters out values that are either `null`, `undefined`, or empty.
+ *
+ * This utility function uses a combination of `isNil` and `isEmpty` checks
+ * to determine if a value should be filtered out.
+ *
+ * @param x - The value to be checked.
+ * @returns A boolean indicating whether the value is `null`, `undefined`, or empty.
+ */
+export const filterNilOrEmpty = filter(
+	(value: any) => or(isNil(value), isEmpty(value)),
+);

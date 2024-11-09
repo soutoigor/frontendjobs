@@ -2,13 +2,14 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	modules: [
-		'@nuxt/ui',
-		'@nuxtjs/i18n',
-		'@pinia/nuxt',
-		'@vueuse/nuxt',
-		'@nuxt/eslint',
-		'@nuxt/image',
-	],
+        '@nuxt/ui',
+        '@nuxtjs/i18n',
+        '@pinia/nuxt',
+        '@vueuse/nuxt',
+        '@nuxt/eslint',
+        '@nuxt/image',
+        "@nuxt/icon",
+    ],
 	eslint: {
 		checker: true,
 		config: {
@@ -27,4 +28,7 @@ export default defineNuxtConfig({
 	css: [
 		'~/assets/styles/global.css',
 	],
+	routeRules: {
+		'/company/**': { appMiddleware: 'auth' },
+	},
 });

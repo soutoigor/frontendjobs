@@ -5,7 +5,7 @@
 				to="/"
 				class="app-toolbar__logo"
 			>
-				<AppLogo v-show="!home" />
+				<AppLogo v-show="!logoVisible" />
 			</NuxtLink>
 		</div>
 
@@ -13,13 +13,13 @@
 			<UButton
 				variant="solid"
 				color="yellow"
-				to="/post-job"
+				to="/company/post-job"
 			>
 				Post Job
 			</UButton>
 			<UButton
 				variant="solid"
-				to="/company"
+				to="/company/dashboard"
 			>
 				Company Area
 			</UButton>
@@ -30,16 +30,18 @@
 <script setup lang="ts">
 import AppLogo from '~/components/shared/app-logo.vue';
 
-defineProps<{
-	home: boolean;
-}>();
+interface Props {
+	logoVisible: boolean;
+}
+
+defineProps<Props>();
 </script>
 
 <style scoped>
 .app-toolbar {
 	@apply bg-transparent w-dvw flex justify-between items-center px-3 md:px-4 py-1 md:py-3 gap-4;
 
-	&.-is-home {
+	&.-is-logo-visible {
 		@apply hidden;
 	}
 
