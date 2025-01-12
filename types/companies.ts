@@ -1,3 +1,5 @@
+import type { JobOpportunity } from '~/types/job-opportunities';
+
 export interface Company {
 	id: string; // uuid
 	name: string;
@@ -8,6 +10,10 @@ export interface Company {
 	socials: Socials;
 	created_at: string;
 	updated_at: string;
+}
+
+export interface CompanyWithJobs extends Company {
+	job_opportunities: JobOpportunity[];
 }
 
 export interface CompanyFilters {

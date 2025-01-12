@@ -19,7 +19,10 @@ export interface JobOpportunity {
 	company: Company;
 }
 
-// region API
+export interface JobOpportunityDraft extends Omit<JobOpportunity, 'id' | 'company'> {
+	id?: string;
+	company?: Company;
+};
 
 // #region Responses
 export type IndexJobOpportunitiesResponse = PaginatedResponse<JobOpportunity>;
@@ -46,5 +49,3 @@ export interface JobOpportunityPayload extends Omit<JobOpportunity, 'id' | 'comp
 };
 
 // #endregion
-
-// endregion

@@ -4,6 +4,7 @@ import type {
 	JobOpportunityPayload,
 	IndexJobOpportunitiesParams,
 	JobOpportunity,
+	JobOpportunityDraft,
 	ShowJobOpportunityResponse,
 } from '~/types/job-opportunities';
 
@@ -51,10 +52,11 @@ const initialJobOpportunity: JobOpportunity = {
 export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	const { technologies } = useFilterOptions();
 	const config = useRuntimeConfig();
-  const token = useCookie('token');
+	const token = useCookie('token');
 
 	const jobOpportunities = ref<IndexJobOpportunitiesResponse>();
 	const jobOpportunity = ref<JobOpportunity>(initialJobOpportunity);
+	const draftJobOpportunity = ref<JobOpportunityDraft>();
 	const isSavingJobOpportunity = ref(false);
 	const filters = ref({ ...initialFilters });
 	const filtersLabel = computed(() => {
@@ -110,46 +112,82 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	// ##endregion
 
 	// ##region Job Opportunity
+	function restoreJobOpportunityDraft() {
+		const draft = localStorage.getItem('job-opportunity-draft');
+		if (draft) {
+			draftJobOpportunity.value = JSON.parse(draft);
+		}
+	}
 
-	function setJobOpportunity(newJobOpportunity: JobOpportunity) {
-		jobOpportunity.value = newJobOpportunity;
+	function setJobOpportunity(payload: JobOpportunity) {
+		jobOpportunity.value = payload;
+	}
+
+	function setDraftJobOpportunity(payload: JobOpportunityDraft) {
+		draftJobOpportunity.value = payload;
+
+		localStorage.setItem('job-opportunity-draft', JSON.stringify(payload));
 	}
 
 	function resetJobOpportunity() {
 		jobOpportunity.value = initialJobOpportunity;
 	}
 
-	async function createJobOpportunity(payload: JobOpportunityPayload) {
+	async function createJobOpportunity(payload: JobOpportunityDraft) {
+		const formattedPayload: JobOpportunityPayload = {
+			...payload,
+			technologies: payload.technologies.map(x => x.id),
+		};
+
 		try {
-		isSavingJobOpportunity.value = true
-		await $fetch<{ job_opportunity: JobOpportunity }>('/job-opportunities', {
+			isSavingJobOpportunity.value = true;
+
+			await $fetch<{ job_opportunity: JobOpportunity }>('/job_opportunities', {
 				method: 'post',
-        baseURL: config.public.baseURL,
+				baseURL: config.public.baseURL,
 				headers: {
-          Authorization: `Bearer ${token.value}`,
-        },
-				body: payload,
+					Authorization: `Bearer ${token.value}`,
+				},
+				body: formattedPayload,
 			});
-		} catch (error) {
+
+			draftJobOpportunity.value = undefined;
+			localStorage.removeItem('job-opportunity-draft');
+		}
+		catch (error) {
 			throw error;
-		} finally {
+		}
+		finally {
 			isSavingJobOpportunity.value = false;
 		}
 	}
 
 	async function updateJobOpportunity(payload: JobOpportunityPayload) {
 		try {
-		isSavingJobOpportunity.value = true
-		await $fetch<{ job_opportunity: JobOpportunity }>('/job-opportunities', {
+			isSavingJobOpportunity.value = true;
+			await $fetch<{ job_opportunity: JobOpportunity }>('/job_opportunities', {
 				method: 'put',
-        baseURL: config.public.baseURL,
+				baseURL: config.public.baseURL,
 				headers: {
-          Authorization: `Bearer ${token.value}`,
-        },
+					Authorization: `Bearer ${token.value}`,
+				},
 				body: payload,
 			});
-		} finally {
+		}
+		finally {
 			isSavingJobOpportunity.value = false;
+		}
+	}
+
+	async function apply(id: string) {
+		try {
+			await $fetch(`/job_opportunities/${id}/apply`, {
+				method: 'post',
+				baseURL: config.public.baseURL,
+			});
+		}
+		catch (error) {
+			console.error(error);
 		}
 	}
 
@@ -163,11 +201,15 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		removeFilter,
 		setJobOpportunities,
 		filtersLabel,
+		draftJobOpportunity,
 
 		jobOpportunity,
 		setJobOpportunity,
+		restoreJobOpportunityDraft,
+		setDraftJobOpportunity,
 		resetJobOpportunity,
 		createJobOpportunity,
-		updateJobOpportunity
+		updateJobOpportunity,
+		apply,
 	};
 });

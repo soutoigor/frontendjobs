@@ -4,10 +4,11 @@
 		:logo-visible="isLogoVisible"
 		class="absolute top-0 left-0 right-0 z-10"
 	/>
+
 	<NuxtLayout>
 		<NuxtPage
 			class="relative"
-			:class="[!isLogoVisible && 'pt-20 pb-6']"
+			:class="[!isLogoVisible && '']"
 		/>
 		<UNotifications />
 	</NuxtLayout>
@@ -19,7 +20,11 @@ import AppToolbar from '~/components/toolbar/app-toolbar.vue';
 const route = useRoute();
 const isLogoVisible = computed(() => route.path === '/');
 const isAuthPage = computed(() => {
-	const authPages = ['/login', '/register', '/forgot-password'];
+	const authPages = [
+		'/login',
+		'/register',
+		'/forgot-password',
+	];
 
 	return authPages.includes(route.path);
 });

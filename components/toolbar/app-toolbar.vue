@@ -15,7 +15,7 @@
 				color="yellow"
 				to="/company/post-job"
 			>
-				Post Job
+				Post a Job
 			</UButton>
 			<UButton
 				variant="solid"
@@ -39,7 +39,7 @@ defineProps<Props>();
 
 <style scoped>
 .app-toolbar {
-	@apply bg-transparent w-dvw flex justify-between items-center px-3 md:px-4 py-1 md:py-3 gap-4;
+	@apply bg-transparent w-full flex justify-between items-center px-3 md:px-4 py-1 md:py-3 gap-4;
 
 	&.-is-logo-visible {
 		@apply hidden;

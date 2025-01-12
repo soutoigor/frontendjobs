@@ -3,7 +3,7 @@ import {
 	isEmpty,
 	or,
 	isNil,
- } from 'ramda';
+} from 'ramda';
 /**
  * Formats the salary range as a text string.
  * @param currency - The currency symbol or code.
@@ -12,15 +12,8 @@ import {
  * @returns The formatted salary range as a text string.
  */
 export function getSalaryText(currency: string, salary_minimum: string, salary_maximum?: string): string {
-	const formatSalary = (salary: number) => {
-		if (salary >= 1000) {
-			return (salary / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-		}
-		return salary.toString();
-	};
-
-	const minSalary = formatSalary(Number(salary_minimum));
-	const maxSalary = salary_maximum ? formatSalary(Number(salary_maximum)) : '';
+	const minSalary = formatSalary(Number(salary_minimum.replace(/,/g, '')));
+	const maxSalary = salary_maximum ? formatSalary(Number(salary_maximum.replace(/,/g, ''))) : '';
 
 	return maxSalary ? `${currency} ${minSalary} - ${maxSalary}` : `${currency} ${minSalary}`;
 }
@@ -56,7 +49,6 @@ export function timeAgo(dateString: string): string {
 
 	return 'just now';
 }
-
 
 /**
  * Filters out values that are either `null`, `undefined`, or empty.

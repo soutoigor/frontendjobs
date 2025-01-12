@@ -31,7 +31,7 @@ defineProps<Props>();
 
 <style scoped>
 .authentication-wrapper {
-  @apply w-full h-dvh flex items-center flex-col gap-20 sm:gap-36 px-6;
+  @apply w-full h-dvh flex items-center flex-col gap-20 sm:gap-36 px-6 py-12;
 
   &__logo {
     @apply text-5xl;

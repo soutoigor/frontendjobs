@@ -1,17 +1,18 @@
 <template>
 	<UContainer
-		class="post-job"
+		class="edit-company"
 		as="article"
 	>
-		<h1 class="post-job__title">
-			Post your job opportunity
+		<h1 class="edit-company__title">
+			Edit company details
 		</h1>
-		<JobOpportunityForm />
+
+		<CompanyForm />
 	</UContainer>
 </template>
 
 <script setup lang="ts">
-import JobOpportunityForm from '~/components/job-opportunities/job-opportunity-form.vue';
+import CompanyForm from '~/components/companies/company-form.vue';
 
 definePageMeta({
 	layout: 'company',
@@ -19,7 +20,7 @@ definePageMeta({
 </script>
 
 <style scoped>
-.post-job {
+.edit-company {
 	@apply min-h-screen p-0 w-full;
 
 	&__title {

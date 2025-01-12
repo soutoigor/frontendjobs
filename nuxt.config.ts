@@ -1,15 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	devtools: { enabled: true },
+	debug: true,
 	modules: [
-        '@nuxt/ui',
-        '@nuxtjs/i18n',
-        '@pinia/nuxt',
-        '@vueuse/nuxt',
-        '@nuxt/eslint',
-        '@nuxt/image',
-        "@nuxt/icon",
-    ],
+		'@nuxt/ui',
+		'@nuxtjs/i18n',
+		'@pinia/nuxt',
+		'@vueuse/nuxt',
+		'@nuxt/eslint',
+		'@nuxt/image',
+		'@nuxt/icon',
+	],
 	eslint: {
 		checker: true,
 		config: {
@@ -22,7 +23,7 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		public: {
-			baseURL: 'http://127.0.0.1:8000/api/',
+			baseURL: 'http://192.168.1.94:8000/api/',
 		},
 	},
 	css: [
@@ -31,4 +32,5 @@ export default defineNuxtConfig({
 	routeRules: {
 		'/company/**': { appMiddleware: 'auth' },
 	},
+	plugins: ['~/plugins/firebase.ts'],
 });
