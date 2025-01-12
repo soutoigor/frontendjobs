@@ -30,7 +30,7 @@ import AppLogo from '~/components/shared/app-logo.vue';
 
 <style scoped>
 .index {
-  @apply flex flex-col min-h-screen;
+  @apply flex flex-col min-h-screen pb-8;
 
 	&__hero {
 		background-image: url('../assets/hero-dev.jpg');

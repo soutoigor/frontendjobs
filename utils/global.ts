@@ -1,3 +1,9 @@
+import {
+	filter,
+	isEmpty,
+	or,
+	isNil,
+} from 'ramda';
 /**
  * Formats the salary range as a text string.
  * @param currency - The currency symbol or code.
@@ -6,15 +12,8 @@
  * @returns The formatted salary range as a text string.
  */
 export function getSalaryText(currency: string, salary_minimum: string, salary_maximum?: string): string {
-	const formatSalary = (salary: number) => {
-		if (salary >= 1000) {
-			return (salary / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-		}
-		return salary.toString();
-	};
-
-	const minSalary = formatSalary(Number(salary_minimum));
-	const maxSalary = salary_maximum ? formatSalary(Number(salary_maximum)) : '';
+	const minSalary = formatSalary(Number(salary_minimum.replace(/,/g, '')));
+	const maxSalary = salary_maximum ? formatSalary(Number(salary_maximum.replace(/,/g, ''))) : '';
 
 	return maxSalary ? `${currency} ${minSalary} - ${maxSalary}` : `${currency} ${minSalary}`;
 }
@@ -50,3 +49,16 @@ export function timeAgo(dateString: string): string {
 
 	return 'just now';
 }
+
+/**
+ * Filters out values that are either `null`, `undefined`, or empty.
+ *
+ * This utility function uses a combination of `isNil` and `isEmpty` checks
+ * to determine if a value should be filtered out.
+ *
+ * @param x - The value to be checked.
+ * @returns A boolean indicating whether the value is `null`, `undefined`, or empty.
+ */
+export const filterNilOrEmpty = filter(
+	(value: any) => or(isNil(value), isEmpty(value)),
+);

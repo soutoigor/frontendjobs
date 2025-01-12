@@ -1,55 +1,53 @@
 <template>
 	<header class="job-opportunity-content-header">
-		<div class="job-opportunity-content-header__title-wrapper">
-			<h1
-				class="job-opportunity-content-header__title"
-				v-text="store.jobOpportunity.title"
-			/>
+		<CompanyCard
+			v-if="jobOpportunity.company"
+			:company="jobOpportunity.company"
+		>
+			<template #title>
+				<div class="job-opportunity-content-header__titles">
+					<h1
+						class="job-opportunity-content-header__title"
+						v-text="jobOpportunity.title"
+					/>
+					<h2 v-text="jobOpportunity.company?.name" />
+				</div>
+			</template>
 
-			<JobOpportunityCta
-				v-if="breakpoints.isGreaterOrEqual('md')"
-				class="job-opportunity-content-header__cta"
-			/>
-		</div>
+			<template #action>
+				<JobOpportunityCta
+					class="job-opportunity-content-header__cta"
+					:job-opportunity="jobOpportunity"
+				/>
+			</template>
+		</CompanyCard>
 
 		<div class="job-opportunity-content-header__tags-container">
-			<JobOpportunityCta v-if="breakpoints.isSmallerOrEqual('sm')" />
-
 			<div class="job-opportunity-content-header__tags">
 				<UBadge
-					v-if="store.jobOpportunity.salary_minimum"
+					v-if="jobOpportunity.salary_minimum"
 					color="gray"
 					:label="getSalaryText(
-						store.jobOpportunity.currency,
-						store.jobOpportunity.salary_minimum,
-						store.jobOpportunity.salary_maximum,
+						jobOpportunity.currency,
+						jobOpportunity.salary_minimum,
+						jobOpportunity.salary_maximum,
 					)"
 				/>
 				<UBadge
-					v-if="store.jobOpportunity.location"
+					v-if="jobOpportunity.location"
 					:color="locationColor"
-					:label="store.jobOpportunity.location"
+					:label="jobOpportunity.location"
 				/>
 				<UBadge
-					v-if="store.jobOpportunity.employment_type"
+					v-for="employmentType of jobOpportunity.employment_type"
 					color="white"
-					:label="store.jobOpportunity.employment_type[0]"
+					:label="employmentType"
 				/>
 				<UBadge
-					v-if="store.jobOpportunity.remote"
+					v-if="jobOpportunity.remote"
 					color="green"
 					label="Remote"
 				/>
-			</div>
-
-			<div class="job-opportunity-content-header__company">
-				<UAvatar
-					v-if="store.jobOpportunity.company.avatar"
-					:src="store.jobOpportunity.company.avatar"
-					:alt="`${store.jobOpportunity.company.name} logo`"
-					size="2xl"
-				/>
-				<h2 v-text="store.jobOpportunity.company.name" />
 			</div>
 		</div>
 	</header>
@@ -57,14 +55,23 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import { getSalaryText } from '~/utils/global';
 import JobOpportunityCta from '~/components/job-opportunities/job-opportunity-cta.vue';
+import CompanyCard from '~/components/companies/company-card.vue';
+import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
-const store = useJobOpportunitiesStore();
+interface Props {
+	jobOpportunity: JobOpportunityDraft;
+}
+
+const props = defineProps<Props>();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const locationColor = computed(() => (store.jobOpportunity.location?.toLowerCase() === 'worldwide' ? 'blue' : 'white'));
+const locationColor = computed(() => (
+	props.jobOpportunity.location?.toLowerCase() === 'worldwide'
+		? 'blue'
+		: 'white'
+));
 </script>
 
 <style scoped>
@@ -75,14 +82,21 @@ const locationColor = computed(() => (store.jobOpportunity.location?.toLowerCase
 		@apply w-full flex md:flex-row flex-col items-center justify-between gap-4;
 	}
 
+	&__titles {
+		@apply flex flex-col gap-1;
+
+		h2 {
+			@apply text-lg font-light text-gray-400;
+		}
+	}
+
 	&__title {
-		@apply w-full md:text-6xl md:text-start text-4xl text-center font-light;
+		@apply w-full md:text-6xl text-4xl font-light;
 		flex: 2;
 	}
 
 	&__cta {
-		@apply flex justify-end;
-		flex: 1;
+		@apply hidden md:flex md:justify-end;
 	}
 
 	&__company {
@@ -91,7 +105,7 @@ const locationColor = computed(() => (store.jobOpportunity.location?.toLowerCase
 	}
 
 	&__tags-container {
-		@apply flex flex-col-reverse md:flex-row items-center md:items-end gap-4 justify-between;
+		@apply flex flex-col-reverse md:flex-row items-start md:items-end gap-4 justify-between;
 	}
 
 	&__tags {

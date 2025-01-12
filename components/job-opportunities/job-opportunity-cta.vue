@@ -4,18 +4,17 @@
 			color="gray"
 			variant="outline"
 			size="xl"
-			:block="breakpoints.isSmallerOrEqual('sm')"
 			@click="shareJobOpportunity"
 		>
 			Share
 		</UButton>
 		<UButton
-			:to="store.jobOpportunity.application_link"
+			:to="jobOpportunity.application_link"
 			target="_blank"
 			color="primary"
 			variant="solid"
 			size="xl"
-			:block="breakpoints.isSmallerOrEqual('sm')"
+			@click="apply"
 		>
 			Apply
 		</UButton>
@@ -23,17 +22,27 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
+interface Props {
+	jobOpportunity: JobOpportunityDraft;
+}
+
+const props = defineProps<Props>();
 const store = useJobOpportunitiesStore();
-const breakpoints = useBreakpoints(breakpointsTailwind);
+
+function apply() {
+	if (props.jobOpportunity.id) {
+		store.apply(props.jobOpportunity.id);
+	}
+}
 
 function shareJobOpportunity() {
 	if (navigator.share) {
 		navigator.share({
-			title: store.jobOpportunity.title,
-			text: store.jobOpportunity.description,
+			title: props.jobOpportunity.title,
+			text: props.jobOpportunity.description,
 			url: window.location.href,
 		});
 	}
@@ -42,6 +51,6 @@ function shareJobOpportunity() {
 
 <style scoped>
 .job-opportunity-cta {
-  @apply flex md:flex-row flex-col-reverse items-center justify-center gap-4 w-full max-w-[80%] md:max-w-full;
+  @apply flex gap-4;
 }
 </style>

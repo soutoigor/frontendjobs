@@ -1,24 +1,21 @@
 <template>
-	<UContainer
-		v-if="store.jobOpportunity.id"
-		class="job-opportunity-content"
-	>
-		<JobOpportunityContentHeader />
+	<UContainer class="job-opportunity-content">
+		<JobOpportunityContentHeader :job-opportunity="jobOpportunity" />
 
 		<main class="job-opportunity-content__description">
 			<p
-				v-if="jobDescription"
-				v-html="jobDescription"
+				v-if="jobOpportunity.description"
+				v-html="jobOpportunity.description"
 			/>
 
 			<div
-				v-if="store.jobOpportunity.technologies.length"
+				v-if="jobOpportunity.technologies.length"
 				class="job-opportunity-content__technologies-wrapper"
 			>
 				<p>Technologies:</p>
 				<div class="job-opportunity-content__technologies">
 					<UBadge
-						v-for="technology in store.jobOpportunity.technologies"
+						v-for="technology in jobOpportunity.technologies"
 						:key="technology.id"
 						variant="soft"
 						:label="technology.name"
@@ -32,26 +29,21 @@
 				Did you like this job?
 			</h3>
 
-			<JobOpportunityCta />
+			<JobOpportunityCta :job-opportunity="jobOpportunity" />
 		</div>
 	</UContainer>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import MarkdownIt from 'markdown-it';
-import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import JobOpportunityContentHeader from '~/components/job-opportunities/job-opportunity-content-header.vue';
 import JobOpportunityCta from '~/components/job-opportunities/job-opportunity-cta.vue';
+import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
-const store = useJobOpportunitiesStore();
-const md = new MarkdownIt();
+interface Props {
+	jobOpportunity: JobOpportunityDraft;
+}
 
-const jobDescription = computed(() => {
-	return store.jobOpportunity.description
-		? md.render(store.jobOpportunity.description)
-		: '';
-});
+const props = defineProps<Props>();
 </script>
 
 <style scoped>

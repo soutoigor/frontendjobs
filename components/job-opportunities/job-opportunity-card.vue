@@ -34,9 +34,10 @@
 						:label="jobOpportunity.location"
 					/>
 					<UBadge
-						v-if="jobOpportunity.employment_type"
+						v-for="employmentType of jobOpportunity.employment_type"
+						:key="employmentType"
 						color="white"
-						:label="jobOpportunity.employment_type"
+						:label="employmentType"
 					/>
 					<UBadge
 						v-if="jobOpportunity.remote"
@@ -51,6 +52,7 @@
 				<UBadge
 					v-for="technology in jobOpportunity.technologies"
 					:key="technology.id"
+					class="job-opportunity-card__technology-badge"
 					variant="soft"
 					:label="technology.name"
 				/>
@@ -83,9 +85,11 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import type { JobOpportunity } from '~/types/job-opportunities';
 import { getSalaryText, timeAgo } from '~/utils/global';
 
-const props = defineProps<{
+interface Props {
 	jobOpportunity: JobOpportunity;
-}>();
+}
+
+const props = defineProps<Props>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -121,7 +125,11 @@ function setIsHovering(value: boolean) {
 	}
 
 	&__technologies {
-		@apply flex gap-2 w-1/5 justify-center;
+		@apply flex flex-wrap gap-2 w-1/5 justify-center;
+	}
+
+	&__technology-badge {
+		@apply text-nowrap;
 	}
 
 	&__tags {

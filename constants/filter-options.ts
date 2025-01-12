@@ -3,3 +3,16 @@ export const COUNTRY_LIST = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'An
 export const SENIORITIES = ['Internship', 'Junior', 'Mid', 'Senior', 'Lead', 'Manager'];
 
 export const EMPLOYMENT_TYPES = ['Full-time', 'Part-time', 'Contract', 'Freelance', 'Internship'];
+
+export const INDUSTRIES = ['Agriculture', 'Automotive', 'Banking', 'Biotechnology', 'Construction', 'Consumer Goods', 'Education', 'Energy', 'Entertainment', 'Fashion', 'Finance', 'Food and Beverage', 'Healthcare', 'Hospitality', 'Information Technology', 'Insurance', 'Logistics', 'Manufacturing', 'Marketing', 'Media', 'Mining', 'Non-profit', 'Pharmaceuticals', 'Real Estate', 'Retail', 'Telecommunications', 'Transportation', 'Utilities', 'Wholesale', 'Government', 'Legal', 'Aerospace', 'Chemical', 'Consulting', 'Defense', 'Electronics', 'Environmental', 'Human Resources', 'Internet', 'Publishing', 'Sports', 'Tourism'];
+
+export const CURRENCIES = [
+	'USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
+	'MXN', 'SGD', 'HKD', 'NOK', 'KRW', 'TRY', 'INR', 'RUB', 'BRL', 'ZAR',
+	'DKK', 'PLN', 'TWD', 'THB', 'MYR', 'IDR', 'CZK', 'HUF', 'ILS', 'CLP',
+	'PHP', 'AED', 'COP', 'SAR', 'RON', 'PEN', 'VND', 'EGP', 'BDT', 'PKR',
+	'QAR', 'UAH', 'KZT', 'OMR', 'KWD', 'DZD', 'ISK', 'BGN', 'HRK', 'LKR',
+	'JMD', 'MAD', 'NPR', 'TTD', 'UYU', 'BHD', 'XOF', 'XAF', 'KES', 'GHS',
+	'ETB', 'UGX', 'RWF', 'TZS', 'MUR', 'MGA', 'AFN', 'AOA', 'XCD', 'BBD',
+	'BSD', 'BZD', 'FJD', 'GYD', 'HTG', 'LRD', 'MVR', 'NGN', 'SBD', 'SRD',
+];

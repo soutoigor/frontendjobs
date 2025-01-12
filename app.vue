@@ -1,17 +1,31 @@
 <template>
 	<AppToolbar
-		:home="isHomePage"
-		class="absolute top-0 left-0 right-0 z-10 max-"
+		v-if="route.path && !isAuthPage"
+		:logo-visible="isLogoVisible"
+		class="absolute top-0 left-0 right-0 z-10"
 	/>
-	<NuxtPage
-		class="relative"
-		:class="[!isHomePage && 'pt-20 pb-6']"
-	/>
+
+	<NuxtLayout>
+		<NuxtPage
+			class="relative"
+			:class="[!isLogoVisible && '']"
+		/>
+		<UNotifications />
+	</NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import AppToolbar from '~/components/toolbar/app-toolbar.vue';
 
 const route = useRoute();
-const isHomePage = computed(() => route.path === '/');
+const isLogoVisible = computed(() => route.path === '/');
+const isAuthPage = computed(() => {
+	const authPages = [
+		'/login',
+		'/register',
+		'/forgot-password',
+	];
+
+	return authPages.includes(route.path);
+});
 </script>

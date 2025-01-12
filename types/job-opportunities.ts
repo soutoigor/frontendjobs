@@ -11,15 +11,18 @@ export interface JobOpportunity {
 	salary_minimum?: string;
 	salary_maximum?: string;
 	currency: string;
-	employment_type: string;
-	seniority?: string;
+	employment_type: string[];
+	seniority?: string[];
 	date_posted?: string; // 2024-05-05 00:00:00
 	application_link: string;
 	technologies: Technology[];
 	company: Company;
 }
 
-// region API
+export interface JobOpportunityDraft extends Omit<JobOpportunity, 'id' | 'company'> {
+	id?: string;
+	company?: Company;
+};
 
 // #region Responses
 export type IndexJobOpportunitiesResponse = PaginatedResponse<JobOpportunity>;
@@ -41,6 +44,8 @@ export interface IndexJobOpportunitiesParams extends Paginated {
 	seniority: string; // TODO: enum
 };
 
-// #endregion
+export interface JobOpportunityPayload extends Omit<JobOpportunity, 'id' | 'company' | 'technologies'> {
+	technologies: string[]; // uuid[]
+};
 
-// endregion
+// #endregion
