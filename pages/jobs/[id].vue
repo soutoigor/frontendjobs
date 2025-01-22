@@ -1,8 +1,6 @@
 <template>
 	<article class="job-opportunity">
-		<div v-if="pending">
-			loading....
-		</div>
+		<AppLoading v-if="pending" />
 		<div v-else-if="error">
 			{{ error }}
 		</div>
@@ -19,13 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import JobOpportunityContent from '~/components/job-opportunities/job-opportunity-content.vue';
+import AppLoading from '~/components/shared/app-loading.vue';
+import { generateDynamicMetaTags } from '~/utils/meta-tags';
 import type { JobOpportunity } from '~/types/job-opportunities';
 
 const route = useRoute();
 const config = useRuntimeConfig();
-
 const jobId = computed(() => route.params.id);
 
 const { pending, error, data } = await useAsyncData(
@@ -39,6 +37,19 @@ const { pending, error, data } = await useAsyncData(
 		watch: [jobId],
 	},
 );
+
+watch(data, (newValue) => {
+  if (newValue) {
+    useHead(generateDynamicMetaTags({
+      title: `${newValue.job_opportunity?.title} at ${newValue.job_opportunity?.company.name} – Frontend Jobs`,
+      description: `Apply for ${newValue.job_opportunity?.title} at ${newValue.job_opportunity?.company.name}. Discover great frontend development opportunities.`,
+      url: route.fullPath,
+      image: newValue.job_opportunity?.company.avatar || '',
+      keywords: `${newValue.job_opportunity?.title}, ${newValue.job_opportunity?.company.name}, frontend jobs, development opportunities`,
+    }));
+  }
+});
+
 </script>
 
 <style scoped>

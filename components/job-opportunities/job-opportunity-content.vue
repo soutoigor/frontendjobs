@@ -1,6 +1,6 @@
 <template>
 	<UContainer class="job-opportunity-content">
-		<JobOpportunityContentHeader :job-opportunity="jobOpportunity" />
+		<JobOpportunityContentHeader :job-opportunity="jobOpportunityFormatted" />
 
 		<main class="job-opportunity-content__description">
 			<p
@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import JobOpportunityContentHeader from '~/components/job-opportunities/job-opportunity-content-header.vue';
 import JobOpportunityCta from '~/components/job-opportunities/job-opportunity-cta.vue';
+import { useCompaniesStore } from '~/store/companies';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
 interface Props {
@@ -44,6 +45,18 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const companiesStore = useCompaniesStore();
+
+const jobOpportunityFormatted = computed(() => {
+	const job = props.jobOpportunity;
+
+	if (!job.company) {
+		job.company = companiesStore.userCompany;
+	}
+
+	return job;
+});
 </script>
 
 <style scoped>

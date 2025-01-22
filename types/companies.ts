@@ -12,8 +12,13 @@ export interface Company {
 	updated_at: string;
 }
 
+export interface CompanyJobOpportunity extends JobOpportunity {
+	views: number;
+	applications: number;
+}
+
 export interface CompanyWithJobs extends Company {
-	job_opportunities: JobOpportunity[];
+	job_opportunities: CompanyJobOpportunity[];
 }
 
 export interface CompanyFilters {

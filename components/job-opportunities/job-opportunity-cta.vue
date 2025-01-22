@@ -9,7 +9,6 @@
 			Share
 		</UButton>
 		<UButton
-			:to="jobOpportunity.application_link"
 			target="_blank"
 			color="primary"
 			variant="solid"
@@ -33,6 +32,14 @@ const props = defineProps<Props>();
 const store = useJobOpportunitiesStore();
 
 function apply() {
+	let url = props.jobOpportunity.application_link;
+
+	if (!url.startsWith('http://') && !url.startsWith('https://')) {
+		url = 'http://' + url;
+	}
+
+	window.open(url, '_blank');
+
 	if (props.jobOpportunity.id) {
 		store.apply(props.jobOpportunity.id);
 	}

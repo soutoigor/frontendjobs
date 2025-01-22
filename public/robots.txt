@@ -1,0 +1,7 @@
+# Allow all crawlers to access everything
+User-agent: *
+Disallow: /api/
+Disallow: /company/
+
+# Sitemap location
+Sitemap: https://frontendjobs.app/sitemap.xml

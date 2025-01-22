@@ -54,7 +54,6 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { getSalaryText } from '~/utils/global';
 import JobOpportunityCta from '~/components/job-opportunities/job-opportunity-cta.vue';
 import CompanyCard from '~/components/companies/company-card.vue';
@@ -65,7 +64,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const locationColor = computed(() => (
 	props.jobOpportunity.location?.toLowerCase() === 'worldwide'
@@ -91,7 +89,7 @@ const locationColor = computed(() => (
 	}
 
 	&__title {
-		@apply w-full md:text-6xl text-4xl font-light;
+		@apply w-full text-4xl font-light;
 		flex: 2;
 	}
 

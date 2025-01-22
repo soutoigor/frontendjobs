@@ -26,6 +26,10 @@ import FeaturedTechnologies from '~/components/home/featured-technologies.vue';
 import JobFilters from '~/components/shared/job-filters.vue';
 import JobOpportunities from '~/components/job-opportunities/job-opportunities.vue';
 import AppLogo from '~/components/shared/app-logo.vue';
+
+import { defaultMetaTags } from '~/utils/meta-tags';
+
+useHead(defaultMetaTags);
 </script>
 
 <style scoped>

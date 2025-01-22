@@ -6,7 +6,7 @@
 
 <style scoped>
 .app-logo {
-  @apply font-light;
+  @apply font-light text-center;
 
   span {
     @apply font-medium text-purple-500;

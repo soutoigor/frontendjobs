@@ -1,9 +1,10 @@
-import { isEmpty } from 'ramda';
 import { COUNTRY_LIST, SENIORITIES, EMPLOYMENT_TYPES, INDUSTRIES, CURRENCIES } from '~/constants/filter-options';
+
+const technologies = ref<Technology[]>([]);
+const isInitialized = ref(false);
 
 export function useFilterOptions() {
 	const config = useRuntimeConfig();
-	const technologies = ref<Technology[]>([]);
 	const employmentTypes = ref(EMPLOYMENT_TYPES);
 	const seniorities = ref(SENIORITIES);
 	const industries = ref(INDUSTRIES);
@@ -11,8 +12,10 @@ export function useFilterOptions() {
 	const locations = ref(['Worldwide', ...COUNTRY_LIST]);
 	const isLoadingTechnologies = ref(false);
 
-	onMounted(() => {
-		Promise.all([fetchTechnologies()]);
+	onMounted(async () => {
+		if (!isInitialized.value) {
+			await fetchTechnologies();
+		}
 	});
 
 	return {
@@ -26,9 +29,7 @@ export function useFilterOptions() {
 	};
 
 	async function fetchTechnologies() {
-		if (!isEmpty(technologies.value)) {
-			return;
-		}
+		isInitialized.value = true;
 
 		try {
 			isLoadingTechnologies.value = true;

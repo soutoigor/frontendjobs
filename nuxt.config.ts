@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	devtools: { enabled: true },
-	debug: true,
 	modules: [
 		'@nuxt/ui',
 		'@nuxtjs/i18n',
@@ -23,7 +22,11 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		public: {
-			baseURL: 'http://192.168.1.94:8000/api/',
+			baseURL: process.env.API_BASE_URL,
+			firebaseApiKey: process.env.FIREBASE_API_KEY,
+			firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
+			firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
+			firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 		},
 	},
 	css: [
@@ -33,4 +36,33 @@ export default defineNuxtConfig({
 		'/company/**': { appMiddleware: 'auth' },
 	},
 	plugins: ['~/plugins/firebase.ts'],
+	app: {
+		head: {
+			title: 'Frontend Jobs',
+			meta: [
+				{ charset: 'utf-8' },
+				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+				{ name: 'robots', content: 'index, follow' },
+			],
+			link: [
+				{ rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+				{ rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+				{ rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+				{ rel: 'manifest', href: '/site.webmanifest' },
+			],
+			script: [
+				{
+					hid: 'tawk.to',
+					src: 'https://embed.tawk.to/678843b3825083258e05daee/1ihm4gtii',
+					defer: true,
+					async: true,
+				},
+			],
+		},
+	},
+	nitro: {
+		routeRules: {
+			'/sitemap.xml': { headers: { 'Content-Type': 'application/xml' } },
+		},
+	},
 });

@@ -1,15 +1,14 @@
 <template>
 	<main class="company">
 		<UContainer class="company__container">
-			<div v-if="companiesStore.loadingCompany">
-				Loading...
-			</div>
+			<AppLoading v-if="companiesStore.loadingCompany" />
 			<slot v-else />
 		</UContainer>
 	</main>
 </template>
 
 <script setup lang="ts">
+import AppLoading from '~/components/shared/app-loading.vue';
 import { useCompaniesStore } from '~/store/companies';
 
 const companiesStore = useCompaniesStore();

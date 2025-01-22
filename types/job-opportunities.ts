@@ -17,6 +17,8 @@ export interface JobOpportunity {
 	application_link: string;
 	technologies: Technology[];
 	company: Company;
+	applications?: number;
+	views?: number;
 }
 
 export interface JobOpportunityDraft extends Omit<JobOpportunity, 'id' | 'company'> {

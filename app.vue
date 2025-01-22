@@ -10,12 +10,14 @@
 			class="relative"
 			:class="[!isLogoVisible && '']"
 		/>
+		<AppFooter />
 		<UNotifications />
 	</NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import AppToolbar from '~/components/toolbar/app-toolbar.vue';
+import AppFooter from '~/components/shared/app-footer.vue';
 
 const route = useRoute();
 const isLogoVisible = computed(() => route.path === '/');

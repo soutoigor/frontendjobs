@@ -1,19 +1,23 @@
 <template>
 	<div class="featured-technologies">
-		<button
-			v-for="tech of FEATURED_TECHNOLOGIES"
+		<template
+			v-for="tech of featuredTechnologies"
 			:key="tech.name"
-			class="featured-technologies__technology"
-			:class="{
-				'-selected': store.filters.technologies.includes(tech.id),
-			}"
-			@click="selectTechnology(tech.id)"
 		>
-			<img
-				:src="tech.image"
-				:alt="tech.name"
+			<button
+				v-if="tech.id"
+				class="featured-technologies__technology"
+				:class="{
+					'-selected': store.filters.technologies.includes(tech.id),
+				}"
+				@click="selectTechnology(tech.id)"
 			>
-		</button>
+				<img
+					:src="tech.image"
+					:alt="tech.name"
+				>
+			</button>
+		</template>
 	</div>
 </template>
 
@@ -24,31 +28,36 @@ import SvelteLogo from '../../assets/svelte-logo.svg';
 import VueLogo from '../../assets/vue-logo.svg';
 
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import { useFilterOptions } from '~/composables/use-filter-options';
 
 const store = useJobOpportunitiesStore();
+const { technologies } = useFilterOptions();
 
 const FEATURED_TECHNOLOGIES = [
 	{
-		id: '78189c6d-2c18-43e9-b9e2-63218cb59558',
 		name: 'Vue.js',
 		image: VueLogo,
 	},
 	{
-		id: '0f5b5f6d-6821-4184-baf8-8c884a9813ea',
 		name: 'Svelte',
 		image: SvelteLogo,
 	},
 	{
-		id: '99301b7d-2214-4186-a7e7-7cb4539110c2',
 		name: 'Angular',
 		image: AngularLogo,
 	},
 	{
-		id: '24aea839-572b-4e33-8680-f416fd9b4a04',
 		name: 'React',
 		image: ReactLogo,
 	},
 ];
+const featuredTechnologies = computed(
+	() => FEATURED_TECHNOLOGIES
+		.map(tech => ({
+			...tech,
+			id: technologies.value.find(technology => technology.name === tech.name)?.id,
+		})),
+);
 
 function selectTechnology(technologyId: string) {
 	if (store.filters.technologies.includes(technologyId)) {

@@ -71,22 +71,41 @@
 				</UButton>
 			</div>
 		</div>
-		<!-- Days posted -->
-		<span
-			v-if="jobOpportunity.date_posted"
-			class="job-opportunity-card__posted-at"
-			v-text="timeAgo(jobOpportunity.date_posted)"
-		/>
+
+		<div class="job-opportunity-card__meta">
+			<UBadge
+				v-if="jobOpportunity.views"
+				color="green"
+				variant="soft"
+				size="sm"
+				:label="viewsText"
+			/>
+
+			<UBadge
+				v-if="jobOpportunity.applications"
+				color="yellow"
+				variant="soft"
+				size="sm"
+				:label="applicationsText"
+			/>
+
+			<span
+				v-if="jobOpportunity.date_posted"
+				class="job-opportunity-card__posted-at"
+				v-text="timeAgo(jobOpportunity.date_posted)"
+			/>
+		</div>
 	</UContainer>
 </template>
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import type { CompanyJobOpportunity } from '~/types/companies';
 import type { JobOpportunity } from '~/types/job-opportunities';
 import { getSalaryText, timeAgo } from '~/utils/global';
 
 interface Props {
-	jobOpportunity: JobOpportunity;
+	jobOpportunity: JobOpportunity | CompanyJobOpportunity;
 }
 
 const props = defineProps<Props>();
@@ -95,6 +114,8 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const isHovering = ref(false);
 const locationColor = computed(() => (props.jobOpportunity.location?.toLowerCase() === 'worldwide' ? 'blue' : 'white'));
+const applicationsText = computed(() => `${props.jobOpportunity.applications} ${props.jobOpportunity.applications === 1 ? 'application' : 'applications'}`);
+const viewsText = computed(() => `${props.jobOpportunity.views} ${props.jobOpportunity.views === 1 ? 'view' : 'views'}`);
 
 function setIsHovering(value: boolean) {
 	isHovering.value = value;
@@ -140,8 +161,12 @@ function setIsHovering(value: boolean) {
 		@apply flex justify-end items-end h-full w-full md:w-1/5 lg:w-1/4;
 	}
 
+	&__meta {
+		@apply absolute right-4 top-2 flex gap-2 items-center;
+	}
+
 	&__posted-at {
-		@apply absolute right-4 top-2 text-xs;
+		@apply text-xs;
 	}
 }
 </style>
