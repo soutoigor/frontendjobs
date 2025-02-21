@@ -1,10 +1,9 @@
 {
   "redirects": [
     {
-      "source": "https://www.frontendjobs.app/:path*",
+      "source": "/:path*",
       "destination": "https://www.frontendjobs.app/:path*",
       "permanent": true
     }
   ]
 }
-
