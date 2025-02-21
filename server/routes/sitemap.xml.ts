@@ -2,7 +2,7 @@ import type {
 	IndexJobOpportunitiesResponse,
 } from '~/types/job-opportunities';
 
-export const WEBSITE_URL = 'https://frontendjobs.app';
+export const WEBSITE_URL = 'https://www.frontendjobs.app';
 
 export default defineEventHandler(async () => {
 	const jobs = await fetchJobsFromAPI();

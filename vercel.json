@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "https://frontendjobs.app/:path*",
+      "destination": "https://www.frontendjobs.app/:path*",
+      "permanent": true
+    }
+  ]
+}
+

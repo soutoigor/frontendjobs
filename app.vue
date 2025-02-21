@@ -30,4 +30,9 @@ const isAuthPage = computed(() => {
 
 	return authPages.includes(route.path);
 });
+const CANONICAL_URL = `https://www.frontendjobs.app${route.path}`
+
+useHead({
+	link: [{ rel: 'canonical', href: CANONICAL_URL }],
+})
 </script>

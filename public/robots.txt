@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /company/
 
 # Sitemap location
-Sitemap: https://frontendjobs.app/sitemap.xml
+Sitemap: https://www.frontendjobs.app/sitemap.xml
