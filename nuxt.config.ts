@@ -38,6 +38,7 @@ export default defineNuxtConfig({
 	],
 	routeRules: {
 		'/company/**': { appMiddleware: 'auth' },
+		'/company/payment-success': { appMiddleware: 'auth' },
 	},
 	plugins: ['~/plugins/firebase.ts'],
 	app: {

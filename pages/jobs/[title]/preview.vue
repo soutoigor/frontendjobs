@@ -53,10 +53,14 @@ async function postJob() {
 	}
 
 	try {
-		await jobOpportunitiesStore.createJobOpportunity(draft.value);
+		const { checkoutUrl } = await jobOpportunitiesStore.createJobOpportunity(draft.value);
+
+		if (checkoutUrl) {
+			window.location.href = checkoutUrl;
+			return;
+		}
 
 		await companiesStore.fetchUserCompany();
-
 		router.push('/company/dashboard');
 	}
 	catch (error: any) {

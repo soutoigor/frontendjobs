@@ -9,17 +9,23 @@ export default defineNuxtPlugin(() => {
 	if (import.meta.client) {
 		const config = useRuntimeConfig();
 
-		const firebaseConfig = {
-			apiKey: config.public.firebaseApiKey,
-			authDomain: config.public.firebaseAuthDomain,
-			projectId: config.public.firebaseProjectId,
-			storageBucket: config.public.firebaseStorageBucket,
-			messagingSenderId: config.public.firebaseMessagingSenderId,
-			appId: config.public.firebaseAppId,
-			measurementId: config.public.firebaseMeasurementId,
-		};
+		const { firebaseApiKey, firebaseAppId, firebaseProjectId, firebaseStorageBucket, firebaseAuthDomain, firebaseMessagingSenderId, firebaseMeasurementId } = config.public;
 
-		const app = initializeApp(firebaseConfig);
+		if (!firebaseApiKey || !firebaseAppId || !firebaseProjectId) {
+			console.warn('[firebase] Missing required config — Firebase disabled. Set FIREBASE_* env vars.');
+			return { provide: { analytics: undefined, storage: undefined } };
+		}
+
+		const app = initializeApp({
+			apiKey: firebaseApiKey,
+			authDomain: firebaseAuthDomain,
+			projectId: firebaseProjectId,
+			storageBucket: firebaseStorageBucket,
+			messagingSenderId: firebaseMessagingSenderId,
+			appId: firebaseAppId,
+			measurementId: firebaseMeasurementId,
+		});
+
 		storage = getStorage(app);
 		analytics = getAnalytics(app);
 	}

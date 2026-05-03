@@ -133,7 +133,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		jobOpportunity.value = initialJobOpportunity;
 	}
 
-	async function createJobOpportunity(payload: JobOpportunityDraft) {
+	async function createJobOpportunity(payload: JobOpportunityDraft): Promise<{ checkoutUrl: string | null }> {
 		const formattedPayload: JobOpportunityPayload = {
 			...payload,
 			technologies: payload.technologies.map(x => x.id),
@@ -142,7 +142,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		try {
 			isSavingJobOpportunity.value = true;
 
-			await $fetch<{ job_opportunity: JobOpportunity }>('/job_opportunities', {
+			const response = await $fetch<{ job_opportunity: JobOpportunity; checkout_url: string | null }>('/job_opportunities', {
 				method: 'post',
 				baseURL: config.public.baseURL,
 				headers: {
@@ -153,6 +153,8 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 
 			draftJobOpportunity.value = undefined;
 			localStorage.removeItem('job-opportunity-draft');
+
+			return { checkoutUrl: response.checkout_url };
 		}
 		catch (error) {
 			throw error;
