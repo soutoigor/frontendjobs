@@ -9,19 +9,25 @@
 			Share
 		</UButton>
 		<UButton
-			target="_blank"
 			color="primary"
 			variant="solid"
 			size="xl"
-			@click="apply"
+			@click="isModalOpen = true"
 		>
 			Apply
 		</UButton>
+
+		<ApplyModal
+			v-model="isModalOpen"
+			:job-id="jobOpportunity.id"
+			:job-title="jobOpportunity.title"
+			:application-link="jobOpportunity.application_link"
+		/>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import ApplyModal from '~/components/job-opportunities/apply-modal.vue';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
 interface Props {
@@ -29,21 +35,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const store = useJobOpportunitiesStore();
-
-function apply() {
-	let url = props.jobOpportunity.application_link;
-
-	if (!url.startsWith('http://') && !url.startsWith('https://')) {
-		url = 'http://' + url;
-	}
-
-	window.open(url, '_blank');
-
-	if (props.jobOpportunity.id) {
-		store.apply(props.jobOpportunity.id);
-	}
-}
+const isModalOpen = ref(false);
 
 function shareJobOpportunity() {
 	if (navigator.share) {

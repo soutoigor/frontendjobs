@@ -181,11 +181,12 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		}
 	}
 
-	async function apply(id: string) {
+	async function apply(id: string, applicant: { name?: string; email?: string } = {}) {
 		try {
 			await $fetch(`/job_opportunities/${id}/apply`, {
 				method: 'post',
 				baseURL: config.public.baseURL,
+				body: applicant,
 			});
 		}
 		catch (error) {
