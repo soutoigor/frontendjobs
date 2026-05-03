@@ -2,6 +2,7 @@
   "redirects": [
     {
       "source": "/:path*",
+      "has": [{ "type": "host", "value": "frontendjobs.app" }],
       "destination": "https://www.frontendjobs.app/:path*",
       "permanent": true
     }
