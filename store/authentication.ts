@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia';
 
+const TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days, matches Sanctum expiration
+const cookieOptions = { secure: true, sameSite: 'strict' as const, maxAge: TOKEN_MAX_AGE };
+
 interface UserPayloadInterface {
 	email: string;
 	password: string;
@@ -29,7 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
 		});
 
 		if (response.token) {
-			const cookieToken = useCookie('token');
+			const cookieToken = useCookie('token', cookieOptions);
 			cookieToken.value = response.token;
 			authenticated.value = true;
 			user.value = response.user;
@@ -47,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
 		});
 
 		if (response.token) {
-			const cookieToken = useCookie('token');
+			const cookieToken = useCookie('token', cookieOptions);
 			cookieToken.value = response.token;
 			authenticated.value = true;
 			user.value = response.user;
@@ -55,7 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	async function refresh() {
-		const token = useCookie('token');
+		const token = useCookie('token', cookieOptions);
 
 		const response = await $fetch<{ user: User }>('/refresh', {
 			method: 'get',
@@ -72,7 +75,7 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	async function logUserOut() {
-		const token = useCookie('token');
+		const token = useCookie('token', cookieOptions);
 
 		try {
 			await $fetch('/logout', {

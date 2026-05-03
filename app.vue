@@ -30,9 +30,9 @@ const isAuthPage = computed(() => {
 
 	return authPages.includes(route.path);
 });
-const CANONICAL_URL = `https://www.frontendjobs.app${route.path}`
+const { siteUrl } = useRuntimeConfig().public
 
 useHead({
-	link: [{ rel: 'canonical', href: CANONICAL_URL }],
+	link: [{ rel: 'canonical', href: `${siteUrl}${route.path}` }],
 })
 </script>

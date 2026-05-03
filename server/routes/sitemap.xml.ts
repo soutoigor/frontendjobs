@@ -2,9 +2,9 @@ import type {
 	IndexJobOpportunitiesResponse,
 } from '~/types/job-opportunities';
 
-export const WEBSITE_URL = 'https://www.frontendjobs.app';
-
 export default defineEventHandler(async () => {
+	const config = useRuntimeConfig();
+	const WEBSITE_URL = config.public.siteUrl;
 	const jobs = await fetchJobsFromAPI();
 
 	const urls = jobs
@@ -26,6 +26,7 @@ export default defineEventHandler(async () => {
         <lastmod>${new Date().toISOString()}</lastmod>
         <priority>1.0</priority>
       </url>
+      ${urls}
     </urlset>`;
 });
 

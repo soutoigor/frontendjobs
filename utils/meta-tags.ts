@@ -1,4 +1,4 @@
-const WEBSITE_URL = 'https://frontendjobs.app';
+const WEBSITE_URL = 'https://www.frontendjobs.app';
 
 export const defaultMetaTags = {
 	title: 'Frontend Jobs – Find & Post Frontend Development Opportunities',
