@@ -132,6 +132,11 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		localStorage.setItem('job-opportunity-draft', JSON.stringify(payload));
 	}
 
+	function clearDraftJobOpportunity() {
+		draftJobOpportunity.value = undefined;
+		localStorage.removeItem('job-opportunity-draft');
+	}
+
 	function setValidationErrors(errors: JobOpportunityValidationErrors = {}) {
 		validationErrors.value = errors;
 	}
@@ -184,8 +189,9 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 				body: formattedPayload,
 			});
 
-			draftJobOpportunity.value = undefined;
-			localStorage.removeItem('job-opportunity-draft');
+			if (!response.checkout_url) {
+				clearDraftJobOpportunity();
+			}
 
 			return { checkoutUrl: response.checkout_url };
 		}
@@ -233,6 +239,23 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		}
 	}
 
+	async function deleteJobOpportunity(id: string) {
+		try {
+			isSavingJobOpportunity.value = true;
+
+			await $fetch(`/job_opportunities/${id}`, {
+				method: 'delete',
+				baseURL: config.public.baseURL,
+				headers: {
+					Authorization: `Bearer ${token.value}`,
+				},
+			});
+		}
+		finally {
+			isSavingJobOpportunity.value = false;
+		}
+	}
+
 	// ##endregion
 
 	return {
@@ -251,11 +274,13 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		setJobOpportunity,
 		restoreJobOpportunityDraft,
 		setDraftJobOpportunity,
+		clearDraftJobOpportunity,
 		setValidationErrors,
 		clearValidationErrors,
 		resetJobOpportunity,
 		createJobOpportunity,
 		updateJobOpportunity,
+		deleteJobOpportunity,
 		apply,
 	};
 });

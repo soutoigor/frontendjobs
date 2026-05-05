@@ -2,6 +2,8 @@ import type { PaginatedResponse, Paginated } from '~/types/global';
 import type { Company } from '~/types/companies';
 import type { Technology } from '~/types/technologies';
 
+export type JobOpportunityStatus = 'pending_payment' | 'published';
+
 export interface JobOpportunity {
 	id: string; // uuid
 	title: string;
@@ -19,6 +21,7 @@ export interface JobOpportunity {
 	company: Company;
 	applications?: number;
 	views?: number;
+	status?: JobOpportunityStatus;
 }
 
 export interface JobOpportunityDraft extends Omit<JobOpportunity, 'id' | 'company'> {

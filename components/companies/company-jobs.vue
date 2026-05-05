@@ -33,11 +33,31 @@
 			v-else
 			class="company-jobs__list"
 		>
-			<JobOpportunityCard
+			<div
 				v-for="jobOpportunity of companiesStore.userCompany?.job_opportunities"
 				:key="jobOpportunity.id"
-				:job-opportunity="jobOpportunity"
-			/>
+				class="company-jobs__item"
+			>
+				<JobOpportunityCard :job-opportunity="jobOpportunity" />
+				<div
+					v-if="jobOpportunity.status === 'pending_payment'"
+					class="company-jobs__pending-payment"
+				>
+					<div>
+						<p>This job is saved, but it is not public yet.</p>
+						<span>Complete Stripe Checkout to publish it, or remove this unpaid attempt and post again.</span>
+					</div>
+					<UButton
+						color="rose"
+						variant="soft"
+						size="sm"
+						:loading="deletingJobId === jobOpportunity.id"
+						@click="deletePendingJob(jobOpportunity.id)"
+					>
+						Remove
+					</UButton>
+				</div>
+			</div>
 		</div>
 	</UContainer>
 </template>
@@ -45,14 +65,42 @@
 <script setup lang="ts">
 import { isEmpty, isNil, or } from 'ramda';
 import { useCompaniesStore } from '~/store/companies';
+import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import JobOpportunityCard from '~/components/job-opportunities/job-opportunity-card.vue';
 
 const companiesStore = useCompaniesStore();
+const jobOpportunitiesStore = useJobOpportunitiesStore();
+const toast = useToast();
+const deletingJobId = ref<string>();
 
 const companyHasNoJobs = computed(() => or(
 	isEmpty(companiesStore.userCompany?.job_opportunities),
 	isNil(companiesStore.userCompany?.job_opportunities),
 ));
+
+async function deletePendingJob(id: string) {
+	try {
+		deletingJobId.value = id;
+		await jobOpportunitiesStore.deleteJobOpportunity(id);
+		await companiesStore.fetchUserCompany();
+
+		toast.add({
+			color: 'green',
+			title: 'Pending job removed',
+			description: 'You can post it again when you are ready to complete payment.',
+		});
+	}
+	catch {
+		toast.add({
+			color: 'rose',
+			title: 'Could not remove job',
+			description: 'Please try again.',
+		});
+	}
+	finally {
+		deletingJobId.value = undefined;
+	}
+}
 </script>
 
 <style scoped>
@@ -65,6 +113,22 @@ const companyHasNoJobs = computed(() => or(
 
   &__list {
     @apply grid w-full gap-4;
+  }
+
+  &__item {
+    @apply flex flex-col gap-3;
+  }
+
+  &__pending-payment {
+    @apply flex flex-col gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-4 text-sm dark:border-yellow-900 dark:bg-yellow-950/20 md:flex-row md:items-center md:justify-between;
+
+    p {
+      @apply font-semibold text-yellow-900 dark:text-yellow-100;
+    }
+
+    span {
+      @apply text-yellow-800 dark:text-yellow-200;
+    }
   }
 
   &__list-item {

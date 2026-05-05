@@ -30,8 +30,16 @@
 </template>
 
 <script setup lang="ts">
+import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+
 definePageMeta({
 	layout: 'company',
+});
+
+const jobOpportunitiesStore = useJobOpportunitiesStore();
+
+onMounted(() => {
+	jobOpportunitiesStore.clearDraftJobOpportunity();
 });
 </script>
 

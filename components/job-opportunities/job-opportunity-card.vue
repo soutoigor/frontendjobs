@@ -1,10 +1,11 @@
 <template>
 	<UContainer
 		class="job-opportunity-card"
+		:class="{ 'job-opportunity-card--pending': isPendingPayment }"
 		as="section"
 		@mouseover="setIsHovering(true)"
 		@mouseleave="setIsHovering(false)"
-		@click="$router.push(`/jobs/${jobOpportunity.id}`)"
+		@click="openJobOpportunity"
 	>
 		<UAvatar
 			:src="jobOpportunity.company.avatar"
@@ -61,11 +62,12 @@
 			<!-- Actions -->
 			<div class="job-opportunity-card__actions">
 				<UButton
-					v-if="isHovering || breakpoints.isSmallerOrEqual('sm')"
+					v-if="isPublished && (isHovering || breakpoints.isSmallerOrEqual('sm'))"
 					variant="solid"
 					size="sm"
 					block
 					:to="`/jobs/${jobOpportunity.id}`"
+					@click.stop
 				>
 					View Details
 				</UButton>
@@ -73,6 +75,14 @@
 		</div>
 
 		<div class="job-opportunity-card__meta">
+			<UBadge
+				v-if="isPendingPayment"
+				color="yellow"
+				variant="soft"
+				size="sm"
+				label="Payment pending"
+			/>
+
 			<UBadge
 				v-if="jobOpportunity.views"
 				color="green"
@@ -111,14 +121,23 @@ interface Props {
 const props = defineProps<Props>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const router = useRouter();
 
 const isHovering = ref(false);
+const isPendingPayment = computed(() => props.jobOpportunity.status === 'pending_payment');
+const isPublished = computed(() => !props.jobOpportunity.status || props.jobOpportunity.status === 'published');
 const locationColor = computed(() => (props.jobOpportunity.location?.toLowerCase() === 'worldwide' ? 'blue' : 'white'));
 const applicationsText = computed(() => `${props.jobOpportunity.applications} ${props.jobOpportunity.applications === 1 ? 'application' : 'applications'}`);
 const viewsText = computed(() => `${props.jobOpportunity.views} ${props.jobOpportunity.views === 1 ? 'view' : 'views'}`);
 
 function setIsHovering(value: boolean) {
 	isHovering.value = value;
+}
+
+function openJobOpportunity() {
+	if (isPublished.value) {
+		router.push(`/jobs/${props.jobOpportunity.id}`);
+	}
 }
 </script>
 
@@ -127,6 +146,10 @@ function setIsHovering(value: boolean) {
   @apply border rounded-md w-full border-gray-600 flex gap-4 py-4 px-6 relative cursor-pointer;
 	@apply transition-all duration-200 hover:shadow-sm hover:border-purple-600;
 	@apply flex-col md:flex-row;
+
+	&--pending {
+		@apply cursor-default border-yellow-300 bg-yellow-50 hover:border-yellow-300 hover:shadow-none dark:border-yellow-900 dark:bg-yellow-950/20;
+	}
 
 	&__content-wrapper {
 		@apply flex gap-8 w-full md:items-center justify-between;
