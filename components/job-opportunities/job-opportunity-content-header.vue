@@ -6,6 +6,7 @@
 		>
 			<template #title>
 				<div class="job-opportunity-content-header__titles">
+					<p>Job preview</p>
 					<h1
 						class="job-opportunity-content-header__title"
 						v-text="jobOpportunity.title"
@@ -22,7 +23,8 @@
 			</template>
 		</CompanyCard>
 
-		<div class="job-opportunity-content-header__tags-container">
+		<div class="job-opportunity-content-header__job-meta">
+			<p>Job details</p>
 			<div class="job-opportunity-content-header__tags">
 				<UBadge
 					v-if="jobOpportunity.salary_minimum"
@@ -40,6 +42,7 @@
 				/>
 				<UBadge
 					v-for="employmentType of jobOpportunity.employment_type"
+					:key="employmentType"
 					color="white"
 					:label="employmentType"
 				/>
@@ -83,6 +86,10 @@ const locationColor = computed(() => (
 	&__titles {
 		@apply flex flex-col gap-1;
 
+		p {
+			@apply text-xs font-semibold uppercase tracking-wide text-gray-500;
+		}
+
 		h2 {
 			@apply text-lg font-light text-gray-400;
 		}
@@ -102,8 +109,12 @@ const locationColor = computed(() => (
 
 	}
 
-	&__tags-container {
-		@apply flex flex-col-reverse md:flex-row items-start md:items-end gap-4 justify-between;
+	&__job-meta {
+		@apply flex flex-col items-start gap-2;
+
+		p {
+			@apply text-xs font-semibold uppercase tracking-wide text-gray-500;
+		}
 	}
 
 	&__tags {

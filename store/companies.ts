@@ -17,6 +17,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 	const userCompany = ref<CompanyWithJobs>();
 	const company = ref<Company>();
 	const loadingCompany = ref(false);
+	const savingCompany = ref(false);
 	const loadingCompanies = ref(false);
 
 	async function fetchCompanies(filters: CompanyFilters) {
@@ -33,7 +34,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 
 			companies.value = response.companies;
   	}
-		catch (error: any) {
+		catch {
 			toast.add({
 				color: 'rose',
 				title: 'Failed to load companies',
@@ -69,7 +70,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 
 	async function createCompany(payload: CompanyPayload) {
 		try {
-			loadingCompany.value = true;
+			savingCompany.value = true;
 			const response = await $fetch<{ company: Company }>('/companies', {
 				method: 'post',
 				baseURL: config.public.baseURL,
@@ -84,13 +85,13 @@ export const useCompaniesStore = defineStore('companies', () => {
 			}
 		}
 		finally {
-			loadingCompany.value = false;
+			savingCompany.value = false;
 		}
 	}
 
 	async function updateCompany(id: string, payload: CompanyPayload) {
 		try {
-			loadingCompany.value = true;
+			savingCompany.value = true;
 			const response = await $fetch<{ company: Company }>(`/companies/${id}`, {
 				method: 'put',
 				baseURL: config.public.baseURL,
@@ -105,7 +106,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 			}
 		}
 		finally {
-			loadingCompany.value = false;
+			savingCompany.value = false;
 		}
 	}
 
@@ -114,6 +115,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 		company,
 		userCompany,
 		loadingCompany,
+		savingCompany,
 		loadingCompanies,
 
 		createCompany,

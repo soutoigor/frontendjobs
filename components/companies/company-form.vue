@@ -7,38 +7,42 @@
 	>
 		<div class="company-form__form-section">
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
-				label="Name"
+				label="Company name"
 				name="name"
+				required
 				class="col-span-12 md:col-span-8"
 			>
-				<UInput v-model="state.name" />
+				<UInput
+					v-model="state.name"
+					placeholder="Acme Labs"
+				/>
 			</UFormGroup>
 
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
-				label="Avatar"
+				label="Logo or avatar"
 				name="avatar"
+				help="Optional. PNG, JPG, or WebP up to 2MB."
 				class="col-span-12 md:col-span-4"
 			>
 				<div class="company-form__avatar-wrapper">
 					<template v-if="!state.avatar">
 						<UInput
-							accept="image/*"
+							accept="image/png,image/jpeg,image/webp"
 							padded
 							type="file"
 							size="sm"
 							@change="onFileChange"
 						/>
 						<UButton
+							v-if="file"
 							size="sm"
 							color="primary"
-							:disabled="!file"
+							:loading="uploadingAvatar"
 							@click="uploadAvatar"
 						>
-							Upload Avatar
+							Upload selected image
 						</UButton>
 					</template>
 					<TransitionGroup name="fade">
@@ -62,91 +66,129 @@
 
 		<div class="company-form__form-section">
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
 				label="Location"
 				name="location"
+				required
+				help="Start typing to search the country list."
 				class="col-span-12 md:col-span-6"
 			>
 				<USelectMenu
 					v-model="state.location"
 					:options="locations"
+					placeholder="Search country"
 					searchable
+					searchable-placeholder="Search country"
 				/>
 			</UFormGroup>
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
 				label="Industry"
 				name="industry"
+				required
+				help="Choose the closest category for your public profile."
 				class="col-span-12 md:col-span-6"
 			>
 				<USelectMenu
 					v-model="state.industry"
 					:options="industries"
+					placeholder="Search industry"
 					searchable
+					searchable-placeholder="Search industry"
 				/>
 			</UFormGroup>
 		</div>
 
-		<h3 class="company-form__socials-title">
-			Socials:
-		</h3>
+		<div class="company-form__optional-header">
+			<h3 class="company-form__socials-title">
+				Optional links
+			</h3>
+			<p>
+				Add full URLs or handles. We will format them before they appear on your public company profile.
+			</p>
+		</div>
 		<div class="company-form__form-section">
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
-				label="Email"
+				label="Public email"
 				name="email"
 				class="col-span-12 md:col-span-6"
 			>
-				<UInput v-model="state.socials.email" />
+				<UInput
+					v-model="state.socials.email"
+					placeholder="jobs@company.com"
+				/>
 			</UFormGroup>
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
 				label="Website"
 				name="website"
 				class="col-span-12 md:col-span-6"
 			>
-				<UInput v-model="state.socials.website" />
+				<UInput
+					v-model="state.socials.website"
+					placeholder="https://company.com"
+				/>
 			</UFormGroup>
 		</div>
 
 		<div class="company-form__form-section">
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
 				label="Github"
 				name="github"
 				class="col-span-12 md:col-span-4"
 			>
-				<UInput v-model="state.socials.github" />
+				<UInput
+					v-model="state.socials.github"
+					placeholder="company"
+				/>
 			</UFormGroup>
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
 				label="Linkedin"
 				name="linkedin"
 				class="col-span-12 md:col-span-4"
 			>
-				<UInput v-model="state.socials.linkedin" />
+				<UInput
+					v-model="state.socials.linkedin"
+					placeholder="company"
+				/>
 			</UFormGroup>
 			<UFormGroup
-				:ui="{ error: 'hidden' }"
 				size="lg"
 				label="Instagram"
 				name="instagram"
 				class="col-span-12 md:col-span-4"
 			>
-				<UInput v-model="state.socials.instagram" />
+				<UInput
+					v-model="state.socials.instagram"
+					placeholder="@company"
+				/>
 			</UFormGroup>
+		</div>
+
+		<div
+			v-if="normalizedPublicLinks.length"
+			class="company-form__link-preview"
+		>
+			<p>Public link preview</p>
+			<ul>
+				<li
+					v-for="link in normalizedPublicLinks"
+					:key="link.social"
+				>
+					<span v-text="link.label" />
+					<b v-text="link.value" />
+				</li>
+			</ul>
 		</div>
 
 		<UButton
 			block
 			size="lg"
 			type="submit"
+			:loading="companiesStore.savingCompany"
 			:label="ctaText"
 		/>
 	</UForm>
@@ -156,10 +198,11 @@
 import * as Yup from 'yup';
 import { useFilterOptions } from '~/composables/use-filter-options';
 import type { FormSubmitEvent } from '#ui/types';
-import type { CompanyPayload } from '~/types/companies';
+import type { CompanyPayload, Socials } from '~/types/companies';
 import { useCompaniesStore } from '~/store/companies';
 import { useAuthStore } from '~/store/authentication';
 import { useUpload } from '~/composables/useUpload';
+import { normalizeSocialLink } from '~/utils/links';
 
 const companiesStore = useCompaniesStore();
 const authStore = useAuthStore();
@@ -181,7 +224,7 @@ const schema = Yup.object({
 		website: Yup.string(),
 		instagram: Yup.string(),
 		github: Yup.string(),
-		email: Yup.string().email().required('Email is required'),
+		email: Yup.string().email('Enter a valid email address'),
 	}),
 });
 
@@ -200,28 +243,49 @@ const state = reactive<CompanyPayload>({
 });
 
 const file = ref<File | null>(null);
-const ctaText = computed(() => companiesStore.userCompany?.id ? 'Update Company' : 'Register Company');
+const uploadingAvatar = ref(false);
+const ctaText = computed(() => {
+	if (companiesStore.savingCompany) {
+		return companiesStore.userCompany?.id ? 'Saving company...' : 'Creating company...';
+	}
+
+	return companiesStore.userCompany?.id ? 'Update Company' : 'Register Company';
+});
+const normalizedSocials = computed(() => normalizeCompanySocials(state.socials));
+const normalizedPublicLinks = computed(() => Object
+	.entries(normalizedSocials.value)
+	.filter(([, value]) => !!value)
+	.map(([social, value]) => ({
+		social,
+		label: social.charAt(0).toUpperCase() + social.slice(1),
+		value,
+	})));
 
 async function onSubmit(event: FormSubmitEvent<CompanyPayload>) {
 	try {
+		const payload = {
+			...event.data,
+			socials: normalizeCompanySocials(event.data.socials),
+		};
+
 		if (companiesStore.userCompany?.id) {
-			await companiesStore.updateCompany(companiesStore.userCompany.id, event.data);
+			await companiesStore.updateCompany(companiesStore.userCompany.id, payload);
 		}
 		else {
-			await companiesStore.createCompany(event.data);
+			await companiesStore.createCompany(payload);
 		}
 
 		toast.add({
 			color: 'green',
-			title: 'Company created successfully',
-			description: 'You can now post your first job',
+			title: companiesStore.userCompany?.id ? 'Company updated successfully' : 'Company created successfully',
+			description: 'You can now post your job.',
 		});
 
 		await companiesStore.fetchUserCompany();
 
 		router.push('/company/dashboard');
 	}
-	catch (error: any) {
+	catch {
 		toast.add({
 			color: 'rose',
 			title: 'Failed to create Company',
@@ -241,6 +305,11 @@ function onFileChange(files: FileList) {
 			verifyImageSize(files[0]);
 		}
 		catch (error) {
+			toast.add({
+				color: 'rose',
+				title: 'Avatar is too large',
+				description: error instanceof Error ? error.message : 'Please choose a smaller image.',
+			});
 			return;
 		}
 
@@ -250,6 +319,7 @@ function onFileChange(files: FileList) {
 async function uploadAvatar() {
 	if (file.value) {
 		try {
+			uploadingAvatar.value = true;
 			verifyImageSize(file.value);
 			const path = `avatars/${file.value.name}-${authStore.user?.id}`;
 			const downloadURL = await uploadFile(file.value, path);
@@ -257,7 +327,14 @@ async function uploadAvatar() {
 			state.avatar = downloadURL;
 		}
 		catch (error) {
-			console.error('Error uploading avatar:', error);
+			toast.add({
+				color: 'rose',
+				title: 'Avatar upload failed',
+				description: error instanceof Error ? error.message : 'Please try a different image.',
+			});
+		}
+		finally {
+			uploadingAvatar.value = false;
 		}
 	}
 	else {
@@ -270,9 +347,18 @@ function verifyImageSize(file: File) {
 	const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // Convert MB to bytes
 
 	if (file.size > MAX_SIZE_BYTES) {
-		alert(`Please upload a file smaller than ${MAX_SIZE_MB}MB.`);
-		throw new Error('File too large');
+		throw new Error(`Please upload a file smaller than ${MAX_SIZE_MB}MB.`);
 	}
+}
+
+function normalizeCompanySocials(socials: Socials): Socials {
+	return {
+		email: normalizeSocialLink('email', socials.email),
+		website: normalizeSocialLink('website', socials.website),
+		github: normalizeSocialLink('github', socials.github),
+		linkedin: normalizeSocialLink('linkedin', socials.linkedin),
+		instagram: normalizeSocialLink('instagram', socials.instagram),
+	};
 }
 </script>
 
@@ -288,8 +374,40 @@ function verifyImageSize(file: File) {
 		@apply text-lg font-bold;
 	}
 
+	&__optional-header {
+		@apply flex flex-col gap-1;
+
+		p {
+			@apply text-sm text-gray-500;
+		}
+	}
+
 	&__avatar-wrapper {
-		@apply flex items-center gap-4;
+		@apply flex flex-col gap-3 md:flex-row md:items-center;
+	}
+
+	&__link-preview {
+		@apply rounded-md border border-gray-200 bg-gray-50 p-4 text-sm dark:border-gray-800 dark:bg-gray-900;
+
+		p {
+			@apply mb-2 font-semibold;
+		}
+
+		ul {
+			@apply flex flex-col gap-1;
+		}
+
+		li {
+			@apply flex flex-col gap-1 md:flex-row md:items-center md:gap-2;
+		}
+
+		span {
+			@apply text-gray-500;
+		}
+
+		b {
+			@apply break-all font-medium;
+		}
 	}
 }
 </style>

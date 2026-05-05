@@ -46,8 +46,12 @@ export interface IndexJobOpportunitiesParams extends Paginated {
 	seniority: string; // TODO: enum
 };
 
-export interface JobOpportunityPayload extends Omit<JobOpportunity, 'id' | 'company' | 'technologies'> {
+export interface JobOpportunityPayload extends Omit<JobOpportunity, 'id' | 'company' | 'technologies' | 'salary_minimum' | 'salary_maximum'> {
+	salary_minimum?: number | null;
+	salary_maximum?: number | null;
 	technologies: string[]; // uuid[]
 };
+
+export type JobOpportunityValidationErrors = Record<string, string[]>;
 
 // #endregion

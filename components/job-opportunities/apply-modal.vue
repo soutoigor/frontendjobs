@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import { getApplicationHref } from '~/utils/links';
 
 interface Props {
 	modelValue: boolean;
@@ -69,15 +70,11 @@ const form = reactive({ name: '', email: '' });
 
 const isOpen = computed({
 	get: () => props.modelValue,
-	set: (value) => emit('update:modelValue', value),
+	set: value => emit('update:modelValue', value),
 });
 
 function openExternalLink() {
-	let url = props.applicationLink;
-	if (!url.startsWith('http://') && !url.startsWith('https://')) {
-		url = 'https://' + url;
-	}
-	window.open(url, '_blank');
+	window.open(getApplicationHref(props.applicationLink), '_blank');
 }
 
 async function submit(anonymous: boolean) {

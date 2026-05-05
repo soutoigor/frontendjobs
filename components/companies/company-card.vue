@@ -9,7 +9,10 @@
 				/>
 				<div class="company-card__company-info-wrapper">
 					<slot name="title">
-						<h1 v-text="company?.name" />
+						<div class="company-card__default-title">
+							<p>Company profile</p>
+							<h1 v-text="company?.name" />
+						</div>
 					</slot>
 					<div>
 						<p>Location: <b v-text="company?.location" /></p>
@@ -34,11 +37,12 @@
 					v-for="companySocial in companySocials"
 					:key="companySocial.social"
 					class="company-card__social-link"
-					:href="getSocialLink(companySocial.social, companySocial.value)"
+					:href="getSocialHref(companySocial.social, companySocial.value)"
 					target="_blank"
+					rel="noopener noreferrer"
 				>
 					<Icon :name="companySocial.icon" />
-					<span v-text="companySocial.value" />
+					<span v-text="getSocialLabel(companySocial.social, companySocial.value)" />
 				</a>
 			</div>
 		</div>
@@ -47,6 +51,7 @@
 
 <script lang="ts" setup>
 import type { Socials, Company, CompanyWithJobs } from '~/types/companies';
+import { getSocialHref, normalizeSocialLink } from '~/utils/links';
 
 interface Props {
 	company: Company | CompanyWithJobs;
@@ -60,13 +65,6 @@ const iconsBySocial: Record<keyof Socials, string> = {
 	linkedin: 'entypo-social:linkedin',
 	instagram: 'entypo-social:instagram',
 };
-const socialURL: Record<keyof Socials, string> = {
-	email: 'mailto:',
-	website: 'https://',
-	github: 'https://github.com/',
-	linkedin: 'https://linkedin.com/company/',
-	instagram: 'https://instagram.com/',
-};
 const companySocials = computed(
 	() => Object
 		.entries(props.company?.socials ?? {})
@@ -74,8 +72,12 @@ const companySocials = computed(
 		.filter(({ value }) => !!value),
 );
 
-function getSocialLink(social: keyof Socials, value: string) {
-	return `${socialURL[social]}${value}`;
+function getSocialLabel(social: keyof Socials, value: string) {
+	if (social === 'email') {
+		return value;
+	}
+
+	return normalizeSocialLink(social, value).replace(/^https?:\/\//, '');
 }
 </script>
 
@@ -104,6 +106,14 @@ function getSocialLink(social: keyof Socials, value: string) {
 
 		p {
 			@apply text-sm;
+		}
+	}
+
+	&__default-title {
+		@apply flex flex-col gap-1;
+
+		p {
+			@apply text-xs font-semibold uppercase tracking-wide text-gray-500;
 		}
 	}
 

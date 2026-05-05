@@ -7,6 +7,14 @@
 			v-if="draft"
 			:job-opportunity="draft"
 		/>
+		<UAlert
+			class="preview__checkout-note"
+			icon="i-heroicons-credit-card"
+			color="primary"
+			variant="soft"
+			title="$99 for a 30-day listing"
+			description="The next step opens Stripe Checkout. After payment succeeds, the job is published automatically and you return to your company dashboard."
+		/>
 		<UContainer class="preview__actions-wrapper">
 			<UButton
 				size="xl"
@@ -22,6 +30,7 @@
 				icon="i-heroicons-check-circle"
 				block
 				trailing
+				:loading="jobOpportunitiesStore.isSavingJobOpportunity"
 				label="Post Job"
 				@click="postJob"
 			/>
@@ -63,16 +72,22 @@ async function postJob() {
 		await companiesStore.fetchUserCompany();
 		router.push('/company/dashboard');
 	}
-	catch (error: any) {
-		const description = error.status === 400
-			? 'Invalid data, please check the form'
-			: 'An error occurred, please try again';
+	catch (error: unknown) {
+		const fetchError = error as { status?: number; data?: { error?: unknown } };
+		const isValidationError = fetchError.status === 400 && fetchError.data?.error;
+		const description = isValidationError
+			? 'Review the highlighted fields and try again.'
+			: 'An error occurred, please try again.';
 
 		toast.add({
 			color: 'rose',
 			title: 'Failed to post job',
 			description,
 		});
+
+		if (isValidationError) {
+			await router.push('/company/post-job');
+		}
 	}
 }
 </script>
@@ -80,6 +95,10 @@ async function postJob() {
 <style scoped>
 .preview {
   @apply min-h-screen p-0 w-full;
+
+  &__checkout-note {
+    @apply mt-8;
+  }
 
   &__actions-wrapper {
     @apply mt-8 grid grid-cols-2 gap-4;

@@ -10,7 +10,17 @@
 			v-if="companyHasNoJobs"
 			class="company-jobs__no-jobs"
 		>
-			<p>No jobs posted yet</p>
+			<div class="company-jobs__empty-copy">
+				<h2>No jobs posted yet</h2>
+				<p>
+					Create the listing, preview exactly what candidates will see, then pay $99 through Stripe to publish it for 30 days.
+				</p>
+			</div>
+			<ul class="company-jobs__empty-steps">
+				<li>1. Write the job details and application destination.</li>
+				<li>2. Review the public preview before checkout.</li>
+				<li>3. Publish automatically after payment succeeds.</li>
+			</ul>
 			<UButton
 				variant="solid"
 				size="xl"
@@ -70,7 +80,23 @@ const companyHasNoJobs = computed(() => or(
   }
 
   &__no-jobs {
-    @apply flex flex-col items-center md:items-start gap-8;
+    @apply flex flex-col items-center md:items-start gap-6 rounded-md border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900;
+  }
+
+  &__empty-copy {
+    @apply flex max-w-2xl flex-col gap-2 text-center md:text-left;
+
+    h2 {
+      @apply text-lg font-semibold;
+    }
+
+    p {
+      @apply text-sm text-gray-500;
+    }
+  }
+
+  &__empty-steps {
+    @apply flex flex-col gap-2 text-sm text-gray-600 dark:text-gray-300;
   }
 }
 </style>

@@ -9,8 +9,9 @@
 			<UFormGroup
 				size="lg"
 				label="Title"
-				:ui="{ error: 'hidden' }"
 				name="title"
+				required
+				:error="fieldError('title')"
 				class="col-span-12 md:col-span-8"
 			>
 				<UInput
@@ -22,21 +23,23 @@
 			<UFormGroup
 				size="lg"
 				label="Location"
-				:ui="{ error: 'hidden' }"
 				name="location"
+				required
+				:error="fieldError('location')"
 				class="col-span-12 md:col-span-3"
 			>
 				<USelectMenu
 					v-model="state.location"
 					:options="options.locations.value"
+					placeholder="Search location"
 					searchable
+					searchable-placeholder="Search location"
 				/>
 			</UFormGroup>
 
 			<UFormGroup
 				size="lg"
 				label="Remote"
-				:ui="{ error: 'hidden' }"
 				name="remote"
 				class="col-span-12 md:col-span-1 flex flex-col items-center gap-2"
 			>
@@ -51,8 +54,9 @@
 			<UFormGroup
 				size="lg"
 				label="Currency"
-				:ui="{ error: 'hidden' }"
 				name="currency"
+				required
+				:error="fieldError('currency')"
 				class="col-span-12 md:col-span-4"
 			>
 				<USelectMenu
@@ -66,14 +70,17 @@
 			<UFormGroup
 				size="lg"
 				label="Salary Minimum"
-				:ui="{ error: 'hidden' }"
 				name="salary_minimum"
+				required
+				:error="fieldError('salary_minimum')"
+				help="Enter the annual amount normally, for example 90000."
 				class="col-span-12 md:col-span-4"
 			>
 				<UInput
-					placeholder="40,000"
+					placeholder="90,000"
+					inputmode="numeric"
 					:model-value="state.salary_minimum"
-					@update:model-value="setSalaryMinimum(format($event, config))"
+					@update:model-value="setSalaryMinimum"
 				>
 					<template #trailing>
 						<span class="job-opportunity-form__trailing-currency">
@@ -86,14 +93,17 @@
 			<UFormGroup
 				size="lg"
 				label="Salary Maximum"
-				:ui="{ error: 'hidden' }"
 				name="salary_maximum"
+				required
+				:error="fieldError('salary_maximum')"
+				help="Candidates will see this as a yearly salary range."
 				class="col-span-12 md:col-span-4"
 			>
 				<UInput
-					placeholder="60,000"
+					placeholder="120,000"
+					inputmode="numeric"
 					:model-value="state.salary_maximum"
-					@update:model-value="setSalaryMaximum(format($event, config))"
+					@update:model-value="setSalaryMaximum"
 				>
 					<template #trailing>
 						<span class="job-opportunity-form__trailing-currency">
@@ -108,30 +118,24 @@
 			<UFormGroup
 				size="lg"
 				label="Employment Type"
-				:ui="{ error: 'hidden' }"
 				name="employment_type"
+				required
+				:error="fieldError('employment_type')"
 				class="col-span-12 md:col-span-4"
 			>
 				<USelectMenu
-					v-model="state.employment_type"
+					v-model="selectedEmploymentType"
 					:options="options.employmentTypes.value"
-					multiple
-				>
-					<template #label>
-						<span
-							v-if="state.employment_type.length"
-							class="truncate"
-						>{{ state.employment_type.join(', ') }}</span>
-						<span v-else>Select employment type</span>
-					</template>
-				</USelectMenu>
+					placeholder="Select employment type"
+				/>
 			</UFormGroup>
 
 			<UFormGroup
 				size="lg"
 				label="Seniority"
-				:ui="{ error: 'hidden' }"
 				name="seniority"
+				required
+				:error="fieldError('seniority')"
 				class="col-span-12 md:col-span-4"
 			>
 				<USelectMenu
@@ -153,8 +157,9 @@
 			<UFormGroup
 				size="lg"
 				label="Technologies"
-				:ui="{ error: 'hidden' }"
 				name="technologies"
+				required
+				:error="fieldError('technologies')"
 				class="col-span-12 md:col-span-4"
 			>
 				<USelectMenu
@@ -176,19 +181,23 @@
 		</div>
 
 		<UFormGroup
-			label="Application Link or Email"
+			label="Application URL or Email"
 			name="application_link"
-			:ui="{ error: 'hidden' }"
+			:error="fieldError('application_link')"
+			help="Use a hosted application page or a hiring inbox email."
 			class="col-span-12 md:col-span-12"
 			required
 		>
-			<UInput v-model="state.application_link" />
+			<UInput
+				v-model="state.application_link"
+				placeholder="https://company.com/careers/frontend-engineer"
+			/>
 		</UFormGroup>
 
 		<UFormGroup
 			label="Job Description"
 			name="description"
-			:ui="{ error: 'hidden' }"
+			:error="fieldError('description')"
 			required
 			class="col-span-12 md:col-span-12 h-full"
 		>
@@ -211,12 +220,12 @@
 <script setup lang="ts">
 import * as Yup from 'yup';
 import { type InferType } from 'yup';
-import { format } from 'v-money3';
 import type { FormSubmitEvent } from '#ui/types';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';
 import { useFilterOptions } from '~/composables/use-filter-options';
 import TiptapEditor from '~/components/shared/tiptap-editor.vue';
+import { isValidApplicationDestination, normalizeApplicationDestination } from '~/utils/links';
 
 const jobOpportunityStore = useJobOpportunitiesStore();
 const toast = useToast();
@@ -225,38 +234,36 @@ const options = useFilterOptions();
 
 type Schema = InferType<typeof schema>;
 
-const config = {
-	prefix: '',
-	suffix: '',
-	thousands: ',',
-	decimal: '.',
-	precision: 2,
-	disableNegative: true,
-	disabled: false,
-	min: null,
-	max: null,
-	allowBlank: true,
-	minimumNumberOfCharacters: 0,
-	shouldRound: false,
-	focusOnRight: false,
-};
+function salaryValue(value?: string) {
+	return Number(String(value ?? '').replace(/,/g, ''));
+}
+
 const schema = Yup.object({
-	title: Yup.string().required(),
-	location: Yup.string().required(),
-	description: Yup.string().required(),
+	title: Yup.string().required('Title is required'),
+	location: Yup.string().required('Location is required'),
+	description: Yup.string().required('Job description is required'),
 	remote: Yup.boolean().required(),
-	salary_minimum: Yup.string(),
-	salary_maximum: Yup.string(),
-	currency: Yup.string().required(),
-	employment_type: Yup.array().of(Yup.string().required()).required(),
-	seniority: Yup.array().of(Yup.string().required()).required(),
-	application_link: Yup.string().required(),
+	salary_minimum: Yup.string()
+		.required('Salary minimum is required')
+		.test('is-salary', 'Enter a valid annual salary', value => salaryValue(value) > 0),
+	salary_maximum: Yup.string()
+		.required('Salary maximum is required')
+		.test('is-salary', 'Enter a valid annual salary', value => salaryValue(value) > 0)
+		.test('is-greater-than-minimum', 'Maximum salary must be at least the minimum salary', function (value) {
+			return salaryValue(value) >= salaryValue(this.parent.salary_minimum);
+		}),
+	currency: Yup.string().required('Currency is required'),
+	employment_type: Yup.array().of(Yup.string().required()).min(1, 'Select an employment type').required(),
+	seniority: Yup.array().of(Yup.string().required()).min(1, 'Select at least one seniority').required(),
+	application_link: Yup.string()
+		.required('Application URL or email is required')
+		.test('application-destination', 'Enter a valid URL or email address', value => isValidApplicationDestination(value ?? '')),
 	technologies: Yup.array().of(Yup.object({
 		id: Yup.string().required(),
 		name: Yup.string().required(),
 		created_at: Yup.string().required(),
 		updated_at: Yup.string().required(),
-	})).required(),
+	})).min(1, 'Select at least one technology').required(),
 });
 
 const state = reactive<JobOpportunityDraft>({
@@ -273,6 +280,17 @@ const state = reactive<JobOpportunityDraft>({
 	application_link: '',
 	technologies: [],
 });
+
+const selectedEmploymentType = computed({
+	get: () => state.employment_type[0],
+	set: (value?: string) => {
+		state.employment_type = value ? [value] : [];
+	},
+});
+
+function fieldError(field: string) {
+	return jobOpportunityStore.validationErrors[field]?.[0];
+}
 
 onMounted(() => {
 	jobOpportunityStore.restoreJobOpportunityDraft();
@@ -296,17 +314,33 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 		});
 	};
 
-	jobOpportunityStore.setDraftJobOpportunity(event.data);
+	jobOpportunityStore.clearValidationErrors();
+	jobOpportunityStore.setDraftJobOpportunity({
+		...event.data,
+		application_link: normalizeApplicationDestination(event.data.application_link),
+		date_posted: state.date_posted || new Date().toISOString().slice(0, 10),
+	});
 
 	router.push(`/jobs/${state.title.replaceAll(' ', '-')}/preview`);
 }
 
-function setSalaryMinimum(value: string) {
-	state.salary_minimum = value.replace(/[^0-9,.]/g, '');
+function formatAnnualSalaryInput(value: string | number) {
+	const wholeSalary = String(value ?? '').replace(/,/g, '').split('.')[0];
+	const digits = wholeSalary.replace(/\D/g, '');
+
+	if (!digits) {
+		return '';
+	}
+
+	return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Number(digits));
 }
 
-function setSalaryMaximum(value: string) {
-	state.salary_maximum = value.replace(/[^0-9,.]/g, '');
+function setSalaryMinimum(value: string | number) {
+	state.salary_minimum = formatAnnualSalaryInput(value);
+}
+
+function setSalaryMaximum(value: string | number) {
+	state.salary_maximum = formatAnnualSalaryInput(value);
 }
 </script>
 

@@ -6,6 +6,9 @@
 		<h1 class="create-company__title">
 			Register your company to post your first job
 		</h1>
+		<p class="create-company__subtitle">
+			This takes under a minute. These details appear on your public job listings so candidates know who they are applying to.
+		</p>
 		<CompanyForm />
 	</UContainer>
 </template>
@@ -31,7 +34,11 @@ if (companiesStore.userCompany) {
 	@apply min-h-screen p-0 w-full;
 
 	&__title {
-		@apply text-2xl md:text-3xl font-bold mb-6;
+		@apply text-2xl md:text-3xl font-bold mb-2;
+	}
+
+	&__subtitle {
+		@apply mb-6 max-w-2xl text-sm text-gray-500 md:text-base;
 	}
 }
 </style>

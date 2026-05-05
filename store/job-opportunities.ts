@@ -5,8 +5,10 @@ import type {
 	IndexJobOpportunitiesParams,
 	JobOpportunity,
 	JobOpportunityDraft,
+	JobOpportunityValidationErrors,
 	ShowJobOpportunityResponse,
 } from '~/types/job-opportunities';
+import { normalizeApplicationDestination } from '~/utils/links';
 
 export interface UseFetchReturn {
 	data: IndexJobOpportunitiesResponse | ShowJobOpportunityResponse | null;
@@ -57,6 +59,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	const jobOpportunities = ref<IndexJobOpportunitiesResponse>();
 	const jobOpportunity = ref<JobOpportunity>(initialJobOpportunity);
 	const draftJobOpportunity = ref<JobOpportunityDraft>();
+	const validationErrors = ref<JobOpportunityValidationErrors>({});
 	const isSavingJobOpportunity = ref(false);
 	const filters = ref({ ...initialFilters });
 	const filtersLabel = computed(() => {
@@ -129,18 +132,48 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		localStorage.setItem('job-opportunity-draft', JSON.stringify(payload));
 	}
 
+	function setValidationErrors(errors: JobOpportunityValidationErrors = {}) {
+		validationErrors.value = errors;
+	}
+
+	function clearValidationErrors() {
+		validationErrors.value = {};
+	}
+
 	function resetJobOpportunity() {
 		jobOpportunity.value = initialJobOpportunity;
 	}
 
+	function salaryToNumber(value?: string | number) {
+		if (value === undefined || value === null || value === '') {
+			return null;
+		}
+
+		const normalizedSalary = String(value).replace(/,/g, '');
+		const salary = Number(normalizedSalary);
+
+		return Number.isNaN(salary) ? null : salary;
+	}
+
 	async function createJobOpportunity(payload: JobOpportunityDraft): Promise<{ checkoutUrl: string | null }> {
 		const formattedPayload: JobOpportunityPayload = {
-			...payload,
+			title: payload.title,
+			location: payload.location,
+			remote: payload.remote,
+			description: payload.description,
+			currency: payload.currency,
+			employment_type: payload.employment_type,
+			seniority: payload.seniority,
+			application_link: normalizeApplicationDestination(payload.application_link),
+			date_posted: payload.date_posted || new Date().toISOString().slice(0, 10),
+			salary_minimum: salaryToNumber(payload.salary_minimum),
+			salary_maximum: salaryToNumber(payload.salary_maximum),
 			technologies: payload.technologies.map(x => x.id),
 		};
 
 		try {
 			isSavingJobOpportunity.value = true;
+			clearValidationErrors();
 
 			const response = await $fetch<{ job_opportunity: JobOpportunity; checkout_url: string | null }>('/job_opportunities', {
 				method: 'post',
@@ -156,7 +189,13 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 
 			return { checkoutUrl: response.checkout_url };
 		}
-		catch (error) {
+		catch (error: unknown) {
+			const fetchError = error as { data?: { error?: JobOpportunityValidationErrors } };
+
+			if (fetchError.data?.error) {
+				setValidationErrors(fetchError.data.error);
+			}
+
 			throw error;
 		}
 		finally {
@@ -199,17 +238,21 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	return {
 		jobOpportunities,
 		filters,
+		isSavingJobOpportunity,
 		updateFilters,
 		resetFilters,
 		removeFilter,
 		setJobOpportunities,
 		filtersLabel,
 		draftJobOpportunity,
+		validationErrors,
 
 		jobOpportunity,
 		setJobOpportunity,
 		restoreJobOpportunityDraft,
 		setDraftJobOpportunity,
+		setValidationErrors,
+		clearValidationErrors,
 		resetJobOpportunity,
 		createJobOpportunity,
 		updateJobOpportunity,
