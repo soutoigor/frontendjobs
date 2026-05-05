@@ -31,7 +31,7 @@
 				block
 				trailing
 				:loading="jobOpportunitiesStore.isSavingJobOpportunity"
-				label="Post Job"
+				:label="draft?.id ? 'Update and Complete Post' : 'Post Job'"
 				@click="postJob"
 			/>
 		</UContainer>
@@ -62,7 +62,9 @@ async function postJob() {
 	}
 
 	try {
-		const { checkoutUrl } = await jobOpportunitiesStore.createJobOpportunity(draft.value);
+		const { checkoutUrl } = draft.value.id
+			? await updateAndCheckoutPendingJob()
+			: await jobOpportunitiesStore.createJobOpportunity(draft.value);
 
 		if (checkoutUrl) {
 			window.location.href = checkoutUrl;
@@ -89,6 +91,15 @@ async function postJob() {
 			await router.push('/company/post-job');
 		}
 	}
+}
+
+async function updateAndCheckoutPendingJob() {
+	if (!draft.value?.id) {
+		return { checkoutUrl: null };
+	}
+
+	await jobOpportunitiesStore.updateJobOpportunity(draft.value.id, draft.value);
+	return jobOpportunitiesStore.checkoutJobOpportunity(draft.value.id);
 }
 </script>
 

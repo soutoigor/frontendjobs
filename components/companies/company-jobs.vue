@@ -47,15 +47,36 @@
 						<p>This job is saved, but it is not public yet.</p>
 						<span>Complete Stripe Checkout to publish it, or remove this unpaid attempt and post again.</span>
 					</div>
-					<UButton
-						color="rose"
-						variant="soft"
-						size="sm"
-						:loading="deletingJobId === jobOpportunity.id"
-						@click="deletePendingJob(jobOpportunity.id)"
-					>
-						Remove
-					</UButton>
+					<div class="company-jobs__pending-actions">
+						<UButton
+							color="blue"
+							variant="soft"
+							size="sm"
+							icon="i-heroicons-pencil"
+							@click="editPendingJob(jobOpportunity)"
+						>
+							Edit
+						</UButton>
+						<UButton
+							color="primary"
+							size="sm"
+							icon="i-heroicons-credit-card"
+							:loading="checkoutJobId === jobOpportunity.id"
+							@click="completePendingJob(jobOpportunity.id)"
+						>
+							Complete post
+						</UButton>
+						<UButton
+							color="rose"
+							variant="soft"
+							size="sm"
+							icon="i-heroicons-trash"
+							:loading="deletingJobId === jobOpportunity.id"
+							@click="deletePendingJob(jobOpportunity.id)"
+						>
+							Remove
+						</UButton>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -66,17 +87,43 @@
 import { isEmpty, isNil, or } from 'ramda';
 import { useCompaniesStore } from '~/store/companies';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import type { JobOpportunity } from '~/types/job-opportunities';
 import JobOpportunityCard from '~/components/job-opportunities/job-opportunity-card.vue';
 
 const companiesStore = useCompaniesStore();
 const jobOpportunitiesStore = useJobOpportunitiesStore();
 const toast = useToast();
+const router = useRouter();
 const deletingJobId = ref<string>();
+const checkoutJobId = ref<string>();
 
 const companyHasNoJobs = computed(() => or(
 	isEmpty(companiesStore.userCompany?.job_opportunities),
 	isNil(companiesStore.userCompany?.job_opportunities),
 ));
+
+function editPendingJob(jobOpportunity: JobOpportunity) {
+	jobOpportunitiesStore.setDraftFromJobOpportunity(jobOpportunity);
+	router.push('/company/post-job');
+}
+
+async function completePendingJob(id: string) {
+	try {
+		checkoutJobId.value = id;
+		const { checkoutUrl } = await jobOpportunitiesStore.checkoutJobOpportunity(id);
+		window.location.href = checkoutUrl;
+	}
+	catch {
+		toast.add({
+			color: 'rose',
+			title: 'Could not open Checkout',
+			description: 'Please try again.',
+		});
+	}
+	finally {
+		checkoutJobId.value = undefined;
+	}
+}
 
 async function deletePendingJob(id: string) {
 	try {
@@ -129,6 +176,10 @@ async function deletePendingJob(id: string) {
     span {
       @apply text-yellow-800 dark:text-yellow-200;
     }
+  }
+
+  &__pending-actions {
+    @apply flex flex-col gap-2 sm:flex-row sm:items-center;
   }
 
   &__list-item {

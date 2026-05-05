@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 const TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days, matches Sanctum expiration
-const cookieOptions = { secure: true, sameSite: 'strict' as const, maxAge: TOKEN_MAX_AGE };
+const cookieOptions = { secure: true, sameSite: 'lax' as const, maxAge: TOKEN_MAX_AGE };
 
 interface UserPayloadInterface {
 	email: string;

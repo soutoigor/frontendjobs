@@ -37,9 +37,11 @@ definePageMeta({
 });
 
 const jobOpportunitiesStore = useJobOpportunitiesStore();
+const router = useRouter();
 
 onMounted(() => {
 	jobOpportunitiesStore.clearDraftJobOpportunity();
+	router.replace('/company/dashboard?payment=success');
 });
 </script>
 

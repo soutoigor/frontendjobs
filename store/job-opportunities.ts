@@ -137,6 +137,25 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		localStorage.removeItem('job-opportunity-draft');
 	}
 
+	function setDraftFromJobOpportunity(payload: JobOpportunity) {
+		setDraftJobOpportunity({
+			id: payload.id,
+			title: payload.title,
+			location: payload.location,
+			remote: payload.remote,
+			description: payload.description,
+			salary_minimum: String(payload.salary_minimum ?? ''),
+			salary_maximum: String(payload.salary_maximum ?? ''),
+			currency: payload.currency,
+			employment_type: payload.employment_type,
+			seniority: payload.seniority,
+			date_posted: payload.date_posted,
+			application_link: payload.application_link,
+			technologies: payload.technologies,
+			status: payload.status,
+		});
+	}
+
 	function setValidationErrors(errors: JobOpportunityValidationErrors = {}) {
 		validationErrors.value = errors;
 	}
@@ -160,7 +179,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		return Number.isNaN(salary) ? null : salary;
 	}
 
-	async function createJobOpportunity(payload: JobOpportunityDraft): Promise<{ checkoutUrl: string | null }> {
+	function formatJobOpportunityPayload(payload: JobOpportunityDraft): JobOpportunityPayload {
 		const formattedPayload: JobOpportunityPayload = {
 			title: payload.title,
 			location: payload.location,
@@ -175,6 +194,12 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 			salary_maximum: salaryToNumber(payload.salary_maximum),
 			technologies: payload.technologies.map(x => x.id),
 		};
+
+		return formattedPayload;
+	}
+
+	async function createJobOpportunity(payload: JobOpportunityDraft): Promise<{ checkoutUrl: string | null }> {
+		const formattedPayload = formatJobOpportunityPayload(payload);
 
 		try {
 			isSavingJobOpportunity.value = true;
@@ -209,17 +234,38 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		}
 	}
 
-	async function updateJobOpportunity(payload: JobOpportunityPayload) {
+	async function updateJobOpportunity(id: string, payload: JobOpportunityDraft) {
+		const formattedPayload = formatJobOpportunityPayload(payload);
+
 		try {
 			isSavingJobOpportunity.value = true;
-			await $fetch<{ job_opportunity: JobOpportunity }>('/job_opportunities', {
+			await $fetch<{ job_opportunity: JobOpportunity }>(`/job_opportunities/${id}`, {
 				method: 'put',
 				baseURL: config.public.baseURL,
 				headers: {
 					Authorization: `Bearer ${token.value}`,
 				},
-				body: payload,
+				body: formattedPayload,
 			});
+		}
+		finally {
+			isSavingJobOpportunity.value = false;
+		}
+	}
+
+	async function checkoutJobOpportunity(id: string): Promise<{ checkoutUrl: string }> {
+		try {
+			isSavingJobOpportunity.value = true;
+
+			const response = await $fetch<{ checkout_url: string }>(`/job_opportunities/${id}/checkout`, {
+				method: 'post',
+				baseURL: config.public.baseURL,
+				headers: {
+					Authorization: `Bearer ${token.value}`,
+				},
+			});
+
+			return { checkoutUrl: response.checkout_url };
 		}
 		finally {
 			isSavingJobOpportunity.value = false;
@@ -274,12 +320,14 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		setJobOpportunity,
 		restoreJobOpportunityDraft,
 		setDraftJobOpportunity,
+		setDraftFromJobOpportunity,
 		clearDraftJobOpportunity,
 		setValidationErrors,
 		clearValidationErrors,
 		resetJobOpportunity,
 		createJobOpportunity,
 		updateJobOpportunity,
+		checkoutJobOpportunity,
 		deleteJobOpportunity,
 		apply,
 	};
