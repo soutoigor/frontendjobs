@@ -84,7 +84,7 @@
 						<FjIcon
 							name="check"
 							:size="26"
-							color="#bef264"
+							color="var(--fj-success-text)"
 						/>
 					</div>
 					<h2 class="apply-modal__title apply-modal__title--center">
@@ -207,8 +207,8 @@ async function submit(anonymous: boolean) {
 
   &__check-circle {
     @apply w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center;
-    background: rgba(190, 242, 100, 0.10);
-    border: 1px solid rgba(190, 242, 100, 0.30);
+    background: var(--fj-success-bg);
+    border: 1px solid var(--fj-success-border);
   }
 }
 </style>

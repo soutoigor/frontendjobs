@@ -3,6 +3,7 @@ import type { Company } from '~/types/companies';
 import type { Technology } from '~/types/technologies';
 
 export type JobOpportunityStatus = 'pending_payment' | 'published';
+export type JobPostingTier = 'standard' | 'featured' | 'spotlight';
 
 export interface JobOpportunity {
 	id: string; // uuid
@@ -22,6 +23,11 @@ export interface JobOpportunity {
 	applications?: number;
 	views?: number;
 	status?: JobOpportunityStatus;
+	posting_tier?: JobPostingTier;
+	paid_amount_cents?: number | null;
+	paid_currency?: string | null;
+	paid_at?: string | null;
+	stripe_checkout_session_id?: string | null;
 }
 
 export interface JobOpportunityDraft extends Omit<JobOpportunity, 'id' | 'company'> {

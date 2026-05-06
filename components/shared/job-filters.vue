@@ -49,7 +49,7 @@
 					</span>
 					<span
 						class="job-filters__remote-label"
-						:class="{ 'text-lime-300': store.filters.remote, 'text-gray-400': !store.filters.remote }"
+						:class="{ 'job-filters__remote-label--active': store.filters.remote }"
 					>Remote only</span>
 				</label>
 			</div>
@@ -124,8 +124,8 @@ const {
 
   &__remote-toggle {
     @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer;
-    background: rgba(190, 242, 100, 0.06);
-    border: 1px solid rgba(190, 242, 100, 0.20);
+    background: var(--fj-success-bg);
+    border: 1px solid var(--fj-success-border);
   }
 
   &__remote-check {
@@ -133,13 +133,18 @@ const {
     border: 1px solid var(--fj-border-strong);
 
     &--active {
-      @apply bg-lime-300;
-      border-color: #bef264;
+      background: var(--fj-success-dot);
+      border-color: var(--fj-success-dot);
     }
   }
 
   &__remote-label {
     @apply text-xs font-medium;
+    color: var(--fj-text-muted);
+
+    &--active {
+      color: var(--fj-success-text);
+    }
   }
 
   &__labels-wrapper {

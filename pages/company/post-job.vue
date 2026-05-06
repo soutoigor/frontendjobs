@@ -57,30 +57,63 @@
 			v-if="currentStep === 3"
 			class="post-job__checkout"
 		>
-			<div class="post-job__checkout-card">
-				<div class="post-job__section-label">
-					Order summary
-				</div>
-				<div class="post-job__checkout-item">
-					<div class="post-job__checkout-item-title">
-						{{ jobOpportunitiesStore.draftJobOpportunity?.title || 'Your job post' }}
+			<div class="post-job__checkout-grid">
+				<section class="post-job__tier-panel">
+					<div class="post-job__section-label">
+						Choose visibility
 					</div>
-					<div class="post-job__checkout-muted">
-						30-day standard listing
+					<button
+						v-for="tier in postingTiers"
+						:key="tier.key"
+						type="button"
+						class="post-job__tier-option"
+						:class="{ 'post-job__tier-option--active': selectedTier.key === tier.key }"
+						@click="selectTier(tier.key)"
+					>
+						<span class="post-job__tier-topline">
+							<span class="post-job__tier-name">{{ tier.label }}</span>
+							<span class="post-job__tier-price">${{ tier.price }}</span>
+						</span>
+						<span class="post-job__tier-description">{{ tier.description }}</span>
+					</button>
+				</section>
+
+				<section class="post-job__preview-panel">
+					<div class="post-job__section-label">
+						Homepage preview
 					</div>
-				</div>
-				<div class="post-job__checkout-row">
-					<span class="post-job__checkout-muted">Listing</span>
-					<span class="post-job__checkout-value">$99.00</span>
-				</div>
-				<div class="post-job__checkout-total">
-					<span class="post-job__checkout-total-label">Total</span>
-					<span class="post-job__checkout-total-value">$99.00</span>
-				</div>
-				<div class="post-job__checkout-note">
-					<strong>Live in seconds.</strong>
-					Payment confirmation publishes your post and sends you an email receipt.
-				</div>
+					<JobOpportunityCard
+						v-if="cardPreviewJob"
+						:job-opportunity="cardPreviewJob"
+						:interactive="false"
+					/>
+				</section>
+
+				<section class="post-job__checkout-card">
+					<div class="post-job__section-label">
+						Order summary
+					</div>
+					<div class="post-job__checkout-item">
+						<div class="post-job__checkout-item-title">
+							{{ jobOpportunitiesStore.draftJobOpportunity?.title || 'Your job post' }}
+						</div>
+						<div class="post-job__checkout-muted">
+							30-day {{ selectedTier.label.toLowerCase() }} listing
+						</div>
+					</div>
+					<div class="post-job__checkout-row">
+						<span class="post-job__checkout-muted">{{ selectedTier.label }} listing</span>
+						<span class="post-job__checkout-value">{{ selectedTierPrice }}</span>
+					</div>
+					<div class="post-job__checkout-total">
+						<span class="post-job__checkout-total-label">Total</span>
+						<span class="post-job__checkout-total-value">{{ selectedTierPrice }}</span>
+					</div>
+					<div class="post-job__checkout-note">
+						<strong>Live in seconds.</strong>
+						Payment confirmation publishes your post and sends you an email receipt.
+					</div>
+				</section>
 			</div>
 		</div>
 
@@ -111,7 +144,7 @@
 				:loading="isSubmitting"
 				@click="submitAndCheckout"
 			>
-				Pay $99 with Stripe
+				Pay {{ selectedTierPrice }} with Stripe
 			</UButton>
 		</div>
 	</div>
@@ -121,13 +154,19 @@
 import FjIcon from '~/components/shared/fj-icon.vue';
 import JobOpportunityForm from '~/components/job-opportunities/job-opportunity-form.vue';
 import JobOpportunityContent from '~/components/job-opportunities/job-opportunity-content.vue';
+import JobOpportunityCard from '~/components/job-opportunities/job-opportunity-card.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import { useCompaniesStore } from '~/store/companies';
+import type { Company } from '~/types/companies';
+import type { JobOpportunity, JobPostingTier } from '~/types/job-opportunities';
+import { getPostingTier, postingTiers } from '~/utils/posting-tiers';
 
 definePageMeta({
 	layout: 'company',
 });
 
 const jobOpportunitiesStore = useJobOpportunitiesStore();
+const companiesStore = useCompaniesStore();
 const toast = useToast();
 const currentStep = ref(1);
 const isSubmitting = ref(false);
@@ -135,10 +174,52 @@ const isSubmitting = ref(false);
 const stepLabels = ['Details', 'Preview', 'Checkout'];
 const stepTitles = ['Post a job', 'Preview your post', 'Complete payment'];
 const stepSubtitles = [
-	'Fill the listing once — preview before publishing. $99 for a 30-day post.',
+	'Fill the listing once — preview before publishing. Plans start at $99 for a 30-day post.',
 	'This is exactly how candidates will see your role.',
-	'One-time $99 payment via Stripe. Your post goes live the moment payment completes.',
+	'Choose visibility, preview the homepage card, then pay once through Stripe.',
 ];
+
+const selectedTier = computed(() => getPostingTier(jobOpportunitiesStore.draftJobOpportunity?.posting_tier));
+const selectedTierPrice = computed(() => `$${selectedTier.value.price}.00`);
+
+const placeholderCompany: Company = {
+	id: 'preview-company',
+	name: 'Your Company',
+	avatar: '',
+	location: '',
+	user_id: '',
+	industry: '',
+	socials: {},
+	created_at: '',
+	updated_at: '',
+};
+
+const cardPreviewJob = computed<JobOpportunity | undefined>(() => {
+	const draft = jobOpportunitiesStore.draftJobOpportunity;
+
+	if (!draft) {
+		return undefined;
+	}
+
+	return {
+		...draft,
+		id: draft.id || 'preview-job',
+		title: draft.title || 'Senior Frontend Engineer',
+		location: draft.location || 'Worldwide',
+		currency: draft.currency || 'USD',
+		application_link: draft.application_link || 'https://company.com/careers',
+		employment_type: draft.employment_type?.length ? draft.employment_type : ['Full-time'],
+		technologies: draft.technologies || [],
+		date_posted: draft.date_posted || new Date().toISOString(),
+		status: 'published',
+		posting_tier: selectedTier.value.key,
+		company: draft.company || companiesStore.userCompany || placeholderCompany,
+	};
+});
+
+function selectTier(tier: JobPostingTier) {
+	jobOpportunitiesStore.updateDraftPostingTier(tier);
+}
 
 async function submitAndCheckout() {
 	const draft = jobOpportunitiesStore.draftJobOpportunity;
@@ -234,13 +315,54 @@ async function submitAndCheckout() {
   }
 
   &__checkout {
-    @apply max-w-sm;
+    @apply w-full;
   }
 
+  &__checkout-grid {
+    @apply grid gap-4;
+    grid-template-columns: minmax(240px, 0.75fr) minmax(320px, 1.4fr) minmax(260px, 0.85fr);
+  }
+
+  &__tier-panel,
+  &__preview-panel,
   &__checkout-card {
     @apply rounded-xl p-6 flex flex-col gap-4;
     background: var(--fj-surface);
     border: 1px solid var(--fj-border);
+  }
+
+  &__tier-option {
+    @apply w-full text-left rounded-lg p-3 transition-colors;
+    border: 1px solid var(--fj-border);
+    background: var(--fj-surface-muted);
+
+    &:hover {
+      border-color: var(--fj-border-strong);
+    }
+
+    &--active {
+      border-color: var(--fj-success-border);
+      background: var(--fj-success-bg);
+    }
+  }
+
+  &__tier-topline {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  &__tier-name {
+    @apply text-sm font-semibold;
+    color: var(--fj-text);
+  }
+
+  &__tier-price {
+    @apply font-mono text-sm;
+    color: var(--fj-text);
+  }
+
+  &__tier-description {
+    @apply block text-xs leading-relaxed mt-1.5;
+    color: var(--fj-text-muted);
   }
 
   &__section-label {
@@ -300,6 +422,14 @@ async function submitAndCheckout() {
 
   &__nav {
     @apply flex gap-2.5 mt-8;
+  }
+}
+
+@media (max-width: 1023px) {
+  .post-job {
+    &__checkout-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

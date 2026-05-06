@@ -3,6 +3,9 @@
 		class="job-card"
 		:class="{
 			'job-card--pending': isPendingPayment,
+			'job-card--featured': postingTier.key === 'featured',
+			'job-card--spotlight': postingTier.key === 'spotlight',
+			'job-card--static': !interactive,
 		}"
 		@mouseenter="isHovering = true"
 		@mouseleave="isHovering = false"
@@ -71,6 +74,13 @@
 		<!-- Right meta -->
 		<div class="job-card__right">
 			<div class="job-card__meta-badges">
+				<span
+					v-if="postingTier.cardLabel"
+					class="job-card__tier-badge"
+					:class="`job-card__tier-badge--${postingTier.key}`"
+				>
+					{{ postingTier.cardLabel }}
+				</span>
 				<UBadge
 					v-if="isPendingPayment"
 					color="yellow"
@@ -92,7 +102,7 @@
 				{{ jobOpportunity.applications }} applied
 			</span>
 			<UButton
-				v-if="isPublished && isHovering"
+				v-if="interactive && isPublished && isHovering"
 				size="sm"
 				trailing-icon="i-heroicons-arrow-right-20-solid"
 				:to="`/jobs/${jobOpportunity.id}`"
@@ -110,21 +120,26 @@ import FjIcon from '~/components/shared/fj-icon.vue';
 import type { CompanyJobOpportunity } from '~/types/companies';
 import type { JobOpportunity } from '~/types/job-opportunities';
 import { getSalaryText, timeAgo } from '~/utils/global';
+import { getPostingTier } from '~/utils/posting-tiers';
 
 interface Props {
 	jobOpportunity: JobOpportunity | CompanyJobOpportunity;
+	interactive?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+	interactive: true,
+});
 
 const router = useRouter();
 
 const isHovering = ref(false);
 const isPendingPayment = computed(() => props.jobOpportunity.status === 'pending_payment');
 const isPublished = computed(() => !props.jobOpportunity.status || props.jobOpportunity.status === 'published');
+const postingTier = computed(() => getPostingTier(props.jobOpportunity.posting_tier));
 
 function openJobOpportunity() {
-	if (isPublished.value) {
+	if (props.interactive && isPublished.value) {
 		router.push(`/jobs/${props.jobOpportunity.id}`);
 	}
 }
@@ -145,8 +160,21 @@ function openJobOpportunity() {
   }
 
   &--featured {
-    background: linear-gradient(90deg, rgba(167, 139, 250, 0.03), transparent 40%);
-    border-color: rgba(167, 139, 250, 0.19);
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.06), var(--fj-surface) 48%);
+    border-color: rgba(45, 212, 191, 0.24);
+  }
+
+  &--spotlight {
+    background: linear-gradient(90deg, var(--fj-success-bg), var(--fj-surface) 52%);
+    border-color: var(--fj-success-border);
+  }
+
+  &--static {
+    @apply cursor-default;
+
+    &:hover {
+      background: var(--fj-surface);
+    }
   }
 
   &--pending {
@@ -224,6 +252,25 @@ function openJobOpportunity() {
 
   &__meta-badges {
     @apply flex items-center gap-2;
+  }
+
+  &__tier-badge {
+    @apply font-mono font-semibold uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+
+  &__tier-badge--featured {
+    color: #0f766e;
+    background: rgba(45, 212, 191, 0.13);
+    border: 1px solid rgba(45, 212, 191, 0.24);
+  }
+
+  &__tier-badge--spotlight {
+    color: var(--fj-success-text);
+    background: var(--fj-success-bg);
+    border: 1px solid var(--fj-success-border);
   }
 
   &__posted {

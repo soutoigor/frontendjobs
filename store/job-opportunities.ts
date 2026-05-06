@@ -7,8 +7,10 @@ import type {
 	JobOpportunityDraft,
 	JobOpportunityValidationErrors,
 	ShowJobOpportunityResponse,
+	JobPostingTier,
 } from '~/types/job-opportunities';
 import { normalizeApplicationDestination } from '~/utils/links';
+import { defaultPostingTier } from '~/utils/posting-tiers';
 
 export interface UseFetchReturn {
 	data: IndexJobOpportunitiesResponse | ShowJobOpportunityResponse | null;
@@ -38,6 +40,7 @@ const initialJobOpportunity: JobOpportunity = {
 	employment_type: [],
 	technologies: [],
 	seniority: [],
+	posting_tier: defaultPostingTier,
 	company: {
 		id: '',
 		name: '',
@@ -123,7 +126,11 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	function restoreJobOpportunityDraft() {
 		const draft = localStorage.getItem('job-opportunity-draft');
 		if (draft) {
-			draftJobOpportunity.value = JSON.parse(draft);
+			const parsedDraft = JSON.parse(draft) as JobOpportunityDraft;
+			draftJobOpportunity.value = {
+				...parsedDraft,
+				posting_tier: parsedDraft.posting_tier || defaultPostingTier,
+			};
 		}
 	}
 
@@ -132,9 +139,23 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	}
 
 	function setDraftJobOpportunity(payload: JobOpportunityDraft) {
-		draftJobOpportunity.value = payload;
+		draftJobOpportunity.value = {
+			...payload,
+			posting_tier: payload.posting_tier || defaultPostingTier,
+		};
 
-		localStorage.setItem('job-opportunity-draft', JSON.stringify(payload));
+		localStorage.setItem('job-opportunity-draft', JSON.stringify(draftJobOpportunity.value));
+	}
+
+	function updateDraftPostingTier(postingTier: JobPostingTier) {
+		if (!draftJobOpportunity.value) {
+			return;
+		}
+
+		setDraftJobOpportunity({
+			...draftJobOpportunity.value,
+			posting_tier: postingTier,
+		});
 	}
 
 	function clearDraftJobOpportunity() {
@@ -158,6 +179,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 			application_link: payload.application_link,
 			technologies: payload.technologies,
 			status: payload.status,
+			posting_tier: payload.posting_tier || defaultPostingTier,
 		});
 	}
 
@@ -198,6 +220,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 			salary_minimum: salaryToNumber(payload.salary_minimum),
 			salary_maximum: salaryToNumber(payload.salary_maximum),
 			technologies: payload.technologies.map(x => x.id),
+			posting_tier: payload.posting_tier || defaultPostingTier,
 		};
 
 		return formattedPayload;
@@ -327,6 +350,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 		setJobOpportunity,
 		restoreJobOpportunityDraft,
 		setDraftJobOpportunity,
+		updateDraftPostingTier,
 		setDraftFromJobOpportunity,
 		clearDraftJobOpportunity,
 		setValidationErrors,

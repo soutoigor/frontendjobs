@@ -13,7 +13,7 @@
 			<h2 class="terms__subtitle">
 				1. Use of the Service
 			</h2>
-			<p>Companies can create accounts, post jobs, and manage their postings. Job postings are currently free, but we may introduce paid features later.</p>
+			<p>Companies can create accounts, post jobs, and manage their postings. Job postings are paid one-time listings with optional visibility tiers.</p>
 		</section>
 
 		<section class="terms__section">
@@ -42,7 +42,7 @@
 			<h2 class="terms__subtitle">
 				4. Payments
 			</h2>
-			<p>Job postings are free for now, but a payment model may be introduced. Payment terms will be updated accordingly.</p>
+			<p>Job posting tiers start at $99 for a 30-day Standard listing. Featured and Spotlight tiers add higher placement and subtle visual emphasis in the job feed. Payments are processed through Stripe before publication.</p>
 		</section>
 
 		<section class="terms__section">
@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts" setup>
-const LAST_UPDATE = 'January 15, 2025';
+const LAST_UPDATE = 'May 6, 2026';
 
 definePageMeta({
 	layout: 'simple',

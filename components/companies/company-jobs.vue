@@ -27,7 +27,7 @@
 			<div class="company-jobs__empty-copy">
 				<h3>No jobs posted yet</h3>
 				<p>
-					Create the listing, preview exactly what candidates will see, then pay $99 through Stripe to publish it for 30 days.
+					Create the listing, preview exactly what candidates will see, then choose a visibility tier starting at $99 for 30 days.
 				</p>
 			</div>
 			<UButton
@@ -62,6 +62,9 @@
 								:class="`company-jobs__status--${getStatus(job)}`"
 							>
 								{{ getStatusLabel(job) }}
+							</span>
+							<span class="company-jobs__tier">
+								{{ getTier(job).label }}
 							</span>
 						</div>
 						<div class="company-jobs__row-tags">
@@ -137,6 +140,7 @@ import { useCompaniesStore } from '~/store/companies';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import type { JobOpportunity } from '~/types/job-opportunities';
 import { getSalaryText } from '~/utils/global';
+import { getPostingTier } from '~/utils/posting-tiers';
 
 const companiesStore = useCompaniesStore();
 const jobOpportunitiesStore = useJobOpportunitiesStore();
@@ -184,6 +188,10 @@ function getStatusLabel(job: JobOpportunity) {
 	if (job.status === 'published') return 'Live';
 	if (job.status === 'pending_payment') return 'Payment pending';
 	return job.status || 'Draft';
+}
+
+function getTier(job: JobOpportunity) {
+	return getPostingTier(job.posting_tier);
 }
 
 function editPendingJob(jobOpportunity: JobOpportunity) {
@@ -313,6 +321,14 @@ async function deletePendingJob(id: string) {
       color: var(--fj-text-muted);
       border: 1px solid var(--fj-border);
     }
+  }
+
+  &__tier {
+    @apply font-mono text-xs px-2 py-0.5 rounded-full;
+    color: var(--fj-text-muted);
+    border: 1px solid var(--fj-border);
+    font-size: 10px;
+    letter-spacing: 0.3px;
   }
 
   &__row-tags {

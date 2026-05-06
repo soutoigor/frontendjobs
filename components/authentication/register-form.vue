@@ -66,7 +66,7 @@
 			<FjIcon
 				name="check"
 				:size="11"
-				color="#bef264"
+				color="var(--fj-success-text)"
 			/>
 			{{ benefit }}
 		</li>
@@ -87,7 +87,7 @@ const router = useRouter();
 type Schema = InferType<typeof schema>;
 
 const benefits = [
-	'$99 per 30-day post',
+	'Plans from $99 per 30-day post',
 	'No subscription',
 	'Email alerts on every application',
 ];

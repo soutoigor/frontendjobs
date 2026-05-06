@@ -42,7 +42,7 @@
 				label="Conversion"
 			/>
 			<StatCard
-				:value="`$${totalSpent}`"
+				:value="totalSpent"
 				label="Spent"
 			/>
 		</div>
@@ -58,6 +58,7 @@ import CompanyJobs from '~/components/companies/company-jobs.vue';
 import StatCard from '~/components/shared/stat-card.vue';
 import { useCompaniesStore } from '~/store/companies';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import { formatAmountCents, getPostingTier } from '~/utils/posting-tiers';
 
 definePageMeta({
 	layout: 'company',
@@ -86,8 +87,19 @@ const conversionRate = computed(() => {
 
 const totalSpent = computed(() => {
 	const jobs = companiesStore.userCompany?.job_opportunities || [];
-	const publishedCount = jobs.filter(j => j.status === 'published').length;
-	return publishedCount * 99;
+	const spentCents = jobs.reduce((sum, job) => {
+		if (job.paid_amount_cents !== undefined && job.paid_amount_cents !== null) {
+			return sum + job.paid_amount_cents;
+		}
+
+		if (job.status === 'published') {
+			return sum + getPostingTier(job.posting_tier).amountCents;
+		}
+
+		return sum;
+	}, 0);
+
+	return formatAmountCents(spentCents);
 });
 
 onMounted(async () => {

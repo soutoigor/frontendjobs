@@ -12,7 +12,7 @@
 			icon="i-heroicons-credit-card"
 			color="primary"
 			variant="soft"
-			title="$99 for a 30-day listing"
+			:title="`${selectedTier.label} listing: ${selectedTierPrice} for 30 days`"
 			description="The next step opens Stripe Checkout. After payment succeeds, the job is published automatically and you return to your company dashboard."
 		/>
 		<UContainer class="preview__actions-wrapper">
@@ -42,6 +42,7 @@
 import JobOpportunityContent from '~/components/job-opportunities/job-opportunity-content.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import { useCompaniesStore } from '~/store/companies';
+import { getPostingTier } from '~/utils/posting-tiers';
 
 definePageMeta({
 	layout: 'company',
@@ -53,6 +54,8 @@ const jobOpportunitiesStore = useJobOpportunitiesStore();
 const companiesStore = useCompaniesStore();
 
 const draft = computed(() => jobOpportunitiesStore.draftJobOpportunity);
+const selectedTier = computed(() => getPostingTier(draft.value?.posting_tier));
+const selectedTierPrice = computed(() => `$${selectedTier.value.price}`);
 
 onMounted(jobOpportunitiesStore.restoreJobOpportunityDraft);
 

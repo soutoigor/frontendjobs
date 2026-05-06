@@ -54,7 +54,7 @@
 					<div class="hero-split__terminal-body">
 						<div class="hero-split__terminal-cmd">
 							<span class="text-gray-500">$</span>
-							<span class="text-lime-300">fj</span>
+							<span class="hero-split__terminal-command-brand">fj</span>
 							search --remote --stack=react
 						</div>
 						<div class="text-gray-500">
@@ -86,8 +86,8 @@
 						label="Per page"
 					/>
 					<StatCard
-						value="$99"
-						label="Job post"
+						value="$99+"
+						label="Post from"
 					/>
 				</div>
 			</div>
@@ -255,6 +255,10 @@ function searchTag(tag: string) {
 
   &__terminal-cmd {
     @apply flex gap-1.5;
+  }
+
+  &__terminal-command-brand {
+    color: var(--fj-success-text);
   }
 
   &__terminal-results {

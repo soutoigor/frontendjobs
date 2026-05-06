@@ -118,7 +118,7 @@
 			<FjIcon
 				name="spark"
 				:size="11"
-				color="#bef264"
+				color="var(--fj-success-text)"
 			/>
 			<span>Salary range will be shown clearly on the listing.</span>
 		</div>
@@ -368,9 +368,10 @@ function setSalaryMaximum(value: string | number) {
   }
 
   &__salary-nudge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-lime-300;
-    background: rgba(190, 242, 100, 0.08);
-    border: 1px solid rgba(190, 242, 100, 0.14);
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs;
+    color: var(--fj-success-text);
+    background: var(--fj-success-bg);
+    border: 1px solid var(--fj-success-border);
   }
 }
 </style>
