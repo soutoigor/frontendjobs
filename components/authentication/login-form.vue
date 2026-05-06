@@ -40,6 +40,7 @@ import { useAuthStore } from '~/store/authentication';
 const authStore = useAuthStore();
 const toast = useToast();
 const router = useRouter();
+const route = useRoute();
 
 type Schema = InferType<typeof schema>;
 
@@ -58,11 +59,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 		await authStore.login(event.data);
 
 		if (authStore.authenticated) {
-			router.push('/company/dashboard');
+			router.push(redirectAfterLogin());
 		}
 	}
-	catch (error: any) {
-		const description = error.status === 400
+	catch (error: unknown) {
+		const fetchError = error as { status?: number };
+		const description = fetchError.status === 400
 			? 'Invalid email or password'
 			: 'An error occurred, please try again';
 
@@ -72,6 +74,16 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 			description,
 		});
 	}
+}
+
+function redirectAfterLogin() {
+	const redirect = route.query.redirect;
+
+	if (typeof redirect === 'string' && redirect.startsWith('/')) {
+		return redirect;
+	}
+
+	return '/company/dashboard';
 }
 </script>
 
