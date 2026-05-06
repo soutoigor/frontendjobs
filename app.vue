@@ -1,15 +1,10 @@
 <template>
 	<AppToolbar
 		v-if="route.path && !isAuthPage"
-		:logo-visible="isLogoVisible"
-		class="absolute top-0 left-0 right-0 z-10"
 	/>
 
 	<NuxtLayout>
-		<NuxtPage
-			class="relative"
-			:class="[!isLogoVisible && '']"
-		/>
+		<NuxtPage class="relative pt-14" />
 		<AppFooter />
 		<UNotifications />
 	</NuxtLayout>
@@ -20,7 +15,6 @@ import AppToolbar from '~/components/toolbar/app-toolbar.vue';
 import AppFooter from '~/components/shared/app-footer.vue';
 
 const route = useRoute();
-const isLogoVisible = computed(() => route.path === '/');
 const isAuthPage = computed(() => {
 	const authPages = [
 		'/login',
@@ -30,9 +24,9 @@ const isAuthPage = computed(() => {
 
 	return authPages.includes(route.path);
 });
-const { siteUrl } = useRuntimeConfig().public
+const { siteUrl } = useRuntimeConfig().public;
 
 useHead({
 	link: [{ rel: 'canonical', href: `${siteUrl}${route.path}` }],
-})
+});
 </script>

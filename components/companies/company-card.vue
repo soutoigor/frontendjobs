@@ -6,45 +6,48 @@
 					:src="company?.avatar"
 					:alt="company?.name"
 					size="3xl"
+					class="company-card__avatar"
 				/>
-				<div class="company-card__company-info-wrapper">
+				<div class="company-card__info">
 					<slot name="title">
-						<div class="company-card__default-title">
-							<p>Company profile</p>
-							<h1 v-text="company?.name" />
+						<div class="company-card__title-row">
+							<h1 class="company-card__name">
+								{{ company?.name }}
+							</h1>
 						</div>
 					</slot>
-					<div>
-						<p>Location: <b v-text="company?.location" /></p>
-						<p>Industry: <b v-text="company?.industry" /></p>
+					<div class="company-card__meta">
+						<span v-if="company?.location">
+							{{ company.location }}
+						</span>
+						<span
+							v-if="company?.location && company?.industry"
+							class="text-gray-600"
+						>·</span>
+						<span v-if="company?.industry">
+							{{ company.industry }}
+						</span>
 					</div>
 				</div>
 			</div>
 			<slot name="action" />
 		</div>
 
-		<div class="company-card__socials-wrapper">
-			<div v-if="!companySocials.length">
-				<p class="company-card__no-socials">
-					No socials provided
-				</p>
-			</div>
-			<div
-				v-else
-				class="company-card__socials"
+		<div
+			v-if="companySocials.length"
+			class="company-card__socials"
+		>
+			<a
+				v-for="companySocial in companySocials"
+				:key="companySocial.social"
+				class="company-card__social-link"
+				:href="getSocialHref(companySocial.social, companySocial.value)"
+				target="_blank"
+				rel="noopener noreferrer"
 			>
-				<a
-					v-for="companySocial in companySocials"
-					:key="companySocial.social"
-					class="company-card__social-link"
-					:href="getSocialHref(companySocial.social, companySocial.value)"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Icon :name="companySocial.icon" />
-					<span v-text="getSocialLabel(companySocial.social, companySocial.value)" />
-				</a>
-			</div>
+				<Icon :name="companySocial.icon" />
+				<span>{{ getSocialLabel(companySocial.social, companySocial.value) }}</span>
+			</a>
 		</div>
 	</section>
 </template>
@@ -83,58 +86,43 @@ function getSocialLabel(social: keyof Socials, value: string) {
 
 <style scoped>
 .company-card {
-	@apply w-full;
+  @apply w-full;
 
-	&__header-wrapper {
-		@apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
-	}
+  &__header-wrapper {
+    @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+  }
 
-	&__header {
-		@apply flex items-center gap-4;
-	}
+  &__header {
+    @apply flex items-center gap-4;
+  }
 
-	&__company-info-wrapper {
-		@apply flex flex-col gap-2 w-full;
+  &__avatar {
+    @apply shrink-0;
+  }
 
-		h1 {
-			@apply text-2xl font-bold;
-		}
+  &__info {
+    @apply flex flex-col gap-1;
+  }
 
-		div {
-			@apply flex flex-col gap-2 md:flex-row md:items-center md:gap-6;
-		}
+  &__title-row {
+    @apply flex items-center gap-2;
+  }
 
-		p {
-			@apply text-sm;
-		}
-	}
+  &__name {
+    @apply text-2xl font-bold text-white;
+    letter-spacing: -0.6px;
+  }
 
-	&__default-title {
-		@apply flex flex-col gap-1;
+  &__meta {
+    @apply flex items-center gap-2 text-sm text-gray-400;
+  }
 
-		p {
-			@apply text-xs font-semibold uppercase tracking-wide text-gray-500;
-		}
-	}
+  &__socials {
+    @apply flex flex-wrap gap-4 mt-4;
+  }
 
-	&__socials-wrapper {
-		@apply mt-5;
-
-		h2 {
-			@apply text-lg font-bold;
-		}
-	}
-
-	&__socials {
-		@apply flex flex-col gap-2 md:flex-row md:items-center md:gap-6;
-	}
-
-	&__social-link {
-		@apply text-sm flex items-center gap-2 hover:underline;
-	}
-
-	&__no-socials {
-		@apply text-sm text-gray-500;
-	}
+  &__social-link {
+    @apply text-xs flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors;
+  }
 }
 </style>

@@ -1,56 +1,92 @@
 <template>
-	<nav class="app-toolbar">
-		<div>
+	<header class="app-toolbar">
+		<div class="app-toolbar__left">
 			<NuxtLink
 				to="/"
-				class="app-toolbar__logo"
+				class="app-toolbar__logo-link"
 			>
-				<AppLogo v-show="!logoVisible" />
+				<AppLogo />
 			</NuxtLink>
+			<nav class="app-toolbar__nav">
+				<NuxtLink
+					to="/"
+					class="app-toolbar__nav-link"
+					:class="{ 'app-toolbar__nav-link--active': route.path === '/' }"
+				>
+					Browse jobs
+				</NuxtLink>
+			</nav>
 		</div>
-
-		<div class="app-toolbar__links">
-			<UButton
-				variant="solid"
-				color="yellow"
-				to="/company/post-job"
+		<div class="app-toolbar__right">
+			<NuxtLink
+				to="/login"
+				class="app-toolbar__sign-in"
 			>
-				Post a Job
-			</UButton>
+				Sign in
+			</NuxtLink>
 			<UButton
-				variant="solid"
+				variant="soft"
+				color="gray"
+				size="sm"
+				icon="i-heroicons-user-20-solid"
 				to="/company/dashboard"
 			>
-				Company Area
+				Company area
+			</UButton>
+			<UButton
+				variant="solid"
+				size="sm"
+				icon="i-heroicons-plus-20-solid"
+				to="/company/post-job"
+			>
+				Post a job
 			</UButton>
 		</div>
-	</nav>
+	</header>
 </template>
 
 <script setup lang="ts">
 import AppLogo from '~/components/shared/app-logo.vue';
 
-interface Props {
-	logoVisible: boolean;
-}
-
-defineProps<Props>();
+const route = useRoute();
 </script>
 
 <style scoped>
 .app-toolbar {
-	@apply bg-transparent w-full flex justify-between items-center px-3 md:px-4 py-1 md:py-3 gap-4;
+  @apply fixed top-0 left-0 right-0 z-50;
+  @apply flex items-center justify-between;
+  @apply px-8 py-3.5;
+  background: rgba(11, 13, 18, 0.72);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
-	&.-is-logo-visible {
-		@apply hidden;
-	}
+  &__left {
+    @apply flex items-center gap-8;
+  }
 
-	&__logo {
-		@apply text-xl lg:text-3xl;
-	}
+  &__logo-link {
+    @apply cursor-pointer;
+  }
 
-	&__links {
-		@apply flex gap-4;
-	}
+  &__nav {
+    @apply hidden md:flex gap-6;
+  }
+
+  &__nav-link {
+    @apply text-sm font-medium text-gray-400 hover:text-white transition-colors;
+    letter-spacing: -0.1px;
+
+    &--active {
+      @apply text-white;
+    }
+  }
+
+  &__right {
+    @apply flex items-center gap-2.5;
+  }
+
+  &__sign-in {
+    @apply text-sm text-gray-400 hover:text-white transition-colors px-3 py-1.5;
+  }
 }
 </style>

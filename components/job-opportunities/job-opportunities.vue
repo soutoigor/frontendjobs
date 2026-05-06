@@ -1,27 +1,33 @@
 <template>
 	<dl class="job-opportunities">
 		<div
-			v-if="store.jobOpportunities?.data.length === 0"
-			class="text-center"
+			v-if="store.jobOpportunities?.data.length === 0 && !pending"
+			class="text-center text-gray-500 py-12"
 		>
 			No job opportunities found.
 		</div>
-	<div
-		v-else-if="pending && store.jobOpportunities?.data.length === 0"
-		class="job-opportunities__list"
-	>
-		<JobOpportunityCardSkeleton v-for="skeleton of 6" />
-	</div>
-	<div v-else-if="error">
-		{{ error }}
-	</div>
-	<div v-else class="job-opportunities__list">
-		<JobOpportunityCard
-			v-for="jobOpportunity of store.jobOpportunities?.data"
-			:key="jobOpportunity.id"
-			:job-opportunity="jobOpportunity"
-		/>
-	</div>
+		<div
+			v-else-if="pending && store.jobOpportunities?.data.length === 0"
+			class="job-opportunities__list"
+		>
+			<JobOpportunityCardSkeleton v-for="skeleton of 6" :key="skeleton" />
+		</div>
+		<div
+			v-else-if="error"
+			class="text-center text-red-400 py-12"
+		>
+			{{ error }}
+		</div>
+		<div
+			v-else
+			class="job-opportunities__list"
+		>
+			<JobOpportunityCard
+				v-for="jobOpportunity of store.jobOpportunities?.data"
+				:key="jobOpportunity.id"
+				:job-opportunity="jobOpportunity"
+			/>
+		</div>
 	</dl>
 </template>
 
@@ -54,7 +60,8 @@ const { error, pending } = await useFetch<UseFetchReturn>(
 						...response._data.data,
 					],
 				});
-			} else {
+			}
+			else {
 				store.setJobOpportunities(response._data);
 			}
 			previousPage = store.filters.page || 1;
@@ -67,7 +74,7 @@ const handleScroll = debounce(() => {
 	const hasMore = (store.jobOpportunities?.current_page ?? 1) < (store.jobOpportunities?.last_page ?? 1);
 
 	if (bottomOfWindow && hasMore) {
-			store.filters.page = (store.filters.page || 1) + 1;
+		store.filters.page = (store.filters.page || 1) + 1;
 	}
 }, 200);
 
@@ -82,10 +89,10 @@ onUnmounted(() => {
 
 <style scoped>
 .job-opportunities {
-	@apply w-full;
+  @apply w-full;
 
-	&__list {
-			@apply grid w-full gap-4;
-	}
+  &__list {
+    @apply flex flex-col gap-2.5 w-full;
+  }
 }
 </style>

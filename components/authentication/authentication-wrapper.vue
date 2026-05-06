@@ -1,21 +1,33 @@
 <template>
-	<main class="authentication-wrapper">
-		<NuxtLink
-			to="/"
-			class="app-toolbar__logo"
-		>
-			<AppLogo class="authentication-wrapper__logo" />
-		</NuxtLink>
-		<section class="authentication-wrapper__content">
-			<div class="authentication-wrapper__form">
-				<h1
-					class="authentication-wrapper__title"
-					v-text="title"
-				/>
-				<slot name="form" />
-			</div>
-			<slot name="options" />
-		</section>
+	<main class="auth-wrapper">
+		<div class="auth-wrapper__glow" />
+		<div class="auth-wrapper__logo-bar">
+			<NuxtLink to="/">
+				<AppLogo />
+			</NuxtLink>
+		</div>
+		<div class="auth-wrapper__center">
+			<section class="auth-wrapper__card">
+				<div class="auth-wrapper__for-companies">
+					For companies
+				</div>
+				<h1 class="auth-wrapper__title">
+					{{ title }}
+				</h1>
+				<p class="auth-wrapper__subtitle">
+					<slot name="subtitle">
+						Post your first frontend role in under 5 minutes.
+					</slot>
+				</p>
+				<div class="auth-wrapper__form">
+					<slot name="form" />
+				</div>
+				<slot name="benefits" />
+				<div class="auth-wrapper__options">
+					<slot name="options" />
+				</div>
+			</section>
+		</div>
 	</main>
 </template>
 
@@ -30,24 +42,53 @@ defineProps<Props>();
 </script>
 
 <style scoped>
-.authentication-wrapper {
-  @apply w-full h-dvh flex items-center flex-col gap-20 sm:gap-36 px-6 py-12;
+.auth-wrapper {
+  @apply w-full min-h-dvh relative overflow-hidden;
 
-  &__logo {
-    @apply text-5xl;
+  &__glow {
+    @apply absolute inset-0 pointer-events-none;
+    background: radial-gradient(900px 500px at 50% 0%, rgba(167, 139, 250, 0.06), transparent 50%);
+  }
+
+  &__logo-bar {
+    @apply relative px-8 py-6;
+  }
+
+  &__center {
+    @apply relative flex items-center justify-center px-5 py-10;
+  }
+
+  &__card {
+    @apply w-full max-w-md rounded-2xl p-8;
+    background: rgba(15, 17, 23, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(8px);
+  }
+
+  &__for-companies {
+    @apply font-mono text-violet-400 uppercase tracking-widest mb-2;
+    font-size: 10.5px;
   }
 
   &__title {
-    @apply text-xl text-center;
+    @apply text-2xl font-bold text-white mb-1.5;
+    letter-spacing: -0.8px;
   }
 
-  &__content {
-    @apply border border-purple-600 rounded-lg shadow-md dark:bg-gray-950 bg-slate-200;
-    @apply w-full max-w-sm flex flex-col items-center gap-6 p-6;
+  &__subtitle {
+    @apply text-sm text-gray-400 mb-6 leading-relaxed;
   }
 
   &__form {
-    @apply w-full flex flex-col items-stretch gap-4;
+    @apply flex flex-col gap-3.5;
+  }
+
+  &__options {
+    @apply text-center mt-5 text-xs text-gray-500;
+
+    :deep(a) {
+      @apply text-violet-400 cursor-pointer hover:text-violet-300;
+    }
   }
 }
 </style>

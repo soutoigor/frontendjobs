@@ -1,34 +1,30 @@
 <template>
 	<footer class="app-footer">
-		<UContainer class="app-footer__container">
-			<div class="app-footer__copy-wrapper">
-				<p class="app-footer__copy">
-					&copy; {{ new Date().getFullYear() }} Frontend Jobs. All rights reserved.
-				</p>
-
+		<div class="app-footer__container">
+			<NuxtLink to="/">
 				<AppLogo />
-			</div>
-
-			<nav>
-				<ul class="app-footer__nav">
-					<li>
-						<NuxtLink href="mailto:igor_souto@outlook.com">
-							Contact
-						</NuxtLink>
-					</li>
-					<li>
-						<NuxtLink to="/privacy">
-							Privacy
-						</NuxtLink>
-					</li>
-					<li>
-						<NuxtLink to="/terms">
-							Terms
-						</NuxtLink>
-					</li>
-				</ul>
+			</NuxtLink>
+			<nav class="app-footer__nav">
+				<NuxtLink to="/">
+					Browse jobs
+				</NuxtLink>
+				<NuxtLink to="/company/post-job">
+					Post a job
+				</NuxtLink>
+				<NuxtLink to="/privacy">
+					Privacy
+				</NuxtLink>
+				<NuxtLink to="/terms">
+					Terms
+				</NuxtLink>
+				<NuxtLink href="mailto:igor_souto@outlook.com">
+					Contact
+				</NuxtLink>
 			</nav>
-		</UContainer>
+			<span class="app-footer__copy">
+				&copy; {{ new Date().getFullYear() }} frontendjobs.app
+			</span>
+		</div>
 	</footer>
 </template>
 
@@ -38,26 +34,24 @@ import AppLogo from '~/components/shared/app-logo.vue';
 
 <style scoped>
 .app-footer {
-  @apply w-full;
+  background: #080a0e;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  @apply py-8 px-8;
 
   &__container {
-    @apply flex flex-col md:flex-row gap-4 md:gap-20 justify-center items-center py-4 text-gray-500 text-sm pb-4;
-  }
-
-  &__section {
-    @apply flex flex-row text-center gap-4 items-center;
-  }
-
-  &__copy-wrapper {
-    @apply flex flex-col md:flex-row gap-2 md:gap-4 items-center;
+    @apply max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-5 flex-wrap;
   }
 
   &__nav {
-    @apply flex gap-4 items-center justify-center;
+    @apply flex gap-6 text-sm text-gray-500 flex-wrap justify-center;
+
+    a {
+      @apply hover:text-gray-300 transition-colors;
+    }
   }
 
   &__copy {
-    @apply text-center text-sm text-gray-500;
+    @apply font-mono text-xs text-gray-600;
   }
 }
 </style>

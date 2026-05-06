@@ -1,18 +1,18 @@
 <template>
-	<AuthenticationWrapper
-		title="Login"
-		@submit="onSubmit"
-	>
+	<AuthenticationWrapper title="Welcome back">
+		<template #subtitle>
+			Sign in to manage your job posts.
+		</template>
 		<template #form>
 			<LoginForm />
 		</template>
 		<template #options>
 			<p>
-				Don't have an account? <NuxtLink
-					class="login__link"
+				New here? <NuxtLink
+					class="text-violet-400 hover:text-violet-300"
 					to="/register"
 				>
-					Register
+					Create account
 				</NuxtLink>
 			</p>
 		</template>
@@ -22,17 +22,4 @@
 <script setup lang="ts">
 import AuthenticationWrapper from '~/components/authentication/authentication-wrapper.vue';
 import LoginForm from '~/components/authentication/login-form.vue';
-
-const onSubmit = (e: SubmitEvent) => {
-	console.log(e);
-};
 </script>
-
-<style scoped>
-.login {
-
-  &__link {
-    @apply text-purple-600;
-  }
-}
-</style>

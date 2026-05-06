@@ -114,6 +114,15 @@
 			</UFormGroup>
 		</div>
 
+		<div class="job-opportunity-form__salary-nudge">
+			<FjIcon
+				name="spark"
+				:size="11"
+				color="#bef264"
+			/>
+			<span>Posts with salary get 3.5× more applications</span>
+		</div>
+
 		<div class="job-opportunity-form__form-section">
 			<UFormGroup
 				size="lg"
@@ -209,10 +218,9 @@
 		<UButton
 			block
 			type="submit"
-			size="xl"
-			label="Preview Job Post"
-			icon="i-heroicons-arrow-right"
-			trailing
+			size="lg"
+			label="Preview post"
+			trailing-icon="i-heroicons-arrow-right-20-solid"
 		/>
 	</UForm>
 </template>
@@ -224,12 +232,14 @@ import type { FormSubmitEvent } from '#ui/types';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';
 import { useFilterOptions } from '~/composables/use-filter-options';
+import FjIcon from '~/components/shared/fj-icon.vue';
 import TiptapEditor from '~/components/shared/tiptap-editor.vue';
 import { isValidApplicationDestination, normalizeApplicationDestination } from '~/utils/links';
 
+const emit = defineEmits<{ (e: 'next'): void }>();
+
 const jobOpportunityStore = useJobOpportunitiesStore();
 const toast = useToast();
-const router = useRouter();
 const options = useFilterOptions();
 
 type Schema = InferType<typeof schema>;
@@ -321,7 +331,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 		date_posted: state.date_posted || new Date().toISOString().slice(0, 10),
 	});
 
-	router.push(`/jobs/${state.title.replaceAll(' ', '-')}/preview`);
+	emit('next');
 }
 
 function formatAnnualSalaryInput(value: string | number) {
@@ -353,7 +363,12 @@ function setSalaryMaximum(value: string | number) {
   }
 
   &__trailing-currency {
-    @apply text-gray-500 dark:text-gray-400 text-xs;
+    @apply text-gray-500 text-xs;
+  }
+
+  &__salary-nudge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-lime-300;
+    background: rgba(190, 242, 100, 0.08);
   }
 }
 </style>

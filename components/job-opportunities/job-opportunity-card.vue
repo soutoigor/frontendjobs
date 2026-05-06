@@ -1,115 +1,112 @@
 <template>
-	<UContainer
-		class="job-opportunity-card"
-		:class="{ 'job-opportunity-card--pending': isPendingPayment }"
-		as="section"
-		@mouseover="setIsHovering(true)"
-		@mouseleave="setIsHovering(false)"
+	<div
+		class="job-card"
+		:class="{
+			'job-card--pending': isPendingPayment,
+		}"
+		@mouseenter="isHovering = true"
+		@mouseleave="isHovering = false"
 		@click="openJobOpportunity"
 	>
+		<!-- Avatar -->
 		<UAvatar
 			:src="jobOpportunity.company.avatar"
-			:alt="`${jobOpportunity.company.name} logo`"
-			size="xl"
+			:alt="jobOpportunity.company.name"
+			:size="'md'"
+			class="job-card__avatar"
 		/>
-		<div class="job-opportunity-card__content-wrapper">
-			<!-- Titles and Tags -->
-			<div class="job-opportunity-card__main-info">
-				<div class="job-opportunity-card__titles">
-					<h1 v-text="jobOpportunity.title" />
-					<h2 v-text="jobOpportunity.company.name" />
-				</div>
-				<div class="job-opportunity-card__tags">
-					<UBadge
-						v-if="jobOpportunity.salary_minimum"
-						color="gray"
-						:label="getSalaryText(
-							jobOpportunity.currency,
-							jobOpportunity.salary_minimum,
-							jobOpportunity.salary_maximum,
-						)"
-					/>
-					<UBadge
-						v-if="jobOpportunity.location"
-						:color="locationColor"
-						:label="jobOpportunity.location"
-					/>
-					<UBadge
-						v-for="employmentType of jobOpportunity.employment_type"
-						:key="employmentType"
-						color="white"
-						:label="employmentType"
-					/>
-					<UBadge
-						v-if="jobOpportunity.remote"
-						color="green"
-						label="Remote"
-					/>
-				</div>
-			</div>
 
-			<!-- Technologies -->
-			<div class="job-opportunity-card__technologies">
+		<!-- Main info -->
+		<div class="job-card__info">
+			<div class="job-card__title-row">
+				<span class="job-card__title">{{ jobOpportunity.title }}</span>
+				<span
+					v-if="jobOpportunity.salary_minimum"
+					class="job-card__salary-inline"
+				>
+					{{ getSalaryText(jobOpportunity.currency, jobOpportunity.salary_minimum, jobOpportunity.salary_maximum) }}
+				</span>
+			</div>
+			<div class="job-card__meta-row">
+				<span class="job-card__company">
+					{{ jobOpportunity.company.name }}
+				</span>
+				<span class="job-card__sep">·</span>
+				<span class="job-card__location">
+					<FjIcon
+						name="pin"
+						:size="11"
+						color="#6b7280"
+					/>
+					{{ jobOpportunity.location || 'Worldwide' }}
+				</span>
+			</div>
+			<div class="job-card__tags">
 				<UBadge
-					v-for="technology in jobOpportunity.technologies"
+					v-for="technology in jobOpportunity.technologies?.slice(0, 4)"
 					:key="technology.id"
-					class="job-opportunity-card__technology-badge"
 					variant="soft"
 					:label="technology.name"
+					size="xs"
+				/>
+				<UBadge
+					v-if="jobOpportunity.remote"
+					color="green"
+					variant="soft"
+					size="xs"
+				>
+					◉ Remote
+				</UBadge>
+				<UBadge
+					v-for="empType in jobOpportunity.employment_type"
+					:key="empType"
+					color="gray"
+					variant="soft"
+					size="xs"
+					:label="empType"
 				/>
 			</div>
+		</div>
 
-			<!-- Actions -->
-			<div class="job-opportunity-card__actions">
-				<UButton
-					v-if="isPublished && (isHovering || breakpoints.isSmallerOrEqual('sm'))"
-					variant="solid"
-					size="sm"
-					block
-					:to="`/jobs/${jobOpportunity.id}`"
-					@click.stop
+		<!-- Right meta -->
+		<div class="job-card__right">
+			<div class="job-card__meta-badges">
+				<UBadge
+					v-if="isPendingPayment"
+					color="yellow"
+					variant="soft"
+					size="xs"
+					label="Payment pending"
+				/>
+				<span
+					v-if="jobOpportunity.date_posted"
+					class="job-card__posted"
 				>
-					View Details
-				</UButton>
+					{{ timeAgo(jobOpportunity.date_posted) }}
+				</span>
 			</div>
-		</div>
-
-		<div class="job-opportunity-card__meta">
-			<UBadge
-				v-if="isPendingPayment"
-				color="yellow"
-				variant="soft"
-				size="sm"
-				label="Payment pending"
-			/>
-
-			<UBadge
-				v-if="jobOpportunity.views"
-				color="green"
-				variant="soft"
-				size="sm"
-				:label="viewsText"
-			/>
-
-			<UBadge
-				v-if="jobOpportunity.applications"
-				color="yellow"
-				variant="soft"
-				size="sm"
-				:label="applicationsText"
-			/>
-
 			<span
-				v-if="jobOpportunity.date_posted"
-				class="job-opportunity-card__posted-at"
-				v-text="timeAgo(jobOpportunity.date_posted)"
-			/>
+				v-if="jobOpportunity.applications"
+				class="job-card__applicants"
+			>
+				{{ jobOpportunity.applications }} applied
+			</span>
+			<UButton
+				v-if="isPublished && isHovering"
+				size="sm"
+				trailing-icon="i-heroicons-arrow-right-20-solid"
+				:to="`/jobs/${jobOpportunity.id}`"
+				class="job-card__apply-btn"
+				@click.stop
+			>
+				Apply
+			</UButton>
 		</div>
-	</UContainer>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import FjIcon from '~/components/shared/fj-icon.vue';
 import type { CompanyJobOpportunity } from '~/types/companies';
 import type { JobOpportunity } from '~/types/job-opportunities';
 import { getSalaryText, timeAgo } from '~/utils/global';
@@ -120,19 +117,11 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const router = useRouter();
 
 const isHovering = ref(false);
 const isPendingPayment = computed(() => props.jobOpportunity.status === 'pending_payment');
 const isPublished = computed(() => !props.jobOpportunity.status || props.jobOpportunity.status === 'published');
-const locationColor = computed(() => (props.jobOpportunity.location?.toLowerCase() === 'worldwide' ? 'blue' : 'white'));
-const applicationsText = computed(() => `${props.jobOpportunity.applications} ${props.jobOpportunity.applications === 1 ? 'application' : 'applications'}`);
-const viewsText = computed(() => `${props.jobOpportunity.views} ${props.jobOpportunity.views === 1 ? 'view' : 'views'}`);
-
-function setIsHovering(value: boolean) {
-	isHovering.value = value;
-}
 
 function openJobOpportunity() {
 	if (isPublished.value) {
@@ -142,54 +131,122 @@ function openJobOpportunity() {
 </script>
 
 <style scoped>
-.job-opportunity-card {
-  @apply border rounded-md w-full border-gray-600 flex gap-4 py-4 px-6 relative cursor-pointer;
-	@apply transition-all duration-200 hover:shadow-sm hover:border-purple-600;
-	@apply flex-col md:flex-row;
+.job-card {
+  @apply relative grid items-center gap-4 cursor-pointer rounded-xl;
+  grid-template-columns: 44px 1fr auto;
+  padding: 18px 22px;
+  background: rgba(15, 17, 23, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.15s;
 
-	&--pending {
-		@apply cursor-default border-yellow-300 bg-yellow-50 hover:border-yellow-300 hover:shadow-none dark:border-yellow-900 dark:bg-yellow-950/20;
-	}
+  &:hover {
+    background: rgba(20, 23, 32, 0.7);
+    border-color: rgba(255, 255, 255, 0.10);
+  }
 
-	&__content-wrapper {
-		@apply flex gap-8 w-full md:items-center justify-between;
-		@apply flex-col md:flex-row;
-	}
+  &--featured {
+    background: linear-gradient(90deg, rgba(167, 139, 250, 0.03), transparent 40%);
+    border-color: rgba(167, 139, 250, 0.19);
+  }
 
-	&__main-info {
-		@apply flex flex-col gap-2 w-2/3;
-	}
+  &--pending {
+    @apply cursor-default;
+    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(251, 191, 36, 0.03);
 
-	&__titles {
-		@apply flex flex-col gap-1;
+    &:hover {
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+  }
 
-		h1 {
-			@apply text-lg font-semibold;
-		}
-	}
+  &__ribbon {
+    @apply absolute -top-px right-4 font-mono font-bold uppercase;
+    padding: 2px 8px;
+    background: #a78bfa;
+    color: #0b0d12;
+    font-size: 9.5px;
+    letter-spacing: 0.6px;
+    border-radius: 0 0 4px 4px;
+  }
 
-	&__technologies {
-		@apply flex flex-wrap gap-2 w-1/5 justify-center;
-	}
+  &__avatar {
+    @apply self-start mt-0.5;
+  }
 
-	&__technology-badge {
-		@apply text-nowrap;
-	}
+  &__info {
+    @apply flex flex-col gap-1.5 min-w-0;
+  }
 
-	&__tags {
-		@apply flex gap-2 mt-2 max-w-full flex-wrap;
-	}
+  &__title-row {
+    @apply flex items-center gap-2.5 flex-wrap;
+  }
 
-	&__actions {
-		@apply flex justify-end items-end h-full w-full md:w-1/5 lg:w-1/4;
-	}
+  &__title {
+    @apply text-white font-semibold;
+    font-size: 15.5px;
+    letter-spacing: -0.2px;
+  }
 
-	&__meta {
-		@apply absolute right-4 top-2 flex gap-2 items-center;
-	}
+  &__salary-inline {
+    @apply font-mono text-xs px-2 py-0.5 rounded text-gray-200;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
 
-	&__posted-at {
-		@apply text-xs;
-	}
+  &__meta-row {
+    @apply flex items-center gap-2 flex-wrap;
+  }
+
+  &__company {
+    @apply text-gray-400 inline-flex items-center gap-1;
+    font-size: 12.5px;
+  }
+
+  &__sep {
+    @apply text-gray-700;
+  }
+
+  &__location {
+    @apply text-gray-400 inline-flex items-center gap-1;
+    font-size: 12.5px;
+  }
+
+  &__tags {
+    @apply flex gap-1.5 flex-wrap mt-0.5;
+  }
+
+  &__right {
+    @apply flex flex-col items-end gap-1;
+  }
+
+  &__meta-badges {
+    @apply flex items-center gap-2;
+  }
+
+  &__posted {
+    @apply font-mono text-gray-500;
+    font-size: 11px;
+  }
+
+  &__applicants {
+    @apply text-gray-500;
+    font-size: 11.5px;
+  }
+
+  &__apply-btn {
+    @apply mt-1;
+  }
+}
+
+@media (max-width: 767px) {
+  .job-card {
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+
+    .job-card__right {
+      grid-column: 1 / -1;
+      @apply flex-row items-center justify-between;
+    }
+  }
 }
 </style>

@@ -1,46 +1,65 @@
 <template>
 	<div class="job-filters">
-		<div class="job-filters__wrapper">
-			<USelectMenu
-				v-model="store.filters.technologies"
-				class="job-filters__filter"
-				:options="technologies"
-				multiple
-				placeholder="Technologies"
-				:loading="isLoadingTechnologies"
-				value-attribute="id"
-				option-attribute="name"
-			/>
-			<UInputMenu
-				v-model="store.filters.location"
-				class="job-filters__filter"
-				:options="locations"
-				placeholder="Location"
-			/>
-			<UInputMenu
-				v-model="store.filters.seniority"
-				class="job-filters__filter"
-				:options="seniorities"
-				placeholder="Seniority"
-			/>
-			<UInputMenu
-				v-model="store.filters.employment_type"
-				class="job-filters__filter"
-				:options="employmentTypes"
-				placeholder="Employment type"
-			/>
-			<UCheckbox
-				v-model="store.filters.remote"
-				name="remote"
-				label="Remote"
-				class="justify-self-end"
-			/>
+		<div class="job-filters__row">
+			<div class="job-filters__dropdowns">
+				<USelectMenu
+					v-model="store.filters.technologies"
+					class="job-filters__filter"
+					:options="technologies"
+					multiple
+					placeholder="Stack"
+					:loading="isLoadingTechnologies"
+					value-attribute="id"
+					option-attribute="name"
+				/>
+				<UInputMenu
+					v-model="store.filters.location"
+					class="job-filters__filter"
+					:options="locations"
+					placeholder="Location"
+				/>
+				<UInputMenu
+					v-model="store.filters.seniority"
+					class="job-filters__filter"
+					:options="seniorities"
+					placeholder="Seniority"
+				/>
+				<UInputMenu
+					v-model="store.filters.employment_type"
+					class="job-filters__filter"
+					:options="employmentTypes"
+					placeholder="Type"
+				/>
+				<label class="job-filters__remote-toggle">
+					<span
+						class="job-filters__remote-check"
+						:class="{ 'job-filters__remote-check--active': store.filters.remote }"
+					>
+						<FjIcon
+							v-if="store.filters.remote"
+							name="check"
+							:size="9"
+							color="#0b0d12"
+						/>
+					</span>
+					<span
+						class="job-filters__remote-label"
+						:class="{ 'text-lime-300': store.filters.remote, 'text-gray-400': !store.filters.remote }"
+						@click="store.filters.remote = !store.filters.remote"
+					>Remote only</span>
+				</label>
+			</div>
 		</div>
-		<div class="job-filters__labels-wrapper">
+
+		<div
+			v-if="store.filtersLabel.length"
+			class="job-filters__labels-wrapper"
+		>
 			<div class="job-filters__labels">
 				<UBadge
 					v-for="label of store.filtersLabel"
 					:key="label"
+					variant="soft"
 				>
 					<span v-text="label" />
 					<UButton
@@ -48,15 +67,17 @@
 						color="white"
 						variant="link"
 						icon="i-heroicons-x-mark-20-solid"
+						size="2xs"
 						@click="store.removeFilter(label)"
 					/>
 				</UBadge>
 			</div>
 			<UButton
-				v-if="store.filtersLabel.length"
 				trailing
 				label="Clear filters"
-				variant="outline"
+				variant="ghost"
+				color="gray"
+				size="xs"
 				icon="i-heroicons-x-mark-20-solid"
 				@click="store.resetFilters"
 			/>
@@ -65,6 +86,7 @@
 </template>
 
 <script setup lang="ts">
+import FjIcon from '~/components/shared/fj-icon.vue';
 import { useFilterOptions } from '~/composables/use-filter-options';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 
@@ -80,22 +102,48 @@ const {
 
 <style scoped>
 .job-filters {
-	@apply w-full flex flex-col gap-4;
+  @apply w-full flex flex-col gap-4;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-	&__wrapper {
-		@apply w-full grid grid-cols-1 md:grid-cols-5 items-center gap-4;
-	}
+  &__row {
+    @apply flex items-center gap-2.5 flex-wrap;
+  }
 
-	&__labels-wrapper {
-		@apply w-full flex flex-col items-end md:flex-row md:items-center gap-4;
-	}
+  &__dropdowns {
+    @apply flex gap-2 flex-1 flex-wrap items-center;
+  }
 
-	&__labels {
-		@apply w-full flex justify-start gap-4 flex-wrap;
-	}
+  &__filter {
+    @apply min-w-[130px];
+  }
 
-	&__filter {
-		@apply rounded-lg bg-gray-900;
-	}
+  &__remote-toggle {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer;
+    background: rgba(190, 242, 100, 0.06);
+    border: 1px solid rgba(190, 242, 100, 0.20);
+  }
+
+  &__remote-check {
+    @apply w-3.5 h-3.5 rounded inline-flex items-center justify-center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    &--active {
+      @apply bg-lime-300;
+      border-color: #bef264;
+    }
+  }
+
+  &__remote-label {
+    @apply text-xs font-medium;
+  }
+
+  &__labels-wrapper {
+    @apply w-full flex flex-col items-end md:flex-row md:items-center gap-4;
+  }
+
+  &__labels {
+    @apply w-full flex justify-start gap-2 flex-wrap;
+  }
 }
 </style>

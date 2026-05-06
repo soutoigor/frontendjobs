@@ -6,10 +6,16 @@
 		@submit="onSubmit"
 	>
 		<UFormGroup
-			label="Email"
+			label="Work email"
 			name="email"
 		>
-			<UInput v-model="state.email" />
+			<UInput
+				v-model="state.email"
+				placeholder="you@company.com"
+				type="email"
+				icon="i-heroicons-envelope-20-solid"
+				size="lg"
+			/>
 		</UFormGroup>
 
 		<UFormGroup
@@ -19,32 +25,59 @@
 			<UInput
 				v-model="state.password"
 				type="password"
+				placeholder="••••••••"
+				icon="i-heroicons-lock-closed-20-solid"
+				size="lg"
 			/>
+			<template #hint>
+				At least 8 characters
+			</template>
 		</UFormGroup>
 
 		<UFormGroup
-			label="Confirm Password"
+			label="Confirm password"
 			name="confirmPassword"
 		>
 			<UInput
 				v-model="state.confirmPassword"
 				type="password"
+				placeholder="••••••••"
+				icon="i-heroicons-lock-closed-20-solid"
+				size="lg"
 			/>
 		</UFormGroup>
 
 		<UButton
 			block
 			type="submit"
+			size="lg"
+			trailing-icon="i-heroicons-arrow-right-20-solid"
+			class="mt-2"
 		>
-			Register
+			Create account
 		</UButton>
 	</UForm>
+
+	<ul class="register-form__benefits">
+		<li
+			v-for="benefit in benefits"
+			:key="benefit"
+		>
+			<FjIcon
+				name="check"
+				:size="11"
+				color="#bef264"
+			/>
+			{{ benefit }}
+		</li>
+	</ul>
 </template>
 
 <script setup lang="ts">
 import * as Yup from 'yup';
 import { type InferType } from 'yup';
 import type { FormSubmitEvent } from '#ui/types';
+import FjIcon from '~/components/shared/fj-icon.vue';
 import { useAuthStore } from '~/store/authentication';
 
 const authStore = useAuthStore();
@@ -53,15 +86,22 @@ const router = useRouter();
 
 type Schema = InferType<typeof schema>;
 
+const benefits = [
+	'$99 per 30-day post',
+	'No subscription',
+	'Verified badge after first post',
+	'Email alerts on every application',
+];
+
 const schema = Yup.object({
 	email: Yup.string().required('Email is required'),
 	password: Yup.string()
 		.min(8, 'Must be at least 8 characters')
 		.required('Password is required'),
 	confirmPassword:
-    Yup.string()
-    	.required('Password confirmation is required')
-    	.oneOf([Yup.ref('password')], 'Passwords must match'),
+		Yup.string()
+			.required('Password confirmation is required')
+			.oneOf([Yup.ref('password')], 'Passwords must match'),
 });
 
 const state = reactive({
@@ -81,9 +121,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 			router.push('/company/dashboard');
 		}
 	}
-	catch (error: any) {
-		const description = error?.data?.error?.email?.[0]
-			|| error?.data?.error?.password?.[0]
+	catch (error: unknown) {
+		const fetchError = error as { data?: { error?: { email?: string[]; password?: string[] } } };
+		const description = fetchError?.data?.error?.email?.[0]
+			|| fetchError?.data?.error?.password?.[0]
 			|| 'An error occurred, please try again';
 
 		toast.add({
@@ -97,6 +138,14 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 <style scoped>
 .register-form {
-  @apply w-full flex flex-col gap-4 items-stretch;
+  @apply w-full flex flex-col gap-3.5 items-stretch;
+
+  &__benefits {
+    @apply list-none p-0 mt-5 flex flex-col gap-2;
+
+    li {
+      @apply flex items-center gap-2 text-xs text-gray-400;
+    }
+  }
 }
 </style>
