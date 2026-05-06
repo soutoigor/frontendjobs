@@ -102,7 +102,7 @@ import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 
 const store = useJobOpportunitiesStore();
 
-const totalJobs = computed(() => store.jobOpportunities?.total || 0);
+const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
 const search = ref(store.filters.search);
 const popularTags = ['React', 'Vue', 'TypeScript', 'Next.js', 'Remote'];
 const terminalLines = [
@@ -150,18 +150,20 @@ function searchTag(tag: string) {
 
   &__pulse {
     @apply inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full mb-6;
-    background: rgba(190, 242, 100, 0.08);
-    border: 1px solid rgba(190, 242, 100, 0.20);
+    background: var(--fj-success-bg);
+    border: 1px solid var(--fj-success-border);
   }
 
   &__pulse-dot {
-    @apply w-1.5 h-1.5 rounded-full bg-lime-300;
-    box-shadow: 0 0 8px #bef264;
+    @apply w-1.5 h-1.5 rounded-full;
+    background: var(--fj-success-dot);
+    box-shadow: 0 0 8px var(--fj-success-dot);
     animation: pulse-glow 2s ease-in-out infinite;
   }
 
   &__pulse-text {
-    @apply font-mono text-lime-300;
+    @apply font-mono;
+    color: var(--fj-success-text);
     font-size: 11.5px;
     letter-spacing: 0.3px;
   }

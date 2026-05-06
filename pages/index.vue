@@ -22,13 +22,26 @@ import TrustStrip from '~/components/home/trust-strip.vue';
 import JobFilters from '~/components/shared/job-filters.vue';
 import JobOpportunities from '~/components/job-opportunities/job-opportunities.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import type { IndexJobOpportunitiesResponse } from '~/types/job-opportunities';
 
 import { defaultMetaTags } from '~/utils/meta-tags';
 
 useHead(defaultMetaTags);
 
 const store = useJobOpportunitiesStore();
-const totalJobs = computed(() => store.jobOpportunities?.total || 0);
+const config = useRuntimeConfig();
+const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
+
+await useFetch<IndexJobOpportunitiesResponse>(
+	'job_opportunities',
+	{
+		baseURL: config.public.baseURL,
+		key: 'job-opportunities-total',
+		onResponse: ({ response }) => {
+			store.setTotalJobOpportunities(response._data.total);
+		},
+	},
+);
 </script>
 
 <style scoped>
@@ -44,7 +57,7 @@ const totalJobs = computed(() => store.jobOpportunities?.total || 0);
   }
 
   &__count {
-    @apply text-xl font-semibold;
+    @apply inline-flex items-baseline gap-2 text-xl font-semibold;
     color: var(--fj-text);
     letter-spacing: -0.6px;
   }

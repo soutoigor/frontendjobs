@@ -23,6 +23,13 @@ html.dark {
   --fj-text-muted: #6b7280;
   --fj-text-soft: #4b5563;
   --fj-shadow: 0 18px 50px rgba(15, 23, 42, 0.10);
+  --fj-success-text: #3f7d20;
+  --fj-success-bg: rgba(63, 125, 32, 0.08);
+  --fj-success-border: rgba(63, 125, 32, 0.20);
+  --fj-success-dot: #6aa832;
+  --fj-warning-text: #a35a00;
+  --fj-warning-bg: rgba(163, 90, 0, 0.08);
+  --fj-warning-border: rgba(163, 90, 0, 0.24);
 }
 
 html.dark {
@@ -40,6 +47,13 @@ html.dark {
   --fj-text-muted: #9ca3af;
   --fj-text-soft: #d1d5db;
   --fj-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --fj-success-text: #bef264;
+  --fj-success-bg: rgba(190, 242, 100, 0.08);
+  --fj-success-border: rgba(190, 242, 100, 0.20);
+  --fj-success-dot: #bef264;
+  --fj-warning-text: #fbbf24;
+  --fj-warning-bg: rgba(251, 191, 36, 0.10);
+  --fj-warning-border: rgba(251, 191, 36, 0.25);
 }
 
 body {

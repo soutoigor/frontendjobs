@@ -65,7 +65,7 @@ const token = useCookie('token');
 const colorMode = useColorMode();
 
 const colorModeOptions = [
-	{ label: 'System', value: 'system', icon: 'i-heroicons-computer-desktop-20-solid' },
+	{ label: 'System', value: 'system', icon: 'i-heroicons-cog-6-tooth-20-solid' },
 	{ label: 'Light', value: 'light', icon: 'i-heroicons-sun-20-solid' },
 	{ label: 'Dark', value: 'dark', icon: 'i-heroicons-moon-20-solid' },
 ];

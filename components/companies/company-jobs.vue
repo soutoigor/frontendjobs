@@ -297,15 +297,15 @@ async function deletePendingJob(id: string) {
     letter-spacing: 0.3px;
 
     &--live {
-      background: rgba(190, 242, 100, 0.10);
-      color: #bef264;
-      border: 1px solid rgba(190, 242, 100, 0.25);
+      background: var(--fj-success-bg);
+      color: var(--fj-success-text);
+      border: 1px solid var(--fj-success-border);
     }
 
     &--pending {
-      background: rgba(251, 191, 36, 0.10);
-      color: #fbbf24;
-      border: 1px solid rgba(251, 191, 36, 0.25);
+      background: var(--fj-warning-bg);
+      color: var(--fj-warning-text);
+      border: 1px solid var(--fj-warning-border);
     }
 
     &--other {

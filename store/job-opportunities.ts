@@ -57,6 +57,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	const token = useCookie('token');
 
 	const jobOpportunities = ref<IndexJobOpportunitiesResponse>();
+	const totalJobOpportunities = ref<number>();
 	const jobOpportunity = ref<JobOpportunity>(initialJobOpportunity);
 	const draftJobOpportunity = ref<JobOpportunityDraft>();
 	const validationErrors = ref<JobOpportunityValidationErrors>({});
@@ -94,6 +95,10 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 
 	function setJobOpportunities(newJobOpportunities: IndexJobOpportunitiesResponse) {
 		jobOpportunities.value = newJobOpportunities;
+	}
+
+	function setTotalJobOpportunities(total: number) {
+		totalJobOpportunities.value = total;
 	}
 
 	function removeFilter(selectedFilter: string) {
@@ -306,12 +311,14 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 
 	return {
 		jobOpportunities,
+		totalJobOpportunities,
 		filters,
 		isSavingJobOpportunity,
 		updateFilters,
 		resetFilters,
 		removeFilter,
 		setJobOpportunities,
+		setTotalJobOpportunities,
 		filtersLabel,
 		draftJobOpportunity,
 		validationErrors,
