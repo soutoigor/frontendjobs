@@ -5,10 +5,9 @@
 		class="search-job-input"
 		icon="i-heroicons-magnifying-glass-20-solid"
 		size="xl"
-		color="purple"
 		:trailing="false"
-		placeholder="Search..."
-		@input="handleSearchJobInput($event.target.value)"
+		placeholder="Search by role, company, or stack…"
+		@input="handleSearchJobInput(($event.target as HTMLInputElement).value)"
 	/>
 </template>
 
@@ -27,6 +26,6 @@ const handleSearchJobInput = useDebounceFn((value: string) => {
 
 <style scoped>
 .search-job-input {
-  @apply w-full bg-gray-900 rounded-lg;
+  @apply w-full rounded-lg;
 }
 </style>

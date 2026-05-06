@@ -1,15 +1,18 @@
 <template>
-	<AuthenticationWrapper title="Create Account">
+	<AuthenticationWrapper title="Create your company account">
+		<template #subtitle>
+			Post your first frontend role in under 5 minutes.
+		</template>
 		<template #form>
 			<RegisterForm />
 		</template>
 		<template #options>
 			<p>
 				Already have an account? <NuxtLink
-					class="register__link"
+					class="text-violet-400 hover:text-violet-300"
 					to="/login"
 				>
-					Login
+					Sign in
 				</NuxtLink>
 			</p>
 		</template>
@@ -20,12 +23,3 @@
 import AuthenticationWrapper from '~/components/authentication/authentication-wrapper.vue';
 import RegisterForm from '~/components/authentication/register-form.vue';
 </script>
-
-<style scoped>
-.register {
-
-  &__link {
-    @apply text-purple-600;
-  }
-}
-</style>

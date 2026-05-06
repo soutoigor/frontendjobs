@@ -1,27 +1,37 @@
 <template>
-	<div class="job-opportunity-cta">
+	<div class="job-cta">
 		<UButton
+			size="lg"
+			icon="i-heroicons-bolt-20-solid"
+			@click="isModalOpen = true"
+		>
+			Apply for this role
+		</UButton>
+		<UButton
+			variant="soft"
 			color="gray"
-			variant="outline"
-			size="xl"
+			size="lg"
+			:icon="saved ? 'i-heroicons-heart-solid' : 'i-heroicons-bookmark-20-solid'"
+			@click="saved = !saved"
+		>
+			{{ saved ? 'Saved' : 'Save' }}
+		</UButton>
+		<UButton
+			variant="soft"
+			color="gray"
+			size="lg"
+			icon="i-heroicons-share-20-solid"
 			@click="shareJobOpportunity"
 		>
 			Share
 		</UButton>
-		<UButton
-			color="primary"
-			variant="solid"
-			size="xl"
-			@click="isModalOpen = true"
-		>
-			Apply
-		</UButton>
 
 		<ApplyModal
 			v-model="isModalOpen"
-			:job-id="jobOpportunity.id"
+			:job-id="jobOpportunity.id ?? ''"
 			:job-title="jobOpportunity.title"
 			:application-link="jobOpportunity.application_link"
+			:company-name="jobOpportunity.company?.name ?? ''"
 		/>
 	</div>
 </template>
@@ -36,6 +46,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const isModalOpen = ref(false);
+const saved = ref(false);
 
 function shareJobOpportunity() {
 	if (navigator.share) {
@@ -49,7 +60,7 @@ function shareJobOpportunity() {
 </script>
 
 <style scoped>
-.job-opportunity-cta {
-  @apply flex gap-4;
+.job-cta {
+  @apply flex gap-2.5 flex-wrap;
 }
 </style>

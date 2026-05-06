@@ -6,10 +6,16 @@
 		@submit="onSubmit"
 	>
 		<UFormGroup
-			label="Email"
+			label="Work email"
 			name="email"
 		>
-			<UInput v-model="state.email" />
+			<UInput
+				v-model="state.email"
+				placeholder="you@company.com"
+				type="email"
+				icon="i-heroicons-envelope-20-solid"
+				size="lg"
+			/>
 		</UFormGroup>
 
 		<UFormGroup
@@ -19,14 +25,20 @@
 			<UInput
 				v-model="state.password"
 				type="password"
+				placeholder="••••••••"
+				icon="i-heroicons-lock-closed-20-solid"
+				size="lg"
 			/>
 		</UFormGroup>
 
 		<UButton
 			block
 			type="submit"
+			size="lg"
+			trailing-icon="i-heroicons-arrow-right-20-solid"
+			class="mt-2"
 		>
-			Login
+			Sign in
 		</UButton>
 	</UForm>
 </template>
@@ -89,6 +101,6 @@ function redirectAfterLogin() {
 
 <style scoped>
 .login-form {
-  @apply w-full flex flex-col gap-4 items-stretch;
+  @apply w-full flex flex-col gap-3.5 items-stretch;
 }
 </style>
