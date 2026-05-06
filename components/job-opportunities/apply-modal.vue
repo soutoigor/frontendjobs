@@ -159,7 +159,7 @@ async function submit(anonymous: boolean) {
 
 <style scoped>
 .apply-modal {
-  @apply p-7;
+  @apply w-full max-w-full p-5 sm:p-7;
 
   &__header {
     @apply flex items-center justify-between mb-5;
@@ -198,7 +198,7 @@ async function submit(anonymous: boolean) {
   }
 
   &__actions {
-    @apply flex gap-2 mt-5;
+    @apply grid grid-cols-1 gap-2 mt-5 sm:grid-cols-2;
   }
 
   &__confirmation {
