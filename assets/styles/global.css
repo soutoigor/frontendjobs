@@ -1,8 +1,50 @@
 @import 'tailwindcss/tailwind.css';
 
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+:root {
+  --fj-bg: #f7f8fb;
+  --fj-bg-soft: #eef1f6;
+  --fj-surface: rgba(255, 255, 255, 0.82);
+  --fj-surface-muted: rgba(248, 250, 252, 0.88);
+  --fj-surface-solid: #ffffff;
+  --fj-toolbar-bg: rgba(255, 255, 255, 0.78);
+  --fj-terminal-bg: #f8fafc;
+  --fj-footer-bg: #ffffff;
+  --fj-border: rgba(15, 23, 42, 0.10);
+  --fj-border-strong: rgba(15, 23, 42, 0.16);
+  --fj-text: #111827;
+  --fj-text-muted: #6b7280;
+  --fj-text-soft: #4b5563;
+  --fj-shadow: 0 18px 50px rgba(15, 23, 42, 0.10);
+}
+
+html.dark {
+  --fj-bg: #0b0d12;
+  --fj-bg-soft: #0f1117;
+  --fj-surface: rgba(15, 17, 23, 0.6);
+  --fj-surface-muted: rgba(20, 23, 32, 0.7);
+  --fj-surface-solid: #0a0c11;
+  --fj-toolbar-bg: rgba(11, 13, 18, 0.72);
+  --fj-terminal-bg: #0a0c11;
+  --fj-footer-bg: #080a0e;
+  --fj-border: rgba(255, 255, 255, 0.06);
+  --fj-border-strong: rgba(255, 255, 255, 0.10);
+  --fj-text: #ffffff;
+  --fj-text-muted: #9ca3af;
+  --fj-text-soft: #d1d5db;
+  --fj-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
 body {
-  background-color: #0b0d12;
-  color: #e5e7eb;
+  background-color: var(--fj-bg);
+  color: var(--fj-text);
   font-family: 'Geist', sans-serif;
 }
 
@@ -22,10 +64,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--fj-border-strong);
   border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--fj-text-muted);
 }

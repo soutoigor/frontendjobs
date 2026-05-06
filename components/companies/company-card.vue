@@ -109,12 +109,14 @@ function getSocialLabel(social: keyof Socials, value: string) {
   }
 
   &__name {
-    @apply text-2xl font-bold text-white;
+    @apply text-2xl font-bold;
+    color: var(--fj-text);
     letter-spacing: -0.6px;
   }
 
   &__meta {
-    @apply flex items-center gap-2 text-sm text-gray-400;
+    @apply flex items-center gap-2 text-sm;
+    color: var(--fj-text-muted);
   }
 
   &__socials {
@@ -122,7 +124,12 @@ function getSocialLabel(social: keyof Socials, value: string) {
   }
 
   &__social-link {
-    @apply text-xs flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors;
+    @apply text-xs flex items-center gap-1.5 transition-colors;
+    color: var(--fj-text-muted);
+
+    &:hover {
+      color: var(--fj-text);
+    }
   }
 }
 </style>

@@ -10,7 +10,10 @@
 			v-else-if="pending && store.jobOpportunities?.data.length === 0"
 			class="job-opportunities__list"
 		>
-			<JobOpportunityCardSkeleton v-for="skeleton of 6" :key="skeleton" />
+			<JobOpportunityCardSkeleton
+				v-for="skeleton of 6"
+				:key="skeleton"
+			/>
 		</div>
 		<div
 			v-else-if="error"

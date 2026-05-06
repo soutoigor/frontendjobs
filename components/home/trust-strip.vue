@@ -50,10 +50,11 @@ const companies = computed(() => {
 <style scoped>
 .trust-strip {
   @apply py-8 max-w-7xl mx-auto px-8;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--fj-border);
 
   &__label {
-    @apply font-mono text-gray-500 uppercase text-center mb-5 tracking-widest;
+    @apply font-mono uppercase text-center mb-5 tracking-widest;
+    color: var(--fj-text-muted);
     font-size: 10.5px;
   }
 
@@ -63,7 +64,8 @@ const companies = computed(() => {
   }
 
   &__company {
-    @apply inline-flex items-center gap-2 text-sm font-semibold text-gray-400;
+    @apply inline-flex items-center gap-2 text-sm font-semibold;
+    color: var(--fj-text-muted);
   }
 }
 </style>

@@ -25,6 +25,14 @@ export function formatSalary(salary: number): string {
 	return salary.toString();
 }
 
+export function formatList(value?: string | string[] | null): string {
+	if (!value) {
+		return '';
+	}
+
+	return Array.isArray(value) ? value.filter(Boolean).join(', ') : value;
+}
+
 export function timeAgo(dateString: string): string {
 	const date = new Date(dateString);
 	const now = new Date();
@@ -60,5 +68,5 @@ export function timeAgo(dateString: string): string {
  * @returns A boolean indicating whether the value is `null`, `undefined`, or empty.
  */
 export const filterNilOrEmpty = filter(
-	(value: any) => or(isNil(value), isEmpty(value)),
+	(value: unknown) => or(isNil(value), isEmpty(value)),
 );

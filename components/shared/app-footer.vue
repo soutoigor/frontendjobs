@@ -34,8 +34,8 @@ import AppLogo from '~/components/shared/app-logo.vue';
 
 <style scoped>
 .app-footer {
-  background: #080a0e;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--fj-footer-bg);
+  border-top: 1px solid var(--fj-border);
   @apply py-8 px-8;
 
   &__container {
@@ -43,15 +43,21 @@ import AppLogo from '~/components/shared/app-logo.vue';
   }
 
   &__nav {
-    @apply flex gap-6 text-sm text-gray-500 flex-wrap justify-center;
+    @apply flex gap-6 text-sm flex-wrap justify-center;
+    color: var(--fj-text-muted);
 
     a {
-      @apply hover:text-gray-300 transition-colors;
+      @apply transition-colors;
+
+      &:hover {
+        color: var(--fj-text);
+      }
     }
   }
 
   &__copy {
-    @apply font-mono text-xs text-gray-600;
+    @apply font-mono text-xs;
+    color: var(--fj-text-muted);
   }
 }
 </style>

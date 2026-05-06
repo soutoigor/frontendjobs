@@ -15,10 +15,6 @@
 						<span class="job-content__company-name">
 							{{ jobOpportunityFormatted.company?.name }}
 						</span>
-						<VerifiedBadge
-							v-if="jobOpportunityFormatted.company"
-							show-label
-						/>
 					</div>
 					<h1 class="job-content__title">
 						{{ jobOpportunityFormatted.title }}
@@ -152,7 +148,7 @@
 							<div class="job-content__sidebar-company-name">
 								{{ jobOpportunityFormatted.company.name }}
 							</div>
-							<div class="text-xs text-gray-500">
+							<div class="job-content__sidebar-company-industry">
 								{{ jobOpportunityFormatted.company.industry || 'Technology' }}
 							</div>
 						</div>
@@ -169,8 +165,8 @@
 							v-if="jobOpportunityFormatted.salary_minimum"
 							class="job-content__fact-row"
 						>
-							<span class="text-gray-500">Salary</span>
-							<span class="text-gray-200 font-mono">
+							<span class="job-content__fact-label">Salary</span>
+							<span class="job-content__fact-value font-mono">
 								{{ getSalaryText(jobOpportunityFormatted.currency, jobOpportunityFormatted.salary_minimum, jobOpportunityFormatted.salary_maximum) }}
 							</span>
 						</div>
@@ -178,40 +174,23 @@
 							v-if="jobOpportunityFormatted.seniority"
 							class="job-content__fact-row"
 						>
-							<span class="text-gray-500">Seniority</span>
-							<span class="text-gray-200">{{ jobOpportunityFormatted.seniority }}</span>
+							<span class="job-content__fact-label">Seniority</span>
+							<span class="job-content__fact-value text-right">{{ formatList(jobOpportunityFormatted.seniority) }}</span>
 						</div>
 						<div class="job-content__fact-row">
-							<span class="text-gray-500">Remote</span>
-							<span class="text-gray-200">{{ jobOpportunityFormatted.remote ? 'Yes' : 'No' }}</span>
+							<span class="job-content__fact-label">Remote</span>
+							<span class="job-content__fact-value">{{ jobOpportunityFormatted.remote ? 'Yes' : 'No' }}</span>
 						</div>
 						<div
 							v-if="jobOpportunityFormatted.technologies?.length"
 							class="job-content__fact-row"
 						>
-							<span class="text-gray-500">Stack</span>
-							<span class="text-gray-200 font-mono text-right">
+							<span class="job-content__fact-label">Stack</span>
+							<span class="job-content__fact-value font-mono text-right">
 								{{ jobOpportunityFormatted.technologies.slice(0, 3).map(t => t.name || t).join(' · ') }}
 							</span>
 						</div>
 					</div>
-				</div>
-
-				<!-- Job alerts -->
-				<div class="job-content__sidebar-card job-content__sidebar-card--accent">
-					<div class="job-content__alert-label">
-						Job alerts
-					</div>
-					<p class="job-content__alert-text">
-						Get similar roles in your inbox weekly.
-					</p>
-					<UButton
-						size="sm"
-						block
-						icon="i-heroicons-envelope-20-solid"
-					>
-						Subscribe
-					</UButton>
 				</div>
 			</div>
 		</div>
@@ -220,10 +199,9 @@
 
 <script setup lang="ts">
 import FjIcon from '~/components/shared/fj-icon.vue';
-import VerifiedBadge from '~/components/shared/verified-badge.vue';
 import JobOpportunityCta from '~/components/job-opportunities/job-opportunity-cta.vue';
 import { useCompaniesStore } from '~/store/companies';
-import { getSalaryText, timeAgo } from '~/utils/global';
+import { formatList, getSalaryText, timeAgo } from '~/utils/global';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
 interface Props {
@@ -251,8 +229,8 @@ const jobOpportunityFormatted = computed(() => {
 
   &__header-card {
     @apply rounded-xl p-7;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
     backdrop-filter: blur(8px);
   }
 
@@ -270,17 +248,20 @@ const jobOpportunityFormatted = computed(() => {
   }
 
   &__company-name {
-    @apply text-sm text-gray-400 font-medium;
+    @apply text-sm font-medium;
+    color: var(--fj-text-muted);
   }
 
   &__title {
-    @apply text-white font-bold leading-tight mb-3.5;
+    @apply font-bold leading-tight mb-3.5;
+    color: var(--fj-text);
     font-size: 32px;
     letter-spacing: -1px;
   }
 
   &__meta {
-    @apply flex gap-3.5 text-sm text-gray-400 flex-wrap;
+    @apply flex gap-3.5 text-sm flex-wrap;
+    color: var(--fj-text-muted);
   }
 
   &__meta-item {
@@ -292,11 +273,13 @@ const jobOpportunityFormatted = computed(() => {
   }
 
   &__salary-amount {
-    @apply font-mono text-xl font-semibold text-white;
+    @apply font-mono text-xl font-semibold;
+    color: var(--fj-text);
   }
 
   &__salary-period {
-    @apply text-xs text-gray-500;
+    @apply text-xs;
+    color: var(--fj-text-muted);
   }
 
   &__tags {
@@ -305,7 +288,7 @@ const jobOpportunityFormatted = computed(() => {
 
   &__actions {
     @apply flex gap-2.5 mt-5 pt-5;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--fj-border);
   }
 
   /* Two-column body */
@@ -316,20 +299,26 @@ const jobOpportunityFormatted = computed(() => {
 
   &__main {
     @apply rounded-xl p-7;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
   }
 
   &__section-label {
-    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3.5;
+    @apply text-xs font-semibold uppercase tracking-wider mb-3.5;
+    color: var(--fj-text-muted);
   }
 
   &__description {
-    @apply text-gray-300 leading-relaxed;
+    @apply leading-relaxed;
+    color: var(--fj-text-soft);
     font-size: 15px;
 
-    :deep(h2), :deep(h3) {
-      @apply text-white font-semibold mt-5 mb-2;
+    :deep(h1), :deep(h2), :deep(h3) {
+      @apply text-gray-950 dark:text-white font-semibold mt-5 mb-2;
+    }
+
+    :deep(h1) {
+      @apply text-2xl;
     }
 
     :deep(ul), :deep(ol) {
@@ -343,7 +332,7 @@ const jobOpportunityFormatted = computed(() => {
 
   &__tech-section {
     @apply mt-6 pt-6;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--fj-border);
   }
 
   &__tech-list {
@@ -357,8 +346,8 @@ const jobOpportunityFormatted = computed(() => {
 
   &__sidebar-card {
     @apply rounded-xl p-5;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
 
     &--accent {
       background: linear-gradient(180deg, rgba(167, 139, 250, 0.06), transparent);
@@ -367,7 +356,8 @@ const jobOpportunityFormatted = computed(() => {
   }
 
   &__sidebar-label {
-    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3;
+    @apply text-xs font-semibold uppercase tracking-wider mb-3;
+    color: var(--fj-text-muted);
   }
 
   &__sidebar-company {
@@ -375,7 +365,13 @@ const jobOpportunityFormatted = computed(() => {
   }
 
   &__sidebar-company-name {
-    @apply text-sm font-semibold text-white;
+    @apply text-sm font-semibold;
+    color: var(--fj-text);
+  }
+
+  &__sidebar-company-industry {
+    @apply text-xs;
+    color: var(--fj-text-muted);
   }
 
   &__facts {
@@ -386,12 +382,12 @@ const jobOpportunityFormatted = computed(() => {
     @apply flex justify-between text-xs;
   }
 
-  &__alert-label {
-    @apply font-mono text-xs text-violet-400 uppercase tracking-wider mb-2;
+  &__fact-label {
+    color: var(--fj-text-muted);
   }
 
-  &__alert-text {
-    @apply text-sm text-gray-200 mb-3 leading-relaxed;
+  &__fact-value {
+    color: var(--fj-text);
   }
 }
 

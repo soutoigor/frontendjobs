@@ -7,7 +7,7 @@
 			<div class="index__heading">
 				<h2 class="index__count">
 					<span class="text-violet-400">{{ totalJobs }}</span>
-					<span class="text-gray-400 font-normal">open roles</span>
+					<span class="index__count-label">open roles</span>
 				</h2>
 				<span class="index__updated">Updated 2 min ago</span>
 			</div>
@@ -44,12 +44,19 @@ const totalJobs = computed(() => store.jobOpportunities?.total || 0);
   }
 
   &__count {
-    @apply text-xl font-semibold text-white;
+    @apply text-xl font-semibold;
+    color: var(--fj-text);
     letter-spacing: -0.6px;
   }
 
+  &__count-label {
+    @apply font-normal;
+    color: var(--fj-text-muted);
+  }
+
   &__updated {
-    @apply font-mono text-gray-500;
+    @apply font-mono;
+    color: var(--fj-text-muted);
     font-size: 11.5px;
   }
 }

@@ -1,16 +1,18 @@
 import { useAuthStore } from '~/store/authentication';
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async () => {
 	const authStore = useAuthStore();
 
 	if (!authStore.authenticated) {
 		try {
 			await authStore.refresh();
 		}
-		finally {
-			if (!authStore.authenticated) {
-				return navigateTo('/login');
-			}
+		catch {
+			return navigateTo('/login');
+		}
+
+		if (!authStore.authenticated) {
+			return navigateTo('/login');
 		}
 	}
 });

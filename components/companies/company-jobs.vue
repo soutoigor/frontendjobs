@@ -242,7 +242,8 @@ async function deletePendingJob(id: string) {
   }
 
   &__title {
-    @apply text-lg font-semibold text-white;
+    @apply text-lg font-semibold;
+    color: var(--fj-text);
     letter-spacing: -0.3px;
   }
 
@@ -251,12 +252,13 @@ async function deletePendingJob(id: string) {
   }
 
   &__tab {
-    @apply px-3 py-1.5 text-xs rounded-md cursor-pointer text-gray-400 transition-colors;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    @apply px-3 py-1.5 text-xs rounded-md cursor-pointer transition-colors;
+    color: var(--fj-text-muted);
+    border: 1px solid var(--fj-border);
 
     &--active {
-      @apply text-white;
-      background: rgba(255, 255, 255, 0.06);
+      color: var(--fj-text);
+      background: var(--fj-surface-muted);
     }
   }
 
@@ -266,8 +268,8 @@ async function deletePendingJob(id: string) {
 
   &__row {
     @apply rounded-xl;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
   }
 
   &__row-inner {
@@ -284,7 +286,8 @@ async function deletePendingJob(id: string) {
   }
 
   &__row-title {
-    @apply text-sm font-semibold text-white;
+    @apply text-sm font-semibold;
+    color: var(--fj-text);
     letter-spacing: -0.2px;
   }
 
@@ -306,9 +309,9 @@ async function deletePendingJob(id: string) {
     }
 
     &--other {
-      background: rgba(255, 255, 255, 0.04);
-      color: #9ca3af;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--fj-surface-muted);
+      color: var(--fj-text-muted);
+      border: 1px solid var(--fj-border);
     }
   }
 
@@ -317,7 +320,8 @@ async function deletePendingJob(id: string) {
   }
 
   &__row-salary {
-    @apply font-mono text-xs text-gray-500;
+    @apply font-mono text-xs;
+    color: var(--fj-text-muted);
   }
 
   &__stat {
@@ -325,7 +329,8 @@ async function deletePendingJob(id: string) {
   }
 
   &__stat-value {
-    @apply font-mono text-base font-semibold text-white block;
+    @apply font-mono text-base font-semibold block;
+    color: var(--fj-text);
 
     &--accent {
       @apply text-violet-400;
@@ -333,7 +338,8 @@ async function deletePendingJob(id: string) {
   }
 
   &__stat-label {
-    @apply text-xs text-gray-500;
+    @apply text-xs;
+    color: var(--fj-text-muted);
   }
 
   &__row-actions {
@@ -342,19 +348,21 @@ async function deletePendingJob(id: string) {
 
   &__empty {
     @apply flex flex-col items-center gap-6 rounded-xl p-8 text-center;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
   }
 
   &__empty-copy {
     @apply flex flex-col gap-2 max-w-md;
 
     h3 {
-      @apply text-lg font-semibold text-white;
+      @apply text-lg font-semibold;
+      color: var(--fj-text);
     }
 
     p {
-      @apply text-sm text-gray-400;
+      @apply text-sm;
+      color: var(--fj-text-muted);
     }
   }
 }

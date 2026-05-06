@@ -135,13 +135,13 @@ function openJobOpportunity() {
   @apply relative grid items-center gap-4 cursor-pointer rounded-xl;
   grid-template-columns: 44px 1fr auto;
   padding: 18px 22px;
-  background: rgba(15, 17, 23, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--fj-surface);
+  border: 1px solid var(--fj-border);
   transition: all 0.15s;
 
   &:hover {
-    background: rgba(20, 23, 32, 0.7);
-    border-color: rgba(255, 255, 255, 0.10);
+    background: var(--fj-surface-muted);
+    border-color: var(--fj-border-strong);
   }
 
   &--featured {
@@ -182,14 +182,16 @@ function openJobOpportunity() {
   }
 
   &__title {
-    @apply text-white font-semibold;
+    @apply font-semibold;
+    color: var(--fj-text);
     font-size: 15.5px;
     letter-spacing: -0.2px;
   }
 
   &__salary-inline {
-    @apply font-mono text-xs px-2 py-0.5 rounded text-gray-200;
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    @apply font-mono text-xs px-2 py-0.5 rounded;
+    color: var(--fj-text);
+    border: 1px solid var(--fj-border-strong);
   }
 
   &__meta-row {
@@ -197,7 +199,8 @@ function openJobOpportunity() {
   }
 
   &__company {
-    @apply text-gray-400 inline-flex items-center gap-1;
+    @apply inline-flex items-center gap-1;
+    color: var(--fj-text-muted);
     font-size: 12.5px;
   }
 
@@ -206,7 +209,8 @@ function openJobOpportunity() {
   }
 
   &__location {
-    @apply text-gray-400 inline-flex items-center gap-1;
+    @apply inline-flex items-center gap-1;
+    color: var(--fj-text-muted);
     font-size: 12.5px;
   }
 
@@ -223,12 +227,13 @@ function openJobOpportunity() {
   }
 
   &__posted {
-    @apply font-mono text-gray-500;
+    @apply font-mono;
+    color: var(--fj-text-muted);
     font-size: 11px;
   }
 
   &__applicants {
-    @apply text-gray-500;
+    color: var(--fj-text-muted);
     font-size: 11.5px;
   }
 

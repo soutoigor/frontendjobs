@@ -21,16 +21,18 @@ defineProps<Props>();
 <style scoped>
 .stat-card {
   @apply flex flex-col gap-0.5 p-3.5 rounded-xl;
-  background: rgba(15, 17, 23, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--fj-surface);
+  border: 1px solid var(--fj-border);
 
   &__value {
-    @apply font-mono text-xl font-semibold text-white;
+    @apply font-mono text-xl font-semibold;
+    color: var(--fj-text);
     letter-spacing: -0.5px;
   }
 
   &__label {
-    @apply text-xs text-gray-500 uppercase tracking-wider;
+    @apply text-xs uppercase tracking-wider;
+    color: var(--fj-text-muted);
   }
 }
 </style>

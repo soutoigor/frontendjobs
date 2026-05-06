@@ -60,8 +60,8 @@ defineProps<Props>();
 
   &__card {
     @apply w-full max-w-md rounded-2xl p-8;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
     backdrop-filter: blur(8px);
   }
 
@@ -71,12 +71,14 @@ defineProps<Props>();
   }
 
   &__title {
-    @apply text-2xl font-bold text-white mb-1.5;
+    @apply text-2xl font-bold mb-1.5;
+    color: var(--fj-text);
     letter-spacing: -0.8px;
   }
 
   &__subtitle {
-    @apply text-sm text-gray-400 mb-6 leading-relaxed;
+    @apply text-sm mb-6 leading-relaxed;
+    color: var(--fj-text-muted);
   }
 
   &__form {
@@ -84,7 +86,8 @@ defineProps<Props>();
   }
 
   &__options {
-    @apply text-center mt-5 text-xs text-gray-500;
+    @apply text-center mt-5 text-xs;
+    color: var(--fj-text-muted);
 
     :deep(a) {
       @apply text-violet-400 cursor-pointer hover:text-violet-300;

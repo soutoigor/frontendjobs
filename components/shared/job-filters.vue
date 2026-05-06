@@ -31,6 +31,11 @@
 					placeholder="Type"
 				/>
 				<label class="job-filters__remote-toggle">
+					<input
+						v-model="store.filters.remote"
+						type="checkbox"
+						class="sr-only"
+					>
 					<span
 						class="job-filters__remote-check"
 						:class="{ 'job-filters__remote-check--active': store.filters.remote }"
@@ -45,7 +50,6 @@
 					<span
 						class="job-filters__remote-label"
 						:class="{ 'text-lime-300': store.filters.remote, 'text-gray-400': !store.filters.remote }"
-						@click="store.filters.remote = !store.filters.remote"
 					>Remote only</span>
 				</label>
 			</div>
@@ -104,7 +108,7 @@ const {
 .job-filters {
   @apply w-full flex flex-col gap-4;
   padding: 20px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--fj-border);
 
   &__row {
     @apply flex items-center gap-2.5 flex-wrap;
@@ -126,7 +130,7 @@ const {
 
   &__remote-check {
     @apply w-3.5 h-3.5 rounded inline-flex items-center justify-center;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--fj-border-strong);
 
     &--active {
       @apply bg-lime-300;

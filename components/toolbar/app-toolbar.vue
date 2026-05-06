@@ -19,11 +19,21 @@
 		</div>
 		<div class="app-toolbar__right">
 			<NuxtLink
+				v-if="!authStore.authenticated && !token"
 				to="/login"
 				class="app-toolbar__sign-in"
 			>
 				Sign in
 			</NuxtLink>
+			<UDropdown :items="colorModeItems">
+				<UButton
+					variant="ghost"
+					color="gray"
+					size="sm"
+					:icon="colorModeIcon"
+					aria-label="Change color mode"
+				/>
+			</UDropdown>
 			<UButton
 				variant="soft"
 				color="gray"
@@ -47,8 +57,31 @@
 
 <script setup lang="ts">
 import AppLogo from '~/components/shared/app-logo.vue';
+import { useAuthStore } from '~/store/authentication';
 
 const route = useRoute();
+const authStore = useAuthStore();
+const token = useCookie('token');
+const colorMode = useColorMode();
+
+const colorModeOptions = [
+	{ label: 'System', value: 'system', icon: 'i-heroicons-computer-desktop-20-solid' },
+	{ label: 'Light', value: 'light', icon: 'i-heroicons-sun-20-solid' },
+	{ label: 'Dark', value: 'dark', icon: 'i-heroicons-moon-20-solid' },
+];
+
+const colorModeIcon = computed(() => {
+	return colorModeOptions.find(option => option.value === colorMode.preference)?.icon || colorModeOptions[0].icon;
+});
+
+const colorModeItems = computed(() => [
+	colorModeOptions.map(option => ({
+		...option,
+		click: () => {
+			colorMode.preference = option.value;
+		},
+	})),
+]);
 </script>
 
 <style scoped>
@@ -56,9 +89,9 @@ const route = useRoute();
   @apply fixed top-0 left-0 right-0 z-50;
   @apply flex items-center justify-between;
   @apply px-8 py-3.5;
-  background: rgba(11, 13, 18, 0.72);
+  background: var(--fj-toolbar-bg);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--fj-border);
 
   &__left {
     @apply flex items-center gap-8;
@@ -73,11 +106,16 @@ const route = useRoute();
   }
 
   &__nav-link {
-    @apply text-sm font-medium text-gray-400 hover:text-white transition-colors;
+    @apply text-sm font-medium transition-colors;
+    color: var(--fj-text-muted);
     letter-spacing: -0.1px;
 
+    &:hover {
+      color: var(--fj-text);
+    }
+
     &--active {
-      @apply text-white;
+      color: var(--fj-text);
     }
   }
 
@@ -86,7 +124,12 @@ const route = useRoute();
   }
 
   &__sign-in {
-    @apply text-sm text-gray-400 hover:text-white transition-colors px-3 py-1.5;
+    @apply text-sm transition-colors px-3 py-1.5;
+    color: var(--fj-text-muted);
+
+    &:hover {
+      color: var(--fj-text);
+    }
   }
 }
 </style>

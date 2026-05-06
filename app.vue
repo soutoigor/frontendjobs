@@ -13,8 +13,11 @@
 <script setup lang="ts">
 import AppToolbar from '~/components/toolbar/app-toolbar.vue';
 import AppFooter from '~/components/shared/app-footer.vue';
+import { useAuthStore } from '~/store/authentication';
 
 const route = useRoute();
+const authStore = useAuthStore();
+const token = useCookie('token');
 const isAuthPage = computed(() => {
 	const authPages = [
 		'/login',
@@ -28,5 +31,18 @@ const { siteUrl } = useRuntimeConfig().public;
 
 useHead({
 	link: [{ rel: 'canonical', href: `${siteUrl}${route.path}` }],
+});
+
+onMounted(async () => {
+	if (!token.value || authStore.authenticated) {
+		return;
+	}
+
+	try {
+		await authStore.refresh();
+	}
+	catch {
+		await authStore.logUserOut();
+	}
 });
 </script>

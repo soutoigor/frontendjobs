@@ -33,7 +33,7 @@
 .job-card-skeleton {
   @apply flex gap-4 items-start rounded-xl;
   padding: 18px 22px;
-  background: rgba(15, 17, 23, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--fj-surface);
+  border: 1px solid var(--fj-border);
 }
 </style>

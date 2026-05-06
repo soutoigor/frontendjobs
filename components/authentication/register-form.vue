@@ -89,7 +89,6 @@ type Schema = InferType<typeof schema>;
 const benefits = [
 	'$99 per 30-day post',
 	'No subscription',
-	'Verified badge after first post',
 	'Email alerts on every application',
 ];
 
@@ -144,7 +143,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     @apply list-none p-0 mt-5 flex flex-col gap-2;
 
     li {
-      @apply flex items-center gap-2 text-xs text-gray-400;
+      @apply flex items-center gap-2 text-xs;
+      color: var(--fj-text-muted);
     }
   }
 }

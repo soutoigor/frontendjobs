@@ -18,12 +18,13 @@
 				</p>
 				<div class="hero-split__search-row">
 					<div class="hero-split__search-input">
-						<SearchJobInput />
+						<SearchJobInput v-model="search" />
 					</div>
 					<UButton
 						size="lg"
 						icon="i-heroicons-arrow-right-20-solid"
 						trailing
+						@click="submitSearch"
 					>
 						Search
 					</UButton>
@@ -57,20 +58,19 @@
 							search --remote --stack=react
 						</div>
 						<div class="text-gray-500">
-							↳ Found <span class="text-white">{{ totalJobs }}</span> matches
+							↳ Browse <span class="hero-split__terminal-count">{{ totalJobs }}</span> open roles
 						</div>
 						<div class="hero-split__terminal-results">
 							<div
-								v-for="job in previewJobs"
-								:key="job.id"
+								v-for="line in terminalLines"
+								:key="line.label"
 								class="hero-split__terminal-row"
 							>
 								<span class="hero-split__terminal-title">
-									{{ job.title }}
-									<span class="text-gray-500">· {{ job.company.name }}</span>
+									{{ line.label }}
 								</span>
 								<span class="text-violet-400">
-									{{ getSalaryText(job.currency || 'USD', job.salary_minimum || '0', job.salary_maximum) }}
+									{{ line.value }}
 								</span>
 							</div>
 						</div>
@@ -82,12 +82,12 @@
 						label="Open roles"
 					/>
 					<StatCard
-						value="89%"
-						label="Remote"
+						value="30"
+						label="Per page"
 					/>
 					<StatCard
-						value="$142k"
-						label="Median"
+						value="$99"
+						label="Job post"
 					/>
 				</div>
 			</div>
@@ -99,20 +99,30 @@
 import SearchJobInput from '~/components/shared/search-job-input.vue';
 import StatCard from '~/components/shared/stat-card.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
-import { getSalaryText } from '~/utils/global';
 
 const store = useJobOpportunitiesStore();
 
 const totalJobs = computed(() => store.jobOpportunities?.total || 0);
-const previewJobs = computed(() => (store.jobOpportunities?.data || []).slice(0, 4));
+const search = ref(store.filters.search);
 const popularTags = ['React', 'Vue', 'TypeScript', 'Next.js', 'Remote'];
+const terminalLines = [
+	{ label: 'Stack, seniority, and location filters', value: 'Live' },
+	{ label: 'Salary ranges shown before applying', value: 'Required' },
+	{ label: 'Company-owned posts only', value: 'Paid' },
+	{ label: 'No candidate account needed to apply', value: 'Open' },
+];
+
+function submitSearch() {
+	store.updateFilters({ search: search.value, page: 1 });
+}
 
 function searchTag(tag: string) {
 	if (tag === 'Remote') {
-		store.updateFilters({ remote: true });
+		store.updateFilters({ remote: true, page: 1 });
 	}
 	else {
-		store.updateFilters({ search: tag });
+		search.value = tag;
+		store.updateFilters({ search: tag, page: 1 });
 	}
 }
 </script>
@@ -121,7 +131,7 @@ function searchTag(tag: string) {
 .hero-split {
   @apply relative overflow-hidden;
   padding: 64px 32px 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--fj-border);
 
   &__glow {
     @apply absolute inset-0 pointer-events-none;
@@ -157,7 +167,8 @@ function searchTag(tag: string) {
   }
 
   &__heading {
-    @apply text-white font-bold leading-none mb-5;
+    @apply font-bold leading-none mb-5;
+    color: var(--fj-text);
     font-size: clamp(36px, 5vw, 64px);
     letter-spacing: -2.4px;
     text-wrap: balance;
@@ -168,7 +179,8 @@ function searchTag(tag: string) {
   }
 
   &__subtitle {
-    @apply text-gray-400 mb-7;
+    @apply mb-7;
+    color: var(--fj-text-muted);
     font-size: 17px;
     line-height: 1.5;
     max-width: 520px;
@@ -187,14 +199,21 @@ function searchTag(tag: string) {
   }
 
   &__popular-label {
-    @apply text-xs text-gray-500 mr-1;
+    @apply text-xs mr-1;
+    color: var(--fj-text-muted);
   }
 
   &__popular-tag {
-    @apply font-mono px-2.5 py-1 rounded-full cursor-pointer text-gray-300 hover:text-white transition-colors;
+    @apply font-mono px-2.5 py-1 rounded-full cursor-pointer transition-colors;
+    color: var(--fj-text-soft);
     font-size: 11.5px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--fj-surface-muted);
+    border: 1px solid var(--fj-border);
+
+    &:hover {
+      color: var(--fj-text);
+      border-color: var(--fj-border-strong);
+    }
   }
 
   /* Right column */
@@ -204,14 +223,14 @@ function searchTag(tag: string) {
 
   &__terminal {
     @apply rounded-xl overflow-hidden;
-    background: #0a0c11;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    background: var(--fj-terminal-bg);
+    border: 1px solid var(--fj-border-strong);
+    box-shadow: var(--fj-shadow);
   }
 
   &__terminal-bar {
     @apply flex items-center gap-1.5 px-3.5 py-2.5;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--fj-border);
   }
 
   &__terminal-dot {
@@ -220,12 +239,14 @@ function searchTag(tag: string) {
   }
 
   &__terminal-url {
-    @apply ml-auto text-gray-500;
+    @apply ml-auto;
+    color: var(--fj-text-muted);
     font-size: 10.5px;
   }
 
   &__terminal-body {
-    @apply p-4 text-gray-400;
+    @apply p-4;
+    color: var(--fj-text-soft);
     font-size: 12px;
     line-height: 1.7;
   }
@@ -236,7 +257,7 @@ function searchTag(tag: string) {
 
   &__terminal-results {
     @apply mt-3.5 pt-3.5;
-    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    border-top: 1px dashed var(--fj-border-strong);
   }
 
   &__terminal-row {
@@ -246,7 +267,12 @@ function searchTag(tag: string) {
   }
 
   &__terminal-title {
-    @apply text-gray-200 overflow-hidden text-ellipsis whitespace-nowrap;
+    @apply overflow-hidden text-ellipsis whitespace-nowrap;
+    color: var(--fj-text);
+  }
+
+  &__terminal-count {
+    color: var(--fj-text);
   }
 
   &__stats {

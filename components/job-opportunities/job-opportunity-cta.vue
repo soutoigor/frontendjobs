@@ -11,15 +11,6 @@
 			variant="soft"
 			color="gray"
 			size="lg"
-			:icon="saved ? 'i-heroicons-heart-solid' : 'i-heroicons-bookmark-20-solid'"
-			@click="saved = !saved"
-		>
-			{{ saved ? 'Saved' : 'Save' }}
-		</UButton>
-		<UButton
-			variant="soft"
-			color="gray"
-			size="lg"
 			icon="i-heroicons-share-20-solid"
 			@click="shareJobOpportunity"
 		>
@@ -46,7 +37,6 @@ interface Props {
 
 const props = defineProps<Props>();
 const isModalOpen = ref(false);
-const saved = ref(false);
 
 function shareJobOpportunity() {
 	if (navigator.share) {

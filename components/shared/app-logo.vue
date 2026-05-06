@@ -38,7 +38,7 @@ const sizeClass = computed(() => `app-logo--${props.size}`);
   }
 
   &__frontend {
-    @apply text-white;
+    color: var(--fj-text);
   }
 
   &__jobs {

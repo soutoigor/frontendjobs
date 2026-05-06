@@ -65,20 +65,20 @@
 					<div class="post-job__checkout-item-title">
 						{{ jobOpportunitiesStore.draftJobOpportunity?.title || 'Your job post' }}
 					</div>
-					<div class="text-xs text-gray-400">
+					<div class="post-job__checkout-muted">
 						30-day standard listing
 					</div>
 				</div>
 				<div class="post-job__checkout-row">
-					<span class="text-gray-400">Listing</span>
-					<span class="font-mono text-gray-200">$99.00</span>
+					<span class="post-job__checkout-muted">Listing</span>
+					<span class="post-job__checkout-value">$99.00</span>
 				</div>
 				<div class="post-job__checkout-total">
-					<span class="font-semibold text-white">Total</span>
-					<span class="font-mono text-xl font-semibold text-white">$99.00</span>
+					<span class="post-job__checkout-total-label">Total</span>
+					<span class="post-job__checkout-total-value">$99.00</span>
 				</div>
 				<div class="post-job__checkout-note">
-					<strong class="text-white">Live in seconds.</strong>
+					<strong>Live in seconds.</strong>
 					Payment confirmation publishes your post and sends you an email receipt.
 				</div>
 			</div>
@@ -181,16 +181,17 @@ async function submitAndCheckout() {
   }
 
   &__step {
-    @apply flex items-center gap-2 text-gray-500;
+    @apply flex items-center gap-2;
+    color: var(--fj-text-muted);
 
     &--active {
-      @apply text-white;
+      color: var(--fj-text);
     }
   }
 
   &__step-circle {
     @apply w-6 h-6 rounded-full font-mono text-xs font-bold inline-flex items-center justify-center;
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface-muted);
     color: #6b7280;
 
     .post-job__step--active & {
@@ -204,7 +205,7 @@ async function submitAndCheckout() {
 
   &__step-line {
     @apply flex-1 h-px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--fj-border-strong);
 
     &--active {
       @apply bg-violet-400;
@@ -216,12 +217,14 @@ async function submitAndCheckout() {
   }
 
   &__title {
-    @apply text-3xl font-bold text-white;
+    @apply text-3xl font-bold;
+    color: var(--fj-text);
     letter-spacing: -1.2px;
   }
 
   &__subtitle {
-    @apply text-sm text-gray-400 mt-2 leading-relaxed;
+    @apply text-sm mt-2 leading-relaxed;
+    color: var(--fj-text-muted);
   }
 
   &__preview-banner {
@@ -236,21 +239,23 @@ async function submitAndCheckout() {
 
   &__checkout-card {
     @apply rounded-xl p-6 flex flex-col gap-4;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--fj-surface);
+    border: 1px solid var(--fj-border);
   }
 
   &__section-label {
-    @apply font-mono text-xs text-gray-500 uppercase tracking-wider;
+    @apply font-mono text-xs uppercase tracking-wider;
+    color: var(--fj-text-muted);
   }
 
   &__checkout-item {
     @apply pb-4;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--fj-border);
   }
 
   &__checkout-item-title {
-    @apply text-sm font-semibold text-white mb-1;
+    @apply text-sm font-semibold mb-1;
+    color: var(--fj-text);
   }
 
   &__checkout-row {
@@ -259,13 +264,38 @@ async function submitAndCheckout() {
 
   &__checkout-total {
     @apply flex justify-between items-baseline pt-2;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--fj-border);
   }
 
   &__checkout-note {
-    @apply text-xs text-gray-300 leading-relaxed p-3 rounded-lg;
+    @apply text-xs leading-relaxed p-3 rounded-lg;
+    color: var(--fj-text-soft);
     background: rgba(167, 139, 250, 0.06);
     border: 1px solid rgba(167, 139, 250, 0.15);
+
+    strong {
+      color: var(--fj-text);
+    }
+  }
+
+  &__checkout-muted {
+    @apply text-xs;
+    color: var(--fj-text-muted);
+  }
+
+  &__checkout-value {
+    @apply font-mono text-sm;
+    color: var(--fj-text);
+  }
+
+  &__checkout-total-label {
+    @apply font-semibold;
+    color: var(--fj-text);
+  }
+
+  &__checkout-total-value {
+    @apply font-mono text-xl font-semibold;
+    color: var(--fj-text);
   }
 
   &__nav {

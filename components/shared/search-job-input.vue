@@ -17,11 +17,16 @@ import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 
 const store = useJobOpportunitiesStore();
 
-const search = ref('');
+const search = defineModel<string>({ default: '' });
 
-const handleSearchJobInput = useDebounceFn((value: string) => {
-	store.updateFilters({ search: value });
+const updateSearchFilter = useDebounceFn((value: string) => {
+	store.updateFilters({ search: value, page: 1 });
 }, 500);
+
+function handleSearchJobInput(value: string) {
+	search.value = value;
+	updateSearchFilter(value);
+}
 </script>
 
 <style scoped>

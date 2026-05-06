@@ -120,7 +120,7 @@
 				:size="11"
 				color="#bef264"
 			/>
-			<span>Posts with salary get 3.5× more applications</span>
+			<span>Salary range will be shown clearly on the listing.</span>
 		</div>
 
 		<div class="job-opportunity-form__form-section">
@@ -363,12 +363,14 @@ function setSalaryMaximum(value: string | number) {
   }
 
   &__trailing-currency {
-    @apply text-gray-500 text-xs;
+    @apply text-xs;
+    color: var(--fj-text-muted);
   }
 
   &__salary-nudge {
     @apply inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-lime-300;
     background: rgba(190, 242, 100, 0.08);
+    border: 1px solid rgba(190, 242, 100, 0.14);
   }
 }
 </style>

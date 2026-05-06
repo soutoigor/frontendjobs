@@ -175,7 +175,8 @@ async function submit(anonymous: boolean) {
   }
 
   &__title {
-    @apply text-xl font-bold text-white mb-1.5;
+    @apply text-xl font-bold mb-1.5;
+    color: var(--fj-text);
     letter-spacing: -0.5px;
 
     &--center {
@@ -184,7 +185,8 @@ async function submit(anonymous: boolean) {
   }
 
   &__subtitle {
-    @apply text-sm text-gray-400 mb-5 leading-relaxed;
+    @apply text-sm mb-5 leading-relaxed;
+    color: var(--fj-text-muted);
 
     &--center {
       @apply text-center;
