@@ -78,17 +78,6 @@
 					</button>
 				</section>
 
-				<section class="post-job__preview-panel">
-					<div class="post-job__section-label">
-						Homepage preview
-					</div>
-					<JobOpportunityCard
-						v-if="cardPreviewJob"
-						:job-opportunity="cardPreviewJob"
-						:interactive="false"
-					/>
-				</section>
-
 				<section class="post-job__checkout-card">
 					<div class="post-job__section-label">
 						Order summary
@@ -113,6 +102,17 @@
 						<strong>Live in seconds.</strong>
 						Payment confirmation publishes your post and sends you an email receipt.
 					</div>
+				</section>
+
+				<section class="post-job__preview-panel">
+					<div class="post-job__section-label">
+						Homepage preview
+					</div>
+					<JobOpportunityCard
+						v-if="cardPreviewJob"
+						:job-opportunity="cardPreviewJob"
+						:interactive="false"
+					/>
 				</section>
 			</div>
 		</div>
@@ -320,7 +320,7 @@ async function submitAndCheckout() {
 
   &__checkout-grid {
     @apply grid gap-4;
-    grid-template-columns: minmax(240px, 0.75fr) minmax(320px, 1.4fr) minmax(260px, 0.85fr);
+    grid-template-columns: minmax(280px, 1fr) minmax(280px, 0.9fr);
   }
 
   &__tier-panel,
@@ -329,6 +329,10 @@ async function submitAndCheckout() {
     @apply rounded-xl p-6 flex flex-col gap-4;
     background: var(--fj-surface);
     border: 1px solid var(--fj-border);
+  }
+
+  &__preview-panel {
+    grid-column: 1 / -1;
   }
 
   &__tier-option {

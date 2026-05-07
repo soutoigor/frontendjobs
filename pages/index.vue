@@ -38,6 +38,7 @@ await useFetch<IndexJobOpportunitiesResponse>(
 		baseURL: config.public.baseURL,
 		key: 'job-opportunities-total',
 		onResponse: ({ response }) => {
+			if (typeof response._data?.total !== 'number') return;
 			store.setTotalJobOpportunities(response._data.total);
 		},
 	},
