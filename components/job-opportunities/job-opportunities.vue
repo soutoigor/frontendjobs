@@ -1,13 +1,13 @@
 <template>
 	<dl class="job-opportunities">
 		<div
-			v-if="(store.jobOpportunities?.data?.length ?? 0) === 0 && !pending"
+			v-if="store.jobOpportunities?.data.length === 0 && !pending"
 			class="text-center text-gray-500 py-12"
 		>
 			No job opportunities found.
 		</div>
 		<div
-			v-else-if="pending && (store.jobOpportunities?.data?.length ?? 0) === 0"
+			v-else-if="pending && store.jobOpportunities?.data.length === 0"
 			class="job-opportunities__list"
 		>
 			<JobOpportunityCardSkeleton
@@ -26,7 +26,7 @@
 			class="job-opportunities__list"
 		>
 			<JobOpportunityCard
-				v-for="jobOpportunity of (store.jobOpportunities?.data ?? [])"
+				v-for="jobOpportunity of store.jobOpportunities?.data"
 				:key="jobOpportunity.id"
 				:job-opportunity="jobOpportunity"
 			/>
@@ -55,8 +55,6 @@ const { error, pending } = await useFetch<UseFetchReturn>(
 		params: filters,
 		watch: [() => store.filters],
 		onResponse: ({ response }) => {
-			if (!Array.isArray(response._data?.data)) return;
-
 			if (store.jobOpportunities && store.filters.page && store.filters.page > previousPage) {
 				store.setJobOpportunities({
 					...store.jobOpportunities,

@@ -152,7 +152,6 @@ function openJobOpportunity() {
   padding: 18px 22px;
   background: var(--fj-surface);
   border: 1px solid var(--fj-border);
-  overflow: hidden;
   transition: all 0.15s;
 
   &:hover {
@@ -161,38 +160,20 @@ function openJobOpportunity() {
   }
 
   &--featured {
-    background: linear-gradient(90deg, rgba(20, 184, 166, 0.18), rgba(255, 255, 255, 0.92) 44%, var(--fj-surface) 100%);
-    border-color: rgba(13, 148, 136, 0.42);
-    box-shadow: 0 12px 30px rgba(15, 118, 110, 0.08);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 4px;
-      background: #14b8a6;
-    }
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.06), var(--fj-surface) 48%);
+    border-color: rgba(45, 212, 191, 0.24);
   }
 
   &--spotlight {
-    background: linear-gradient(90deg, rgba(250, 204, 21, 0.26), rgba(255, 255, 255, 0.94) 42%, var(--fj-surface) 100%);
-    border-color: rgba(202, 138, 4, 0.5);
-    box-shadow: 0 14px 34px rgba(161, 98, 7, 0.12);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 4px;
-      background: #facc15;
-    }
+    background: linear-gradient(90deg, var(--fj-success-bg), var(--fj-surface) 52%);
+    border-color: var(--fj-success-border);
   }
 
   &--static {
     @apply cursor-default;
 
     &:hover {
-      transform: none;
+      background: var(--fj-surface);
     }
   }
 
@@ -282,14 +263,14 @@ function openJobOpportunity() {
 
   &__tier-badge--featured {
     color: #0f766e;
-    background: rgba(20, 184, 166, 0.18);
-    border: 1px solid rgba(13, 148, 136, 0.34);
+    background: rgba(45, 212, 191, 0.13);
+    border: 1px solid rgba(45, 212, 191, 0.24);
   }
 
   &__tier-badge--spotlight {
-    color: #854d0e;
-    background: rgba(250, 204, 21, 0.22);
-    border: 1px solid rgba(202, 138, 4, 0.36);
+    color: var(--fj-success-text);
+    background: var(--fj-success-bg);
+    border: 1px solid var(--fj-success-border);
   }
 
   &__posted {
@@ -305,28 +286,6 @@ function openJobOpportunity() {
 
   &__apply-btn {
     @apply mt-1;
-  }
-}
-
-:global(html.dark) {
-  .job-card {
-    &--featured {
-      background: linear-gradient(90deg, rgba(45, 212, 191, 0.13), var(--fj-surface) 48%);
-      border-color: rgba(45, 212, 191, 0.3);
-      box-shadow: 0 12px 30px rgba(45, 212, 191, 0.06);
-    }
-
-    &--spotlight {
-      background: linear-gradient(90deg, rgba(190, 242, 100, 0.13), var(--fj-surface) 50%);
-      border-color: rgba(190, 242, 100, 0.34);
-      box-shadow: 0 14px 34px rgba(190, 242, 100, 0.07);
-    }
-
-    &__tier-badge--spotlight {
-      color: var(--fj-success-text);
-      background: var(--fj-success-bg);
-      border-color: var(--fj-success-border);
-    }
   }
 }
 
