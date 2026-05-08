@@ -188,7 +188,7 @@
 			block
 			size="lg"
 			type="submit"
-			:loading="companiesStore.savingCompany"
+			:loading="isSubmitting"
 			:label="ctaText"
 		/>
 	</UForm>
@@ -213,6 +213,7 @@ const {
 	industries,
 	locations,
 } = useFilterOptions();
+const isSubmitting = ref(false);
 
 const schema = Yup.object({
 	name: Yup.string().required('Name is required'),
@@ -262,13 +263,20 @@ const normalizedPublicLinks = computed(() => Object
 	})));
 
 async function onSubmit(event: FormSubmitEvent<CompanyPayload>) {
+	if (isSubmitting.value) {
+		return;
+	}
+
+	isSubmitting.value = true;
+	const isEditing = Boolean(companiesStore.userCompany?.id);
+
 	try {
 		const payload = {
 			...event.data,
 			socials: normalizeCompanySocials(event.data.socials),
 		};
 
-		if (companiesStore.userCompany?.id) {
+		if (isEditing && companiesStore.userCompany?.id) {
 			await companiesStore.updateCompany(companiesStore.userCompany.id, payload);
 		}
 		else {
@@ -276,14 +284,15 @@ async function onSubmit(event: FormSubmitEvent<CompanyPayload>) {
 		}
 
 		toast.add({
+			id: isEditing ? 'company-updated' : 'company-created',
 			color: 'green',
-			title: companiesStore.userCompany?.id ? 'Company updated successfully' : 'Company created successfully',
+			title: isEditing ? 'Company updated successfully' : 'Company created successfully',
 			description: 'You can now post your job.',
 		});
 
 		await companiesStore.fetchUserCompany();
 
-		router.push('/company/dashboard');
+		await router.push('/company/dashboard');
 	}
 	catch {
 		toast.add({
@@ -291,6 +300,9 @@ async function onSubmit(event: FormSubmitEvent<CompanyPayload>) {
 			title: 'Failed to create Company',
 			description: 'Please, try again',
 		});
+	}
+	finally {
+		isSubmitting.value = false;
 	}
 }
 

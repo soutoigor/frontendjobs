@@ -104,26 +104,29 @@ const totalSpent = computed(() => {
 
 onMounted(async () => {
 	if (route.query.payment === 'success') {
+		await router.replace('/company/dashboard');
 		jobOpportunitiesStore.clearDraftJobOpportunity();
 		await companiesStore.fetchUserCompany();
 
 		toast.add({
+			id: 'payment-success',
 			color: 'green',
 			title: 'Payment received',
 			description: 'Your job post is being published.',
 		});
 
-		router.replace('/company/dashboard');
+		return;
 	}
 
 	if (route.query.payment === 'cancelled') {
+		await router.replace('/company/dashboard');
+
 		toast.add({
+			id: 'payment-cancelled',
 			color: 'yellow',
 			title: 'Payment not completed',
 			description: 'You can edit, complete, or remove the pending job below.',
 		});
-
-		router.replace('/company/dashboard');
 	}
 });
 </script>
