@@ -39,7 +39,6 @@
 					<FjIcon
 						name="pin"
 						:size="11"
-						color="#6b7280"
 					/>
 					{{ jobOpportunity.location || 'Worldwide' }}
 				</span>
@@ -51,12 +50,14 @@
 					variant="soft"
 					:label="technology.name"
 					size="xs"
+					class="job-card__tech-badge"
 				/>
 				<UBadge
 					v-if="jobOpportunity.remote"
 					color="green"
 					variant="soft"
 					size="xs"
+					class="job-card__remote-badge"
 				>
 					◉ Remote
 				</UBadge>
@@ -67,6 +68,7 @@
 					variant="soft"
 					size="xs"
 					:label="empType"
+					class="job-card__employment-badge"
 				/>
 			</div>
 		</div>
@@ -149,31 +151,54 @@ function openJobOpportunity() {
 .job-card {
   @apply relative grid items-center gap-4 cursor-pointer rounded-xl;
   grid-template-columns: 44px 1fr auto;
-  padding: 18px 22px;
-  background: var(--fj-surface);
-  border: 1px solid var(--fj-border);
-  transition: all 0.15s;
+  --job-card-bg: var(--fj-surface);
+  --job-card-border: var(--fj-border);
+  --job-card-border-left: var(--job-card-border);
+  --job-card-shadow: none;
+  --job-card-hover-bg: var(--fj-surface-muted);
+  --job-card-hover-border: var(--fj-border-strong);
+  padding: 18px 22px 18px 22px;
+  background: var(--job-card-bg);
+  border: 1px solid var(--job-card-border);
+  border-left-color: var(--job-card-border-left);
+  box-shadow: var(--job-card-shadow);
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 
   &:hover {
-    background: var(--fj-surface-muted);
-    border-color: var(--fj-border-strong);
+    background: var(--job-card-hover-bg);
+    border-color: var(--job-card-hover-border);
+    border-left-color: var(--job-card-border-left);
   }
 
   &--featured {
-    background: linear-gradient(90deg, rgba(45, 212, 191, 0.06), var(--fj-surface) 48%);
-    border-color: rgba(45, 212, 191, 0.24);
+    --job-card-bg: rgba(124, 58, 237, 0.055);
+    --job-card-border: rgba(124, 58, 237, 0.22);
+    --job-card-border-left: rgb(124, 58, 237);
+    --job-card-shadow: rgba(124, 58, 237, 0.25) 0 6px 20px -10px;
+    --job-card-hover-bg: rgba(124, 58, 237, 0.08);
+    --job-card-hover-border: rgba(124, 58, 237, 0.3);
+    border-left-width: 3px;
+    padding-left: 20px;
   }
 
   &--spotlight {
-    background: linear-gradient(90deg, var(--fj-success-bg), var(--fj-surface) 52%);
-    border-color: var(--fj-success-border);
+    --job-card-bg: rgba(217, 119, 6, 0.07);
+    --job-card-border: rgba(217, 119, 6, 0.3);
+    --job-card-border-left: rgb(217, 119, 6);
+    --job-card-shadow: rgba(245, 158, 11, 0.06) 0 0 0 4px, rgba(217, 119, 6, 0.4) 0 12px 32px -12px;
+    --job-card-hover-bg: rgba(217, 119, 6, 0.095);
+    --job-card-hover-border: rgba(217, 119, 6, 0.4);
+    border-left-width: 3px;
+    padding-left: 20px;
   }
 
   &--static {
     @apply cursor-default;
 
     &:hover {
-      background: var(--fj-surface);
+      background: var(--job-card-bg);
+      border-color: var(--job-card-border);
+      border-left-color: var(--job-card-border-left);
     }
   }
 
@@ -199,6 +224,8 @@ function openJobOpportunity() {
 
   &__avatar {
     @apply self-start mt-0.5;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
   }
 
   &__info {
@@ -219,7 +246,8 @@ function openJobOpportunity() {
   &__salary-inline {
     @apply font-mono text-xs px-2 py-0.5 rounded;
     color: var(--fj-text);
-    border: 1px solid var(--fj-border-strong);
+    border: 1px solid rgba(15, 23, 42, 0.18);
+    background: rgba(255, 255, 255, 0.44);
   }
 
   &__meta-row {
@@ -246,6 +274,25 @@ function openJobOpportunity() {
     @apply flex gap-1.5 flex-wrap mt-0.5;
   }
 
+  &__tech-badge {
+    color: #6d28d9;
+    background: rgba(124, 58, 237, 0.1);
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  &__remote-badge {
+    color: #3f7d20;
+    background: rgba(63, 125, 32, 0.1);
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  &__employment-badge {
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
   &__right {
     @apply flex flex-col items-end gap-1;
   }
@@ -256,21 +303,23 @@ function openJobOpportunity() {
 
   &__tier-badge {
     @apply font-mono font-semibold uppercase;
-    padding: 2px 7px;
+    padding: 3px 8px;
     border-radius: 4px;
-    font-size: 10px;
+    font-size: 9.5px;
+    line-height: 1;
+    letter-spacing: 0.7px;
   }
 
   &__tier-badge--featured {
-    color: #0f766e;
-    background: rgba(45, 212, 191, 0.13);
-    border: 1px solid rgba(45, 212, 191, 0.24);
+    color: #6d28d9;
+    background: rgba(124, 58, 237, 0.12);
+    border: 1px solid rgba(124, 58, 237, 0.3);
   }
 
   &__tier-badge--spotlight {
-    color: var(--fj-success-text);
-    background: var(--fj-success-bg);
-    border: 1px solid var(--fj-success-border);
+    color: #92400e;
+    background: rgba(217, 119, 6, 0.14);
+    border: 1px solid rgba(217, 119, 6, 0.36);
   }
 
   &__posted {
@@ -286,6 +335,60 @@ function openJobOpportunity() {
 
   &__apply-btn {
     @apply mt-1;
+  }
+}
+
+:global(html.dark) {
+  .job-card {
+    --job-card-bg: rgba(15, 17, 23, 0.6);
+    --job-card-border: rgba(255, 255, 255, 0.06);
+    --job-card-hover-bg: rgba(24, 27, 36, 0.72);
+    --job-card-hover-border: rgba(255, 255, 255, 0.12);
+
+    &--featured {
+      --job-card-bg: rgba(167, 139, 250, 0.1);
+      --job-card-border: rgba(167, 139, 250, 0.26);
+      --job-card-border-left: rgb(167, 139, 250);
+      --job-card-shadow: rgba(167, 139, 250, 0.35) 0 8px 24px -12px;
+      --job-card-hover-bg: rgba(167, 139, 250, 0.14);
+      --job-card-hover-border: rgba(167, 139, 250, 0.36);
+    }
+
+    &--spotlight {
+      --job-card-bg: rgba(251, 191, 36, 0.105);
+      --job-card-border: rgba(251, 191, 36, 0.32);
+      --job-card-border-left: rgb(251, 191, 36);
+      --job-card-shadow: rgba(251, 191, 36, 0.06) 0 0 0 4px, rgba(251, 191, 36, 0.4) 0 14px 36px -12px;
+      --job-card-hover-bg: rgba(251, 191, 36, 0.14);
+      --job-card-hover-border: rgba(251, 191, 36, 0.42);
+    }
+
+    &__salary-inline {
+      border-color: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    &__tech-badge {
+      color: #c4b5fd;
+      background: rgba(167, 139, 250, 0.14);
+    }
+
+    &__remote-badge {
+      color: #86efac;
+      background: rgba(74, 222, 128, 0.12);
+    }
+
+    &__tier-badge--featured {
+      color: #c4b5fd;
+      background: rgba(167, 139, 250, 0.16);
+      border-color: rgba(167, 139, 250, 0.34);
+    }
+
+    &__tier-badge--spotlight {
+      color: #fcd34d;
+      background: rgba(251, 191, 36, 0.16);
+      border-color: rgba(251, 191, 36, 0.36);
+    }
   }
 }
 
