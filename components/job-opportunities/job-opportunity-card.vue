@@ -153,43 +153,34 @@ function openJobOpportunity() {
   grid-template-columns: 44px 1fr auto;
   --job-card-bg: var(--fj-surface);
   --job-card-border: var(--fj-border);
-  --job-card-border-left: var(--job-card-border);
   --job-card-shadow: none;
   --job-card-hover-bg: var(--fj-surface-muted);
   --job-card-hover-border: var(--fj-border-strong);
   padding: 18px 22px 18px 22px;
   background: var(--job-card-bg);
   border: 1px solid var(--job-card-border);
-  border-left-color: var(--job-card-border-left);
   box-shadow: var(--job-card-shadow);
   transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 
   &:hover {
     background: var(--job-card-hover-bg);
     border-color: var(--job-card-hover-border);
-    border-left-color: var(--job-card-border-left);
   }
 
   &--featured {
     --job-card-bg: rgba(124, 58, 237, 0.055);
     --job-card-border: rgba(124, 58, 237, 0.22);
-    --job-card-border-left: rgb(124, 58, 237);
     --job-card-shadow: rgba(124, 58, 237, 0.25) 0 6px 20px -10px;
     --job-card-hover-bg: rgba(124, 58, 237, 0.08);
     --job-card-hover-border: rgba(124, 58, 237, 0.3);
-    border-left-width: 3px;
-    padding-left: 20px;
   }
 
   &--spotlight {
     --job-card-bg: rgba(217, 119, 6, 0.07);
     --job-card-border: rgba(217, 119, 6, 0.3);
-    --job-card-border-left: rgb(217, 119, 6);
     --job-card-shadow: rgba(245, 158, 11, 0.06) 0 0 0 4px, rgba(217, 119, 6, 0.4) 0 12px 32px -12px;
     --job-card-hover-bg: rgba(217, 119, 6, 0.095);
     --job-card-hover-border: rgba(217, 119, 6, 0.4);
-    border-left-width: 3px;
-    padding-left: 20px;
   }
 
   &--static {
@@ -198,7 +189,6 @@ function openJobOpportunity() {
     &:hover {
       background: var(--job-card-bg);
       border-color: var(--job-card-border);
-      border-left-color: var(--job-card-border-left);
     }
   }
 
@@ -348,7 +338,6 @@ function openJobOpportunity() {
     &--featured {
       --job-card-bg: rgba(167, 139, 250, 0.1);
       --job-card-border: rgba(167, 139, 250, 0.26);
-      --job-card-border-left: rgb(167, 139, 250);
       --job-card-shadow: rgba(167, 139, 250, 0.35) 0 8px 24px -12px;
       --job-card-hover-bg: rgba(167, 139, 250, 0.14);
       --job-card-hover-border: rgba(167, 139, 250, 0.36);
@@ -357,7 +346,6 @@ function openJobOpportunity() {
     &--spotlight {
       --job-card-bg: rgba(251, 191, 36, 0.105);
       --job-card-border: rgba(251, 191, 36, 0.32);
-      --job-card-border-left: rgb(251, 191, 36);
       --job-card-shadow: rgba(251, 191, 36, 0.06) 0 0 0 4px, rgba(251, 191, 36, 0.4) 0 14px 36px -12px;
       --job-card-hover-bg: rgba(251, 191, 36, 0.14);
       --job-card-hover-border: rgba(251, 191, 36, 0.42);
