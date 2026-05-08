@@ -1,13 +1,18 @@
 <template>
 	<AppToolbar
-		v-if="route.path && !isAuthPage"
+		v-if="showToolbar"
 	/>
 
-	<NuxtLayout>
-		<NuxtPage class="relative pt-14" />
-		<AppFooter />
-		<UNotifications />
-	</NuxtLayout>
+	<div
+		class="app-shell"
+		:class="{ 'app-shell--with-toolbar': showToolbar }"
+	>
+		<NuxtLayout>
+			<NuxtPage />
+			<AppFooter />
+			<UNotifications />
+		</NuxtLayout>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -27,6 +32,7 @@ const isAuthPage = computed(() => {
 
 	return authPages.includes(route.path);
 });
+const showToolbar = computed(() => !!route.path && !isAuthPage.value);
 const { siteUrl } = useRuntimeConfig().public;
 
 useHead({
@@ -46,3 +52,9 @@ onMounted(async () => {
 	}
 });
 </script>
+
+<style scoped>
+.app-shell--with-toolbar {
+	padding-top: 5.5rem;
+}
+</style>
