@@ -170,6 +170,7 @@ const jobOpportunitiesStore = useJobOpportunitiesStore();
 const companiesStore = useCompaniesStore();
 const toast = useToast();
 const router = useRouter();
+const { track } = useAnalytics();
 const currentStep = ref(1);
 const isSubmitting = ref(false);
 
@@ -334,6 +335,14 @@ async function submitAndCheckout() {
 
 	isSubmitting.value = true;
 	try {
+		track('Checkout Started', {
+			props: {
+				posting_tier: selectedTier.value.key,
+				price: selectedTier.value.price,
+				is_existing_pending_job: Boolean(draft.id),
+			},
+		});
+
 		const response = draft.id
 			? await updateAndCheckoutPendingJob(draft.id, draft)
 			: await jobOpportunitiesStore.createJobOpportunity(draft);
@@ -359,6 +368,14 @@ watch(isEditingPublishedJob, (isEditingPaidListing) => {
 	if (isEditingPaidListing && currentStep.value > 2) {
 		currentStep.value = 2;
 	}
+});
+
+onMounted(() => {
+	track('Post Job Started', {
+		props: {
+			has_draft: Boolean(jobOpportunitiesStore.draftJobOpportunity),
+		},
+	});
 });
 </script>
 

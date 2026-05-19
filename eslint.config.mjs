@@ -7,5 +7,6 @@ export default withNuxt({
 		'no-console': 'off',
 		'vue/no-v-html': 'off',
 		'@stylistic/no-mixed-spaces-and-tabs': 'off',
+		'@stylistic/quote-props': 'off',
 	},
 });

@@ -227,7 +227,7 @@
 
 <script setup lang="ts">
 import * as Yup from 'yup';
-import { type InferType } from 'yup';
+import type { InferType } from 'yup';
 import type { FormSubmitEvent } from '#ui/types';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';

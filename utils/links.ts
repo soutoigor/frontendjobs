@@ -58,7 +58,16 @@ function normalizeNetworkLink(social: SocialKind, value: string) {
 }
 
 export function isEmail(value: string) {
-	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+	const trimmedValue = value.trim();
+	const atIndex = trimmedValue.indexOf('@');
+	const domain = trimmedValue.slice(atIndex + 1);
+
+	return atIndex > 0
+		&& atIndex === trimmedValue.lastIndexOf('@')
+		&& domain.includes('.')
+		&& !trimmedValue.includes(' ')
+		&& !trimmedValue.includes('\n')
+		&& !trimmedValue.includes('\t');
 }
 
 export function normalizeExternalUrl(value: string) {

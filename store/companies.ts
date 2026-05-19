@@ -33,7 +33,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 			});
 
 			companies.value = response.companies;
-  	}
+		}
 		catch {
 			toast.add({
 				color: 'rose',
@@ -60,7 +60,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 
 			userCompany.value = response.company;
 		}
-		catch (error) {
+		catch {
 			router.push('/company/create');
 		}
 		finally {
@@ -110,7 +110,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 		}
 	}
 
-	  return {
+	return {
 		companies,
 		company,
 		userCompany,

@@ -5,7 +5,7 @@
 			<div class="job-content__header-grid">
 				<UAvatar
 					v-if="jobOpportunityFormatted.company"
-					:src="jobOpportunityFormatted.company.avatar"
+					:src="getOptimizedAvatarUrl(jobOpportunityFormatted.company.avatar, 128)"
 					:alt="jobOpportunityFormatted.company?.name"
 					size="xl"
 					class="job-content__avatar"
@@ -106,9 +106,9 @@
 					About the role
 				</h3>
 				<div
-					v-if="jobOpportunityFormatted.description"
+					v-if="sanitizedDescription"
 					class="job-content__description prose"
-					v-html="jobOpportunityFormatted.description"
+					v-html="sanitizedDescription"
 				/>
 				<div
 					v-if="jobOpportunityFormatted.technologies?.length"
@@ -140,7 +140,7 @@
 					</h4>
 					<div class="job-content__sidebar-company">
 						<UAvatar
-							:src="jobOpportunityFormatted.company.avatar"
+							:src="getOptimizedAvatarUrl(jobOpportunityFormatted.company.avatar, 80)"
 							:alt="jobOpportunityFormatted.company.name"
 							size="sm"
 						/>
@@ -201,7 +201,8 @@
 import FjIcon from '~/components/shared/fj-icon.vue';
 import JobOpportunityCta from '~/components/job-opportunities/job-opportunity-cta.vue';
 import { useCompaniesStore } from '~/store/companies';
-import { formatList, getSalaryText, timeAgo } from '~/utils/global';
+import DOMPurify from 'dompurify';
+import { formatList, getOptimizedAvatarUrl, getSalaryText, timeAgo } from '~/utils/global';
 import type { JobOpportunityDraft } from '~/types/job-opportunities';
 
 interface Props {
@@ -221,6 +222,7 @@ const jobOpportunityFormatted = computed(() => {
 
 	return job;
 });
+const sanitizedDescription = computed(() => DOMPurify.sanitize(jobOpportunityFormatted.value.description || ''));
 </script>
 
 <style scoped>

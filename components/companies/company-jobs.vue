@@ -144,7 +144,6 @@
 </template>
 
 <script setup lang="ts">
-import { isEmpty, isNil, or } from 'ramda';
 import { useCompaniesStore } from '~/store/companies';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import type { JobOpportunity } from '~/types/job-opportunities';
@@ -159,10 +158,7 @@ const deletingJobId = ref<string>();
 const checkoutJobId = ref<string>();
 const selectedTab = ref('all');
 
-const companyHasNoJobs = computed(() => or(
-	isEmpty(companiesStore.userCompany?.job_opportunities),
-	isNil(companiesStore.userCompany?.job_opportunities),
-));
+const companyHasNoJobs = computed(() => !companiesStore.userCompany?.job_opportunities?.length);
 
 const allJobs = computed(() => companiesStore.userCompany?.job_opportunities || []);
 

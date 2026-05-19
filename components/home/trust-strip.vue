@@ -13,7 +13,7 @@
 				class="trust-strip__company"
 			>
 				<UAvatar
-					:src="company.avatar"
+					:src="getOptimizedAvatarUrl(company.avatar, 64)"
 					:alt="company.name"
 					size="xs"
 				/>
@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+import { getOptimizedAvatarUrl } from '~/utils/global';
 
 const store = useJobOpportunitiesStore();
 
@@ -60,7 +61,6 @@ const companies = computed(() => {
 
   &__logos {
     @apply flex items-center justify-center gap-12 flex-wrap;
-    opacity: 0.7;
   }
 
   &__company {

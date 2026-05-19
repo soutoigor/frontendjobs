@@ -1,45 +1,27 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	devtools: { enabled: true },
 	modules: [
 		'@nuxt/ui',
-		'@nuxtjs/i18n',
 		'@pinia/nuxt',
 		'@vueuse/nuxt',
 		'@nuxt/eslint',
 		'@nuxt/image',
 		'@nuxt/icon',
 	],
-	eslint: {
-		checker: true,
-		config: {
-			tooling: true,
-			stylistic: {
-				indent: 'tab',
-				semi: true,
-			},
-		},
-	},
-	runtimeConfig: {
-		public: {
-			baseURL: process.env.API_BASE_URL,
-			siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.frontendjobs.app',
-		},
-	},
-	css: [
-		'~/assets/styles/global.css',
-	],
-	routeRules: {
-		'/company/**': { appMiddleware: 'auth' },
-		'/company/payment-success': { appMiddleware: 'auth' },
-	},
+	devtools: { enabled: process.env.NODE_ENV !== 'production' },
 	app: {
 		head: {
 			title: 'Frontend Jobs',
+			htmlAttrs: {
+				lang: 'en',
+			},
 			meta: [
 				{ charset: 'utf-8' },
 				{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
 				{ name: 'robots', content: 'index, follow' },
+				...(process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+					? [{ name: 'google-site-verification', content: process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION }]
+					: []),
 			],
 			link: [
 				{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -50,23 +32,44 @@ export default defineNuxtConfig({
 				{ rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
 				{ rel: 'manifest', href: '/site.webmanifest' },
 			],
-			script: [
-				{
-					src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8184561234048018',
-					crossorigin: 'anonymous',
-					async: true,
-				},
-			],
 		},
 	},
+	css: [
+		'~/assets/styles/global.css',
+	],
 	colorMode: {
 		preference: 'system',
 		fallback: 'dark',
 		classSuffix: '',
 	},
+	runtimeConfig: {
+		public: {
+			baseURL: process.env.API_BASE_URL,
+			siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.frontendjobs.app',
+			plausibleDomain: process.env.NUXT_PUBLIC_PLAUSIBLE_DOMAIN || 'frontendjobs.app',
+			plausibleEnabled: process.env.NUXT_PUBLIC_PLAUSIBLE_ENABLED === 'true',
+			adsenseClient: process.env.NUXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-8184561234048018',
+			adsenseEnabled: process.env.NUXT_PUBLIC_ADSENSE_ENABLED === 'true',
+			googleSiteVerification: process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+		},
+	},
+	routeRules: {
+		'/company/**': { appMiddleware: 'auth' },
+		'/company/payment-success': { appMiddleware: 'auth' },
+	},
 	nitro: {
 		routeRules: {
 			'/sitemap.xml': { headers: { 'Content-Type': 'application/xml' } },
+		},
+	},
+	eslint: {
+		checker: true,
+		config: {
+			tooling: true,
+			stylistic: {
+				indent: 'tab',
+				semi: true,
+			},
 		},
 	},
 });

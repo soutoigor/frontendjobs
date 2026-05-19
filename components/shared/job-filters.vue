@@ -5,6 +5,7 @@
 				<USelectMenu
 					v-model="store.filters.technologies"
 					class="job-filters__filter"
+					aria-label="Filter by technology stack"
 					:options="technologies"
 					multiple
 					placeholder="Stack"
@@ -15,18 +16,21 @@
 				<UInputMenu
 					v-model="store.filters.location"
 					class="job-filters__filter"
+					aria-label="Filter by location"
 					:options="locations"
 					placeholder="Location"
 				/>
 				<UInputMenu
 					v-model="store.filters.seniority"
 					class="job-filters__filter"
+					aria-label="Filter by seniority"
 					:options="seniorities"
 					placeholder="Seniority"
 				/>
 				<UInputMenu
 					v-model="store.filters.employment_type"
 					class="job-filters__filter"
+					aria-label="Filter by employment type"
 					:options="employmentTypes"
 					placeholder="Type"
 				/>
@@ -72,6 +76,7 @@
 						variant="link"
 						icon="i-heroicons-x-mark-20-solid"
 						size="2xs"
+						:aria-label="`Remove ${label} filter`"
 						@click="store.removeFilter(label)"
 					/>
 				</UBadge>
@@ -95,6 +100,7 @@ import { useFilterOptions } from '~/composables/use-filter-options';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 
 const store = useJobOpportunitiesStore();
+const { track } = useAnalytics();
 const {
 	employmentTypes,
 	isLoadingTechnologies,
@@ -102,6 +108,39 @@ const {
 	seniorities,
 	technologies,
 } = useFilterOptions();
+
+watch(
+	() => ({ ...store.filters }),
+	(filters, previousFilters) => {
+		if (!previousFilters) {
+			return;
+		}
+
+		track('Filter Change', {
+			props: {
+				location: filters.location || '',
+				remote: filters.remote,
+				seniority: filters.seniority || '',
+				employment_type: filters.employment_type || '',
+				technologies_count: filters.technologies.length,
+			},
+		});
+	},
+	{ deep: true },
+);
+
+onMounted(() => {
+	const labels = [
+		'Filter by technology stack',
+		'Filter by location',
+		'Filter by seniority',
+		'Filter by employment type',
+	];
+
+	document.querySelectorAll<HTMLElement>('.job-filters__filter button[aria-haspopup]').forEach((button, index) => {
+		button.setAttribute('aria-label', labels[index] || 'Open filter options');
+	});
+});
 </script>
 
 <style scoped>

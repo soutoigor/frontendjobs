@@ -22,8 +22,16 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
+const { track } = useAnalytics();
 
 onMounted(async () => {
+	track('Payment Cancelled', {
+		props: {
+			job_id: typeof route.query.job_id === 'string' ? route.query.job_id : '',
+		},
+	});
+
 	try {
 		await authStore.refresh();
 	}

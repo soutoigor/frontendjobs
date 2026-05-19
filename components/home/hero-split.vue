@@ -14,7 +14,7 @@
 					The job board for <span class="hero-split__italic">frontend</span> developers.
 				</h1>
 				<p class="hero-split__subtitle">
-					React, Vue, Angular, Svelte and beyond. Salaries upfront. Remote-first. No fluff — just roles built for people who ship interfaces.
+					Browse frontend roles across React, Vue, Angular, Svelte, and the modern web. Salary ranges are visible before you apply, with remote-friendly filters and zero filler.
 				</p>
 				<div class="hero-split__search-row">
 					<div class="hero-split__search-input">
@@ -57,7 +57,7 @@
 							<span class="hero-split__terminal-command-brand">fj</span>
 							search --remote --stack=react
 						</div>
-						<div class="text-gray-500">
+						<div class="hero-split__terminal-note">
 							↳ Browse <span class="hero-split__terminal-count">{{ totalJobs }}</span> open roles
 						</div>
 						<div class="hero-split__terminal-results">
@@ -101,6 +101,7 @@ import StatCard from '~/components/shared/stat-card.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 
 const store = useJobOpportunitiesStore();
+const { track } = useAnalytics();
 
 const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
 const search = ref(store.filters.search);
@@ -114,15 +115,34 @@ const terminalLines = [
 
 function submitSearch() {
 	store.updateFilters({ search: search.value, page: 1 });
+	track('Search', {
+		props: {
+			query: search.value,
+			source: 'hero',
+		},
+	});
 }
 
 function searchTag(tag: string) {
 	if (tag === 'Remote') {
 		store.updateFilters({ remote: true, page: 1 });
+		track('Filter Change', {
+			props: {
+				filter: 'remote',
+				value: true,
+				source: 'popular-tag',
+			},
+		});
 	}
 	else {
 		search.value = tag;
 		store.updateFilters({ search: tag, page: 1 });
+		track('Search', {
+			props: {
+				query: tag,
+				source: 'popular-tag',
+			},
+		});
 	}
 }
 </script>
@@ -259,6 +279,10 @@ function searchTag(tag: string) {
 
   &__terminal-command-brand {
     color: var(--fj-success-text);
+  }
+
+  &__terminal-note {
+    color: var(--fj-text-soft);
   }
 
   &__terminal-results {

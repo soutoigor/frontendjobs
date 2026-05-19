@@ -36,7 +36,7 @@
 			</UDropdown>
 			<UButton
 				variant="soft"
-				color="gray"
+				color="violet"
 				size="sm"
 				icon="i-heroicons-user-20-solid"
 				to="/company/dashboard"

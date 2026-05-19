@@ -31,6 +31,36 @@ useHead(defaultMetaTags);
 const store = useJobOpportunitiesStore();
 const config = useRuntimeConfig();
 const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
+const siteUrl = config.public.siteUrl;
+
+useHead({
+	script: [
+		{
+			type: 'application/ld+json',
+			children: JSON.stringify({
+				'@context': 'https://schema.org',
+				'@type': 'WebSite',
+				name: 'Frontend Jobs',
+				url: siteUrl,
+				potentialAction: {
+					'@type': 'SearchAction',
+					target: `${siteUrl}/?search={search_term_string}`,
+					'query-input': 'required name=search_term_string',
+				},
+			}),
+		},
+		{
+			type: 'application/ld+json',
+			children: JSON.stringify({
+				'@context': 'https://schema.org',
+				'@type': 'Organization',
+				name: 'Frontend Jobs',
+				url: siteUrl,
+				logo: `${siteUrl}/frontend-jobs-icon.png`,
+			}),
+		},
+	],
+});
 
 await useFetch<IndexJobOpportunitiesResponse>(
 	'job_opportunities',

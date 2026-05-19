@@ -10,6 +10,7 @@
 		<NuxtLayout>
 			<NuxtPage />
 			<AppFooter />
+			<PrivacyPreferences />
 			<UNotifications />
 		</NuxtLayout>
 	</div>
@@ -18,6 +19,7 @@
 <script setup lang="ts">
 import AppToolbar from '~/components/toolbar/app-toolbar.vue';
 import AppFooter from '~/components/shared/app-footer.vue';
+import PrivacyPreferences from '~/components/shared/privacy-preferences.vue';
 import { useAuthStore } from '~/store/authentication';
 
 const route = useRoute();

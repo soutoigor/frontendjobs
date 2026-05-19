@@ -5,98 +5,110 @@
 				Privacy Policy
 			</h1>
 			<p class="privacy__date">
-				Last Updated: {{ LAST_UPDATE }}
+				Last updated: {{ LAST_UPDATE }}
+			</p>
+			<p class="privacy__notice">
+				This policy is a practical launch draft for Frontend Jobs and should be reviewed by the site owner or legal counsel before production launch.
 			</p>
 		</header>
 
 		<section class="privacy__section">
 			<h2 class="privacy__subtitle">
-				1. Information We Collect
+				1. Information we collect
 			</h2>
-			<p>We collect the following types of information when you use our services:</p>
 			<ul class="privacy__list">
-				<li class="privacy__item">
-					<strong>Account Information:</strong> email address, password, company details (social media usernames, website, location), and company avatar.
-				</li>
-				<li class="privacy__item">
-					<strong>Job Opportunities:</strong> details of job postings created by companies.
-				</li>
-				<li class="privacy__item">
-					<strong>Cookies:</strong> used to store your authentication token when you log in.
-				</li>
-				<li class="privacy__item">
-					<strong>Advertising:</strong> we use Google AdSense to display ads.
-				</li>
+				<li><strong>Account data:</strong> email address, password hash, login token, and company account details.</li>
+				<li><strong>Company and job data:</strong> company profile, avatar, social links, job descriptions, salary ranges, technologies, locations, and application destination links.</li>
+				<li><strong>Applicant data:</strong> optional applicant name and email submitted through the apply modal, plus application timestamps and application counts.</li>
+				<li><strong>Usage data:</strong> pageviews and product events such as searches, filters, job opens, applications, and checkout starts when analytics are enabled.</li>
+				<li><strong>Storage:</strong> an essential auth token cookie and local browser storage for unfinished job drafts and privacy preferences.</li>
 			</ul>
 		</section>
 
 		<section class="privacy__section">
 			<h2 class="privacy__subtitle">
-				2. How We Use Your Information
+				2. How we use information
 			</h2>
 			<ul class="privacy__list">
-				<li class="privacy__item">
-					To provide and improve our services
-				</li>
-				<li class="privacy__item">
-					To allow companies to manage job postings
-				</li>
-				<li class="privacy__item">
-					To facilitate secure user authentication
-				</li>
-				<li class="privacy__item">
-					To analyze usage patterns for a better experience
-				</li>
+				<li>To operate the job board, company dashboard, job posting flow, payment flow, and application tracking.</li>
+				<li>To send application notifications to companies and operational emails related to job posts.</li>
+				<li>To prevent abuse, secure accounts, debug issues, and improve the product.</li>
+				<li>To measure aggregate site usage and launch performance.</li>
 			</ul>
 		</section>
 
 		<section class="privacy__section">
 			<h2 class="privacy__subtitle">
-				3. Sharing Your Information
+				3. Service providers
 			</h2>
-			<p>We do not sell your personal information to third parties. However, we may share it with:</p>
+			<p>We use trusted providers to run the service:</p>
 			<ul class="privacy__list">
-				<li class="privacy__item">
-					<strong>Service Providers:</strong> Cloudinary and Google AdSense
-				</li>
-				<li class="privacy__item">
-					<strong>Legal Authorities:</strong> if required by law or to protect our rights
-				</li>
+				<li><strong>Railway</strong> hosts the API and database.</li>
+				<li><strong>Vercel</strong> hosts the frontend.</li>
+				<li><strong>Cloudinary</strong> stores and delivers company avatars.</li>
+				<li><strong>Resend</strong> sends application notification emails.</li>
+				<li><strong>Stripe</strong> processes paid job-posting checkout. We do not store full payment card details.</li>
+				<li><strong>Plausible</strong> provides privacy-friendly analytics when enabled.</li>
+				<li><strong>Google AdSense</strong> is not active by default. If ads are enabled later, they will be kept behind the consent controls required for the visitor's region.</li>
 			</ul>
 		</section>
 
 		<section class="privacy__section">
 			<h2 class="privacy__subtitle">
-				4. Your Rights
+				4. Cookies and preferences
 			</h2>
-			<ul class="privacy__list">
-				<li class="privacy__item">
-					<strong>Access and Correction:</strong> You can update your details anytime.
-				</li>
-				<li class="privacy__item">
-					<strong>Data Deletion:</strong> Request deletion by contacting us at <a
-						:href="`mailto:${CONTACT_EMAIL}`"
-						v-text="CONTACT_EMAIL"
-					/>.
-				</li>
-				<li class="privacy__item">
-					<strong>Cookies:</strong> Manage preferences via browser settings.
-				</li>
-			</ul>
+			<p>
+				Essential storage is required for login, security, privacy preferences, and saving unfinished job drafts. Plausible analytics is cookie-free, but you can disable analytics in Cookie settings. Ads are not presented as a choice unless the advertising integration is enabled.
+			</p>
+			<button
+				type="button"
+				class="privacy__button"
+				@click="openPrivacyPreferences"
+			>
+				Open cookie settings
+			</button>
 		</section>
 
 		<section class="privacy__section">
 			<h2 class="privacy__subtitle">
-				5. Data Security
+				5. Sharing and disclosure
 			</h2>
-			<p>We take measures to protect your data from unauthorized access or disclosure.</p>
+			<p>
+				We do not sell personal information. We share information with service providers only as needed to operate Frontend Jobs, comply with legal obligations, protect users, process payments, or prevent abuse.
+			</p>
 		</section>
 
 		<section class="privacy__section">
 			<h2 class="privacy__subtitle">
-				6. Changes to This Privacy Policy
+				6. Data retention and deletion
 			</h2>
-			<p>We may update this policy from time to time. Updates will be posted here with the revised date.</p>
+			<p>
+				We retain account, company, job, payment status, and application records while needed to operate the service, resolve disputes, comply with legal obligations, and maintain business records. To request access, correction, or deletion, contact
+				<a
+					:href="`mailto:${CONTACT_EMAIL}`"
+					v-text="CONTACT_EMAIL"
+				/>.
+			</p>
+		</section>
+
+		<section class="privacy__section">
+			<h2 class="privacy__subtitle">
+				7. Security
+			</h2>
+			<p>
+				We use HTTPS, authentication tokens, validation, access controls, and provider security features to protect the service. No online service can guarantee perfect security, so please report suspected issues to
+				<a
+					:href="`mailto:${CONTACT_EMAIL}`"
+					v-text="CONTACT_EMAIL"
+				/>.
+			</p>
+		</section>
+
+		<section class="privacy__section">
+			<h2 class="privacy__subtitle">
+				8. Changes
+			</h2>
+			<p>We may update this policy as the product changes. Material updates will be reflected on this page with a new date.</p>
 		</section>
 	</div>
 </template>
@@ -108,34 +120,52 @@ const CONTACT_EMAIL = 'igor_souto@outlook.com';
 definePageMeta({
 	layout: 'simple',
 });
+
+function openPrivacyPreferences() {
+	window.dispatchEvent(new CustomEvent('frontendjobs:open-privacy-preferences'));
+}
 </script>
 
 <style scoped>
 .privacy {
-  a {
-    @apply text-blue-300 hover:underline;
+  a,
+  &__button {
+    @apply text-violet-400 hover:text-violet-300 hover:underline;
   }
 
   &__header {
     @apply mb-6;
   }
+
   &__title {
     @apply text-3xl font-bold mb-2;
   }
-  &__date {
-    @apply text-gray-600;
+
+  &__date,
+  &__notice {
+    color: var(--fj-text-muted);
   }
+
+  &__notice {
+    @apply mt-3 rounded-lg border px-4 py-3 text-sm;
+    border-color: var(--fj-border);
+    background: var(--fj-surface);
+  }
+
   &__section {
     @apply mb-8;
   }
+
   &__subtitle {
     @apply text-xl font-semibold mb-4;
   }
+
   &__list {
-    @apply list-disc pl-5;
+    @apply list-disc pl-5 space-y-2;
   }
-  &__item {
-    @apply mb-2;
+
+  &__button {
+    @apply mt-4 border-0 bg-transparent p-0 cursor-pointer font-medium;
   }
 }
 </style>

@@ -17,6 +17,13 @@
 				<NuxtLink to="/terms">
 					Terms
 				</NuxtLink>
+				<button
+					type="button"
+					class="app-footer__button"
+					@click="openPrivacyPreferences"
+				>
+					Cookie settings
+				</button>
 				<NuxtLink href="mailto:igor_souto@outlook.com">
 					Contact
 				</NuxtLink>
@@ -30,6 +37,10 @@
 
 <script setup lang="ts">
 import AppLogo from '~/components/shared/app-logo.vue';
+
+function openPrivacyPreferences() {
+	window.dispatchEvent(new CustomEvent('frontendjobs:open-privacy-preferences'));
+}
 </script>
 
 <style scoped>
@@ -46,13 +57,19 @@ import AppLogo from '~/components/shared/app-logo.vue';
     @apply flex gap-6 text-sm flex-wrap justify-center;
     color: var(--fj-text-muted);
 
-    a {
+    a,
+    button {
       @apply transition-colors;
 
       &:hover {
         color: var(--fj-text);
       }
     }
+  }
+
+  &__button {
+    @apply border-0 bg-transparent p-0 text-sm cursor-pointer;
+    color: inherit;
   }
 
   &__copy {

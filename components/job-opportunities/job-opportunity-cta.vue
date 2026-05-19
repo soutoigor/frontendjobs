@@ -3,7 +3,7 @@
 		<UButton
 			size="lg"
 			icon="i-heroicons-bolt-20-solid"
-			@click="isModalOpen = true"
+			@click="openApplyModal"
 		>
 			Apply for this role
 		</UButton>
@@ -37,8 +37,19 @@ interface Props {
 
 const props = defineProps<Props>();
 const isModalOpen = ref(false);
+const { track } = useAnalytics();
+
+function openApplyModal() {
+	isModalOpen.value = true;
+}
 
 function shareJobOpportunity() {
+	track('Share Job', {
+		props: {
+			job_id: props.jobOpportunity.id || '',
+		},
+	});
+
 	if (navigator.share) {
 		navigator.share({
 			title: props.jobOpportunity.title,

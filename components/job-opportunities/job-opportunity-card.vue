@@ -7,13 +7,18 @@
 			'job-card--spotlight': postingTier.key === 'spotlight',
 			'job-card--static': !interactive,
 		}"
+		:role="interactive && isPublished ? 'button' : undefined"
+		:tabindex="interactive && isPublished ? 0 : undefined"
+		:aria-label="interactive && isPublished ? `Open ${jobOpportunity.title} at ${jobOpportunity.company.name}` : undefined"
 		@mouseenter="isHovering = true"
 		@mouseleave="isHovering = false"
 		@click="openJobOpportunity"
+		@keydown.enter="openJobOpportunity"
+		@keydown.space.prevent="openJobOpportunity"
 	>
 		<!-- Avatar -->
 		<UAvatar
-			:src="jobOpportunity.company.avatar"
+			:src="getOptimizedAvatarUrl(jobOpportunity.company.avatar, 80)"
 			:alt="jobOpportunity.company.name"
 			:size="'md'"
 			class="job-card__avatar"
@@ -121,7 +126,7 @@
 import FjIcon from '~/components/shared/fj-icon.vue';
 import type { CompanyJobOpportunity } from '~/types/companies';
 import type { JobOpportunity } from '~/types/job-opportunities';
-import { getSalaryText, timeAgo } from '~/utils/global';
+import { getOptimizedAvatarUrl, getSalaryText, timeAgo } from '~/utils/global';
 import { getPostingTier } from '~/utils/posting-tiers';
 
 interface Props {
@@ -134,6 +139,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const router = useRouter();
+const { track } = useAnalytics();
 
 const isHovering = ref(false);
 const isPendingPayment = computed(() => props.jobOpportunity.status === 'pending_payment');
@@ -142,6 +148,12 @@ const postingTier = computed(() => getPostingTier(props.jobOpportunity.posting_t
 
 function openJobOpportunity() {
 	if (props.interactive && isPublished.value) {
+		track('Job Card Open', {
+			props: {
+				job_id: props.jobOpportunity.id,
+				posting_tier: props.jobOpportunity.posting_tier || 'standard',
+			},
+		});
 		router.push(`/jobs/${props.jobOpportunity.id}`);
 	}
 }
@@ -235,9 +247,9 @@ function openJobOpportunity() {
 
   &__salary-inline {
     @apply font-mono text-xs px-2 py-0.5 rounded;
-    color: var(--fj-text);
-    border: 1px solid rgba(15, 23, 42, 0.18);
-    background: rgba(255, 255, 255, 0.44);
+    color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.24);
+    background: rgba(15, 23, 42, 0.82);
   }
 
   &__meta-row {
@@ -265,14 +277,14 @@ function openJobOpportunity() {
   }
 
   &__tech-badge {
-    color: #6d28d9;
+    color: #ede9fe;
     background: rgba(124, 58, 237, 0.1);
     border-radius: 999px;
     font-weight: 500;
   }
 
   &__remote-badge {
-    color: #3f7d20;
+    color: #bbf7d0;
     background: rgba(63, 125, 32, 0.1);
     border-radius: 999px;
     font-weight: 500;
@@ -301,13 +313,13 @@ function openJobOpportunity() {
   }
 
   &__tier-badge--featured {
-    color: #6d28d9;
+    color: #ede9fe;
     background: rgba(124, 58, 237, 0.12);
     border: 1px solid rgba(124, 58, 237, 0.3);
   }
 
   &__tier-badge--spotlight {
-    color: #92400e;
+    color: #fde68a;
     background: rgba(217, 119, 6, 0.14);
     border: 1px solid rgba(217, 119, 6, 0.36);
   }
@@ -357,7 +369,7 @@ function openJobOpportunity() {
     }
 
     &__tech-badge {
-      color: #c4b5fd;
+      color: #ddd6fe;
       background: rgba(167, 139, 250, 0.14);
     }
 
@@ -367,7 +379,7 @@ function openJobOpportunity() {
     }
 
     &__tier-badge--featured {
-      color: #c4b5fd;
+      color: #ddd6fe;
       background: rgba(167, 139, 250, 0.16);
       border-color: rgba(167, 139, 250, 0.34);
     }

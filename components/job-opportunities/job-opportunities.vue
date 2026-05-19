@@ -1,5 +1,8 @@
 <template>
-	<dl class="job-opportunities">
+	<section
+		class="job-opportunities"
+		aria-label="Job opportunities"
+	>
 		<div
 			v-if="store.jobOpportunities?.data.length === 0 && !pending"
 			class="text-center text-gray-500 py-12"
@@ -31,11 +34,10 @@
 				:job-opportunity="jobOpportunity"
 			/>
 		</div>
-	</dl>
+	</section>
 </template>
 
 <script setup lang="ts">
-import { and, isNotEmpty, filter } from 'ramda';
 import { debounce } from 'lodash-es';
 import { useJobOpportunitiesStore, type UseFetchReturn } from '~/store/job-opportunities';
 import JobOpportunityCard from '~/components/job-opportunities/job-opportunity-card.vue';
@@ -44,7 +46,15 @@ import JobOpportunityCardSkeleton from '~/components/job-opportunities/job-oppor
 const store = useJobOpportunitiesStore();
 const config = useRuntimeConfig();
 
-const filters = computed(() => filter(_filter => and(!!_filter, isNotEmpty(_filter)), store.filters));
+const filters = computed(() => Object.fromEntries(
+	Object.entries(store.filters).filter(([, value]) => {
+		if (Array.isArray(value)) {
+			return value.length > 0;
+		}
+
+		return value !== '' && value !== false && value !== null && value !== undefined;
+	}),
+));
 
 let previousPage = store.filters.page || 1;
 

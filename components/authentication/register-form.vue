@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import * as Yup from 'yup';
-import { type InferType } from 'yup';
+import type { InferType } from 'yup';
 import type { FormSubmitEvent } from '#ui/types';
 import FjIcon from '~/components/shared/fj-icon.vue';
 import { useAuthStore } from '~/store/authentication';

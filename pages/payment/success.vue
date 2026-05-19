@@ -24,9 +24,16 @@ definePageMeta({
 const authStore = useAuthStore();
 const jobOpportunitiesStore = useJobOpportunitiesStore();
 const router = useRouter();
+const route = useRoute();
+const { track } = useAnalytics();
 
 onMounted(async () => {
 	jobOpportunitiesStore.clearDraftJobOpportunity();
+	track('Payment Success', {
+		props: {
+			job_id: typeof route.query.job_id === 'string' ? route.query.job_id : '',
+		},
+	});
 
 	try {
 		await authStore.refresh();

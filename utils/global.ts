@@ -1,9 +1,3 @@
-import {
-	filter,
-	isEmpty,
-	or,
-	isNil,
-} from 'ramda';
 /**
  * Formats the salary range as a text string.
  * @param currency - The currency symbol or code.
@@ -31,6 +25,14 @@ export function formatList(value?: string | string[] | null): string {
 	}
 
 	return Array.isArray(value) ? value.filter(Boolean).join(', ') : value;
+}
+
+export function getOptimizedAvatarUrl(avatar?: string | null, size = 80): string {
+	if (!avatar || !avatar.includes('res.cloudinary.com') || !avatar.includes('/image/upload/')) {
+		return avatar || '';
+	}
+
+	return avatar.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_fill,w_${size},h_${size}/`);
 }
 
 export function timeAgo(dateString: string): string {
@@ -61,12 +63,20 @@ export function timeAgo(dateString: string): string {
 /**
  * Filters out values that are either `null`, `undefined`, or empty.
  *
- * This utility function uses a combination of `isNil` and `isEmpty` checks
- * to determine if a value should be filtered out.
+ * This utility checks arrays, nullish values, and empty strings to determine
+ * if a value should be filtered out.
  *
- * @param x - The value to be checked.
+ * @param value - The object to be filtered.
  * @returns A boolean indicating whether the value is `null`, `undefined`, or empty.
  */
-export const filterNilOrEmpty = filter(
-	(value: unknown) => or(isNil(value), isEmpty(value)),
-);
+export function filterNilOrEmpty<T extends Record<string, unknown>>(value: T): Partial<T> {
+	return Object.fromEntries(
+		Object.entries(value).filter(([, entry]) => {
+			if (Array.isArray(entry)) {
+				return entry.length > 0;
+			}
+
+			return entry !== null && entry !== undefined && entry !== '';
+		}),
+	) as Partial<T>;
+}

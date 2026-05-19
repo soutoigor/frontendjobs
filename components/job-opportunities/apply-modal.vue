@@ -8,6 +8,7 @@
 				</span>
 				<button
 					class="apply-modal__close"
+					aria-label="Close application modal"
 					@click="isOpen = false"
 				>
 					<FjIcon
@@ -124,6 +125,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>();
 
 const store = useJobOpportunitiesStore();
+const { track } = useAnalytics();
 const loading = ref(false);
 const step = ref(1);
 const form = reactive({ name: '', email: '', portfolio: '' });
@@ -138,6 +140,16 @@ const isOpen = computed({
 	},
 });
 
+watch(() => props.modelValue, (isVisible) => {
+	if (isVisible) {
+		track('Apply Modal Opened', {
+			props: {
+				job_id: props.jobId,
+			},
+		});
+	}
+});
+
 function openExternalLink() {
 	window.open(getApplicationHref(props.applicationLink), '_blank');
 }
@@ -148,6 +160,13 @@ async function submit(anonymous: boolean) {
 	openExternalLink();
 
 	await store.apply(props.jobId, anonymous ? {} : { name: form.name, email: form.email });
+	track('Apply Submitted', {
+		props: {
+			job_id: props.jobId,
+			has_name: Boolean(form.name),
+			has_email: Boolean(form.email),
+		},
+	});
 
 	loading.value = false;
 	step.value = 2;
