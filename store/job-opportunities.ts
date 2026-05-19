@@ -267,6 +267,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 
 		try {
 			isSavingJobOpportunity.value = true;
+			clearValidationErrors();
 			await $fetch<{ job_opportunity: JobOpportunity }>(`/job_opportunities/${id}`, {
 				method: 'put',
 				baseURL: config.public.baseURL,
@@ -275,6 +276,15 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 				},
 				body: formattedPayload,
 			});
+		}
+		catch (error: unknown) {
+			const fetchError = error as { data?: { error?: JobOpportunityValidationErrors } };
+
+			if (fetchError.data?.error) {
+				setValidationErrors(fetchError.data.error);
+			}
+
+			throw error;
 		}
 		finally {
 			isSavingJobOpportunity.value = false;

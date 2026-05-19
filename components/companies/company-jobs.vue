@@ -100,6 +100,15 @@
 					<div class="company-jobs__row-actions">
 						<template v-if="job.status === 'pending_payment'">
 							<UButton
+								variant="soft"
+								color="gray"
+								size="xs"
+								icon="i-heroicons-pencil-20-solid"
+								@click="editJob(job)"
+							>
+								Edit
+							</UButton>
+							<UButton
 								size="xs"
 								icon="i-heroicons-credit-card-20-solid"
 								:loading="checkoutJobId === job.id"
@@ -114,7 +123,7 @@
 								color="gray"
 								size="xs"
 								icon="i-heroicons-pencil-20-solid"
-								@click="editPendingJob(job)"
+								@click="editJob(job)"
 							>
 								Edit
 							</UButton>
@@ -194,7 +203,7 @@ function getTier(job: JobOpportunity) {
 	return getPostingTier(job.posting_tier);
 }
 
-function editPendingJob(jobOpportunity: JobOpportunity) {
+function editJob(jobOpportunity: JobOpportunity) {
 	jobOpportunitiesStore.setDraftFromJobOpportunity(jobOpportunity);
 	router.push('/company/post-job');
 }

@@ -8,6 +8,7 @@
 			:job-opportunity="draft"
 		/>
 		<UAlert
+			v-if="!isEditingPublishedJob"
 			class="preview__checkout-note"
 			icon="i-heroicons-credit-card"
 			color="primary"
@@ -31,7 +32,7 @@
 				block
 				trailing
 				:loading="jobOpportunitiesStore.isSavingJobOpportunity"
-				:label="draft?.id ? 'Update and Complete Post' : 'Post Job'"
+				:label="primaryActionLabel"
 				@click="postJob"
 			/>
 		</UContainer>
@@ -54,8 +55,16 @@ const jobOpportunitiesStore = useJobOpportunitiesStore();
 const companiesStore = useCompaniesStore();
 
 const draft = computed(() => jobOpportunitiesStore.draftJobOpportunity);
+const isEditingPublishedJob = computed(() => Boolean(draft.value?.id && draft.value.status === 'published'));
 const selectedTier = computed(() => getPostingTier(draft.value?.posting_tier));
 const selectedTierPrice = computed(() => `$${selectedTier.value.price}`);
+const primaryActionLabel = computed(() => {
+	if (isEditingPublishedJob.value) {
+		return 'Save Changes';
+	}
+
+	return draft.value?.id ? 'Update and Complete Post' : 'Post Job';
+});
 
 onMounted(jobOpportunitiesStore.restoreJobOpportunityDraft);
 
@@ -65,9 +74,17 @@ async function postJob() {
 	}
 
 	try {
-		const { checkoutUrl } = draft.value.id
-			? await updateAndCheckoutPendingJob()
-			: await jobOpportunitiesStore.createJobOpportunity(draft.value);
+		let checkoutUrl: string | null = null;
+
+		if (isEditingPublishedJob.value) {
+			({ checkoutUrl } = await updatePublishedJob());
+		}
+		else if (draft.value.id) {
+			({ checkoutUrl } = await updateAndCheckoutPendingJob());
+		}
+		else {
+			({ checkoutUrl } = await jobOpportunitiesStore.createJobOpportunity(draft.value));
+		}
 
 		if (checkoutUrl) {
 			window.location.href = checkoutUrl;
@@ -103,6 +120,17 @@ async function updateAndCheckoutPendingJob() {
 
 	await jobOpportunitiesStore.updateJobOpportunity(draft.value.id, draft.value);
 	return jobOpportunitiesStore.checkoutJobOpportunity(draft.value.id);
+}
+
+async function updatePublishedJob() {
+	if (!draft.value?.id) {
+		return { checkoutUrl: null };
+	}
+
+	await jobOpportunitiesStore.updateJobOpportunity(draft.value.id, draft.value);
+	jobOpportunitiesStore.clearDraftJobOpportunity();
+
+	return { checkoutUrl: null };
 }
 </script>
 

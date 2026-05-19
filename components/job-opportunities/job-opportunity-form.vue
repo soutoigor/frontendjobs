@@ -326,6 +326,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 	jobOpportunityStore.clearValidationErrors();
 	jobOpportunityStore.setDraftJobOpportunity({
+		id: state.id,
+		status: state.status,
+		company: state.company,
+		posting_tier: state.posting_tier,
 		...event.data,
 		application_link: normalizeApplicationDestination(event.data.application_link),
 		date_posted: state.date_posted || new Date().toISOString().slice(0, 10),

@@ -4,7 +4,7 @@
 		<div class="post-job__steps">
 			<template
 				v-for="(label, i) in stepLabels"
-				:key="i"
+				:key="label"
 			>
 				<div
 					class="post-job__step"
@@ -16,7 +16,7 @@
 					<span class="post-job__step-label">{{ label }}</span>
 				</div>
 				<div
-					v-if="i < 2"
+					v-if="i < stepLabels.length - 1"
 					class="post-job__step-line"
 					:class="{ 'post-job__step-line--active': currentStep > i + 1 }"
 				/>
@@ -26,10 +26,10 @@
 		<!-- Step heading -->
 		<div class="post-job__heading">
 			<h1 class="post-job__title">
-				{{ stepTitles[currentStep - 1] }}
+				{{ currentStepTitle }}
 			</h1>
 			<p class="post-job__subtitle">
-				{{ stepSubtitles[currentStep - 1] }}
+				{{ currentStepSubtitle }}
 			</p>
 		</div>
 
@@ -132,10 +132,11 @@
 			<UButton
 				v-if="currentStep === 2"
 				size="lg"
-				trailing-icon="i-heroicons-arrow-right-20-solid"
-				@click="currentStep = 3"
+				:trailing-icon="previewPrimaryIcon"
+				:loading="isSubmitting && isEditingPublishedJob"
+				@click="handlePreviewPrimary"
 			>
-				Continue to payment
+				{{ previewPrimaryLabel }}
 			</UButton>
 			<UButton
 				v-if="currentStep === 3"
@@ -158,7 +159,7 @@ import JobOpportunityCard from '~/components/job-opportunities/job-opportunity-c
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import { useCompaniesStore } from '~/store/companies';
 import type { Company } from '~/types/companies';
-import type { JobOpportunity, JobPostingTier } from '~/types/job-opportunities';
+import type { JobOpportunity, JobOpportunityDraft, JobPostingTier } from '~/types/job-opportunities';
 import { getPostingTier, postingTiers } from '~/utils/posting-tiers';
 
 definePageMeta({
@@ -168,16 +169,56 @@ definePageMeta({
 const jobOpportunitiesStore = useJobOpportunitiesStore();
 const companiesStore = useCompaniesStore();
 const toast = useToast();
+const router = useRouter();
 const currentStep = ref(1);
 const isSubmitting = ref(false);
 
-const stepLabels = ['Details', 'Preview', 'Checkout'];
-const stepTitles = ['Post a job', 'Preview your post', 'Complete payment'];
-const stepSubtitles = [
-	'Fill the listing once — preview before publishing. Plans start at $99 for a 30-day post.',
-	'This is exactly how candidates will see your role.',
-	'Choose visibility, preview the homepage card, then pay once through Stripe.',
-];
+const draftJob = computed(() => jobOpportunitiesStore.draftJobOpportunity);
+const isEditingPublishedJob = computed(() => Boolean(draftJob.value?.id && draftJob.value.status === 'published'));
+const isEditingPendingJob = computed(() => Boolean(draftJob.value?.id && draftJob.value.status === 'pending_payment'));
+
+const stepLabels = computed(() => isEditingPublishedJob.value
+	? ['Details', 'Preview']
+	: ['Details', 'Preview', 'Checkout']);
+const stepTitles = computed(() => {
+	if (isEditingPublishedJob.value) {
+		return ['Edit job', 'Review changes'];
+	}
+
+	if (isEditingPendingJob.value) {
+		return ['Edit pending job', 'Preview your post', 'Complete payment'];
+	}
+
+	return ['Post a job', 'Preview your post', 'Complete payment'];
+});
+const stepSubtitles = computed(() => {
+	if (isEditingPublishedJob.value) {
+		return [
+			'Update the listing details. Simple content edits do not require another payment.',
+			'Review the updated listing before saving it live.',
+		];
+	}
+
+	if (isEditingPendingJob.value) {
+		return [
+			'Update the listing before payment. You will only pay once when you complete checkout.',
+			'This is exactly how candidates will see your role.',
+			'Choose visibility, preview the homepage card, then pay once through Stripe.',
+		];
+	}
+
+	return [
+		'Fill the listing once — preview before publishing. Plans start at $99 for a 30-day post.',
+		'This is exactly how candidates will see your role.',
+		'Choose visibility, preview the homepage card, then pay once through Stripe.',
+	];
+});
+const currentStepTitle = computed(() => stepTitles.value[currentStep.value - 1]);
+const currentStepSubtitle = computed(() => stepSubtitles.value[currentStep.value - 1]);
+const previewPrimaryLabel = computed(() => isEditingPublishedJob.value ? 'Save changes' : 'Continue to payment');
+const previewPrimaryIcon = computed(() => isEditingPublishedJob.value
+	? 'i-heroicons-check-20-solid'
+	: 'i-heroicons-arrow-right-20-solid');
 
 const selectedTier = computed(() => getPostingTier(jobOpportunitiesStore.draftJobOpportunity?.posting_tier));
 const selectedTierPrice = computed(() => `$${selectedTier.value.price}.00`);
@@ -221,6 +262,65 @@ function selectTier(tier: JobPostingTier) {
 	jobOpportunitiesStore.updateDraftPostingTier(tier);
 }
 
+async function handlePreviewPrimary() {
+	if (isEditingPublishedJob.value) {
+		await savePublishedJob();
+		return;
+	}
+
+	currentStep.value = 3;
+}
+
+function handleSubmissionError(error: unknown) {
+	const fetchError = error as { status?: number; data?: { error?: unknown } };
+	const isValidationError = fetchError.status === 400 && fetchError.data?.error;
+
+	toast.add({
+		color: 'rose',
+		title: isValidationError ? 'Could not save job' : 'Something went wrong',
+		description: isValidationError
+			? 'Review the highlighted fields and try again.'
+			: 'Please try again.',
+	});
+
+	if (isValidationError) {
+		currentStep.value = 1;
+	}
+}
+
+async function savePublishedJob() {
+	const draft = jobOpportunitiesStore.draftJobOpportunity;
+	if (!draft?.id) {
+		toast.add({
+			color: 'rose',
+			title: 'No job to update',
+			description: 'Please return to your dashboard and try again.',
+		});
+		return;
+	}
+
+	isSubmitting.value = true;
+	try {
+		await jobOpportunitiesStore.updateJobOpportunity(draft.id, draft);
+		await companiesStore.fetchUserCompany();
+		jobOpportunitiesStore.clearDraftJobOpportunity();
+
+		toast.add({
+			color: 'green',
+			title: 'Job updated',
+			description: 'Your live listing has been saved.',
+		});
+
+		await router.push('/company/dashboard');
+	}
+	catch (error: unknown) {
+		handleSubmissionError(error);
+	}
+	finally {
+		isSubmitting.value = false;
+	}
+}
+
 async function submitAndCheckout() {
 	const draft = jobOpportunitiesStore.draftJobOpportunity;
 	if (!draft) {
@@ -234,23 +334,32 @@ async function submitAndCheckout() {
 
 	isSubmitting.value = true;
 	try {
-		const response = await jobOpportunitiesStore.createJobOpportunity(draft);
+		const response = draft.id
+			? await updateAndCheckoutPendingJob(draft.id, draft)
+			: await jobOpportunitiesStore.createJobOpportunity(draft);
 
 		if (response?.checkoutUrl) {
 			window.location.href = response.checkoutUrl;
 		}
 	}
-	catch {
-		toast.add({
-			color: 'rose',
-			title: 'Something went wrong',
-			description: 'Please try again.',
-		});
+	catch (error: unknown) {
+		handleSubmissionError(error);
 	}
 	finally {
 		isSubmitting.value = false;
 	}
 }
+
+async function updateAndCheckoutPendingJob(id: string, draft: JobOpportunityDraft) {
+	await jobOpportunitiesStore.updateJobOpportunity(id, draft);
+	return jobOpportunitiesStore.checkoutJobOpportunity(id);
+}
+
+watch(isEditingPublishedJob, (isEditingPaidListing) => {
+	if (isEditingPaidListing && currentStep.value > 2) {
+		currentStep.value = 2;
+	}
+});
 </script>
 
 <style scoped>
