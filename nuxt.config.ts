@@ -60,12 +60,6 @@ export default defineNuxtConfig({
 			],
 			script: [
 				{
-					hid: 'tawk.to',
-					src: 'https://embed.tawk.to/678843b3825083258e05daee/1ihm4gtii',
-					defer: true,
-					async: true,
-				},
-				{
 					src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8184561234048018',
 					crossorigin: 'anonymous',
 					async: true,
