@@ -25,7 +25,7 @@
 					<strong>Cookies:</strong> used to store your authentication token when you log in.
 				</li>
 				<li class="privacy__item">
-					<strong>Analytics:</strong> we use Google Analytics to track user behavior.
+					<strong>Advertising:</strong> we use Google AdSense to display ads.
 				</li>
 			</ul>
 		</section>
@@ -57,7 +57,7 @@
 			<p>We do not sell your personal information to third parties. However, we may share it with:</p>
 			<ul class="privacy__list">
 				<li class="privacy__item">
-					<strong>Service Providers:</strong> Firebase and Google Analytics
+					<strong>Service Providers:</strong> Cloudinary and Google AdSense
 				</li>
 				<li class="privacy__item">
 					<strong>Legal Authorities:</strong> if required by law or to protect our rights
@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts" setup>
-const LAST_UPDATE = 'January 15, 2025';
+const LAST_UPDATE = 'May 19, 2026';
 const CONTACT_EMAIL = 'igor_souto@outlook.com';
 
 definePageMeta({

@@ -1,18 +1,25 @@
 import { ref } from 'vue';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export const useUpload = () => {
+	const config = useRuntimeConfig();
+	const token = useCookie('token');
 	const uploadProgress = ref(0);
 
-	const uploadFile = async (file: File, path: string) => {
+	const uploadFile = async (file: File) => {
 		try {
-			const storage = getStorage();
-			const fileRef = storageRef(storage, path);
+			const formData = new FormData();
+			formData.append('avatar', file);
 
-			const uploadTask = await uploadBytes(fileRef, file);
+			const response = await $fetch<{ avatar: string }>('/companies/avatar', {
+				method: 'post',
+				baseURL: config.public.baseURL,
+				headers: {
+					Authorization: `Bearer ${token.value}`,
+				},
+				body: formData,
+			});
 
-			const downloadURL = await getDownloadURL(uploadTask.ref);
-			return downloadURL;
+			return response.avatar;
 		}
 		catch (error) {
 			console.error('Error uploading file:', error);

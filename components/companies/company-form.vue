@@ -334,8 +334,7 @@ async function uploadAvatar() {
 		try {
 			uploadingAvatar.value = true;
 			verifyImageSize(file.value);
-			const path = `avatars/${file.value.name}-${authStore.user?.id}`;
-			const downloadURL = await uploadFile(file.value, path);
+			const downloadURL = await uploadFile(file.value);
 
 			state.avatar = downloadURL;
 		}
