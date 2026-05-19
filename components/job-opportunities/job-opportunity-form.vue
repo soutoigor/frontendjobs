@@ -359,7 +359,7 @@ function setSalaryMaximum(value: string | number) {
   @apply w-full flex flex-col gap-4 items-stretch;
 
   &__form-section {
-    @apply grid grid-cols-12 gap-4 items-center;
+    @apply grid grid-cols-12 gap-4 items-start;
   }
 
   &__trailing-currency {
