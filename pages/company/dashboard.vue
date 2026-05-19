@@ -27,6 +27,22 @@
 			</CompanyCard>
 		</div>
 
+		<div
+			v-if="companiesStore.userCompany"
+			class="dashboard__email-notice"
+		>
+			<Icon name="i-heroicons-envelope-20-solid" />
+			<div>
+				<p class="dashboard__email-title">
+					Applicant and job emails go to <strong>{{ notificationEmail }}</strong>
+				</p>
+				<p class="dashboard__email-copy">
+					This comes from your {{ notificationEmailSource }}. Your account login email is
+					<strong>{{ accountEmail }}</strong>.
+				</p>
+			</div>
+		</div>
+
 		<!-- Stats row -->
 		<div class="dashboard__stats">
 			<StatCard
@@ -102,6 +118,19 @@ const totalSpent = computed(() => {
 	return formatAmountCents(spentCents);
 });
 
+const notificationEmail = computed(() => {
+	return companiesStore.userCompany?.notification_email
+		|| companiesStore.userCompany?.socials?.email
+		|| companiesStore.userCompany?.account_email
+		|| 'your account email';
+});
+
+const accountEmail = computed(() => companiesStore.userCompany?.account_email || 'your login email');
+
+const notificationEmailSource = computed(() => {
+	return companiesStore.userCompany?.socials?.email ? 'company Application email' : 'account login email fallback';
+});
+
 onMounted(async () => {
 	if (route.query.payment === 'success') {
 		await router.replace('/company/dashboard');
@@ -137,6 +166,22 @@ onMounted(async () => {
 
   &__header {
     @apply mb-2;
+  }
+
+  &__email-notice {
+    @apply flex gap-3 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3 text-sm text-violet-950 dark:border-violet-900 dark:bg-violet-950/30 dark:text-violet-100;
+
+    svg {
+      @apply mt-0.5 h-5 w-5 shrink-0 text-violet-500;
+    }
+  }
+
+  &__email-title {
+    @apply font-medium;
+  }
+
+  &__email-copy {
+    @apply mt-1 text-xs text-violet-800 dark:text-violet-200;
   }
 
   &__header-actions {

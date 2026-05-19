@@ -8,6 +8,8 @@ export interface Company {
 	user_id: string; // uuid
 	industry: string;
 	socials: Socials;
+	account_email?: string;
+	notification_email?: string;
 	created_at: string;
 	updated_at: string;
 }

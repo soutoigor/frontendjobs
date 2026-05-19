@@ -111,7 +111,7 @@
 					</div>
 					<div class="post-job__checkout-note">
 						<strong>Live in seconds.</strong>
-						Payment confirmation publishes your post and sends you an email receipt.
+						Payment confirmation publishes your post and uses your company Application email for the receipt.
 					</div>
 				</section>
 			</div>

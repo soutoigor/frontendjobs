@@ -101,17 +101,18 @@
 
 		<div class="company-form__optional-header">
 			<h3 class="company-form__socials-title">
-				Optional links
+				Contact and links
 			</h3>
 			<p>
-				Add full URLs or handles. We will format them before they appear on your public company profile.
+				The application email receives applicant alerts and job-related emails. It is also shown on your public company profile.
 			</p>
 		</div>
 		<div class="company-form__form-section">
 			<UFormGroup
 				size="lg"
-				label="Public email"
+				label="Application email"
 				name="email"
+				help="Use the hiring inbox that should receive application notifications."
 				class="col-span-12 md:col-span-6"
 			>
 				<UInput
@@ -239,7 +240,7 @@ const state = reactive<CompanyPayload>({
 		website: companiesStore.userCompany?.socials?.website || '',
 		instagram: companiesStore.userCompany?.socials?.instagram || '',
 		github: companiesStore.userCompany?.socials?.github || '',
-		email: authStore?.user?.email || '',
+		email: companiesStore.userCompany?.socials?.email || authStore?.user?.email || '',
 	},
 });
 
