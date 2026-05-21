@@ -21,6 +21,7 @@ import HeroSplit from '~/components/home/hero-split.vue';
 import TrustStrip from '~/components/home/trust-strip.vue';
 import JobFilters from '~/components/shared/job-filters.vue';
 import JobOpportunities from '~/components/job-opportunities/job-opportunities.vue';
+import { useFilterOptions } from '~/composables/use-filter-options';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import type { IndexJobOpportunitiesParams, IndexJobOpportunitiesResponse } from '~/types/job-opportunities';
 
@@ -32,9 +33,11 @@ const store = useJobOpportunitiesStore();
 const config = useRuntimeConfig();
 const route = useRoute();
 const router = useRouter();
+const { fetchTechnologies, technologies } = useFilterOptions();
 const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
 const siteUrl = config.public.siteUrl;
 
+await fetchTechnologies();
 store.updateFilters(filtersFromQuery(route.query));
 
 useHead({
@@ -115,7 +118,7 @@ function filtersFromQuery(query: typeof route.query): IndexJobOpportunitiesParam
 		search: queryString(query.search),
 		location: queryString(query.location),
 		remote: queryString(query.remote) === '1' || queryString(query.remote) === 'true',
-		technologies: queryList(query.stack),
+		technologies: queryList(query.stack).map(resolveTechnologyFilter).filter(Boolean),
 		salary_minimum: queryString(query.salary_minimum),
 		employment_type: queryString(query.employment_type),
 		seniority: queryString(query.seniority),
@@ -136,7 +139,7 @@ function queryFromFilters(filters: IndexJobOpportunitiesParams) {
 		query.remote = '1';
 	}
 	if (filters.technologies.length) {
-		query.stack = filters.technologies.join(',');
+		query.stack = filters.technologies.map(technologyQueryValue).join(',');
 	}
 	if (filters.salary_minimum) {
 		query.salary_minimum = filters.salary_minimum;
@@ -183,6 +186,25 @@ function queryList(value: typeof route.query[string]) {
 		.split(',')
 		.map(item => item.trim())
 		.filter(Boolean);
+}
+
+function resolveTechnologyFilter(value: string) {
+	const decodedValue = decodeURIComponent(value);
+	const technology = technologies.value.find(({ id, name }) =>
+		id === decodedValue || normalizedTechnologyName(name) === normalizedTechnologyName(decodedValue),
+	);
+
+	return technology?.id || decodedValue;
+}
+
+function technologyQueryValue(technologyId: string) {
+	const technology = technologies.value.find(({ id }) => id === technologyId);
+
+	return technology?.name || technologyId;
+}
+
+function normalizedTechnologyName(value: string) {
+	return value.trim().toLowerCase();
 }
 </script>
 

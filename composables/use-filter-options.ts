@@ -2,6 +2,7 @@ import { COUNTRY_LIST, SENIORITIES, EMPLOYMENT_TYPES, INDUSTRIES, CURRENCIES } f
 
 const technologies = ref<Technology[]>([]);
 const isInitialized = ref(false);
+let fetchTechnologiesPromise: Promise<void> | null = null;
 
 export function useFilterOptions() {
 	const config = useRuntimeConfig();
@@ -26,9 +27,24 @@ export function useFilterOptions() {
 		currencies,
 		locations,
 		isLoadingTechnologies,
+		fetchTechnologies,
 	};
 
 	async function fetchTechnologies() {
+		if (isInitialized.value && technologies.value.length) {
+			return;
+		}
+
+		if (fetchTechnologiesPromise) {
+			return fetchTechnologiesPromise;
+		}
+
+		fetchTechnologiesPromise = loadTechnologies();
+		await fetchTechnologiesPromise;
+		fetchTechnologiesPromise = null;
+	}
+
+	async function loadTechnologies() {
 		try {
 			isLoadingTechnologies.value = true;
 			const response = await $fetch('/technologies', {
