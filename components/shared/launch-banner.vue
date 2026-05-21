@@ -1,6 +1,7 @@
 <template>
 	<div
 		v-if="show"
+		ref="bannerEl"
 		class="launch-banner"
 		role="region"
 		aria-label="Launch promotion"
@@ -37,6 +38,25 @@ const STORAGE_KEY = 'launch-banner-dismissed-v1';
 
 const promo = useLaunchPromo();
 const dismissed = ref(true); // start hidden to avoid SSR/CSR flash
+const bannerEl = ref<HTMLElement | null>(null);
+
+const show = computed(() => promo.active && !dismissed.value);
+
+function setOffsetVar(height: number) {
+	document.documentElement.style.setProperty('--launch-banner-height', `${height}px`);
+}
+
+function syncOffset() {
+	if (!show.value) {
+		setOffsetVar(0);
+		return;
+	}
+
+	// Wait a tick so the element has rendered and has an accurate height.
+	requestAnimationFrame(() => {
+		setOffsetVar(bannerEl.value?.offsetHeight ?? 0);
+	});
+}
 
 onMounted(() => {
 	if (!promo.active) {
@@ -44,9 +64,18 @@ onMounted(() => {
 	}
 
 	dismissed.value = localStorage.getItem(STORAGE_KEY) === '1';
+	syncOffset();
+	window.addEventListener('resize', syncOffset);
 });
 
-const show = computed(() => promo.active && !dismissed.value);
+onUnmounted(() => {
+	if (typeof window !== 'undefined') {
+		window.removeEventListener('resize', syncOffset);
+		setOffsetVar(0);
+	}
+});
+
+watch(show, syncOffset);
 
 function dismiss() {
 	dismissed.value = true;
@@ -58,7 +87,7 @@ function dismiss() {
 
 <style scoped>
 .launch-banner {
-	@apply relative flex items-center justify-center gap-3 px-4 py-2.5 text-sm;
+	@apply fixed top-0 left-0 right-0 z-[60] flex items-center justify-center gap-3 px-4 py-2.5 text-sm;
 	background: linear-gradient(90deg, rgba(139, 92, 246, 0.18), rgba(167, 139, 250, 0.18));
 	border-bottom: 1px solid var(--fj-border);
 	color: var(--fj-text);

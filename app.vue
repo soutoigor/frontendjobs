@@ -59,6 +59,6 @@ onMounted(async () => {
 
 <style scoped>
 .app-shell--with-toolbar {
-	padding-top: 5.5rem;
+	padding-top: calc(5.5rem + var(--launch-banner-height, 0px));
 }
 </style>

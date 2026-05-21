@@ -86,9 +86,10 @@ const colorModeItems = computed(() => [
 
 <style scoped>
 .app-toolbar {
-  @apply fixed top-0 left-0 right-0 z-50;
+  @apply fixed left-0 right-0 z-50;
   @apply flex items-center justify-between;
   @apply px-8 py-3.5;
+  top: var(--launch-banner-height, 0px);
   background: var(--fj-toolbar-bg);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--fj-border);
