@@ -11,6 +11,8 @@ declare global {
 	interface Window {
 		plausible?: {
 			(eventName: string, options?: PlausibleOptions): void;
+			init?: (options?: Record<string, unknown>) => void;
+			o?: Record<string, unknown>;
 			q?: Array<[string, PlausibleOptions | undefined]>;
 		};
 	}

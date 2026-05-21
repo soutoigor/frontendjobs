@@ -49,6 +49,7 @@ export default defineNuxtConfig({
 			siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.frontendjobs.app',
 			plausibleDomain: process.env.NUXT_PUBLIC_PLAUSIBLE_DOMAIN || 'frontendjobs.app',
 			plausibleEnabled: process.env.NUXT_PUBLIC_PLAUSIBLE_ENABLED === 'true',
+			plausibleScriptSrc: process.env.NUXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC || 'https://plausible.io/js/pa-Nokph7gMwhI7ttkvFPYy1.js',
 			adsenseClient: process.env.NUXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-8184561234048018',
 			adsenseEnabled: process.env.NUXT_PUBLIC_ADSENSE_ENABLED === 'true',
 			googleSiteVerification: process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',

@@ -12,6 +12,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 		window.plausible = window.plausible || function plausible(...args) {
 			(window.plausible!.q = window.plausible!.q || []).push(args as [string, PlausibleOptions | undefined]);
 		};
+		window.plausible.init = window.plausible.init || function init(options) {
+			window.plausible!.o = options || {};
+		};
 	}
 
 	function injectScript(id: string, src: string, attributes: Record<string, string> = {}) {
@@ -22,7 +25,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 		const script = document.createElement('script');
 		script.id = id;
 		script.src = src;
-		script.defer = true;
+		script.async = true;
 
 		for (const [key, value] of Object.entries(attributes)) {
 			script.setAttribute(key, value);
@@ -43,9 +46,17 @@ export default defineNuxtPlugin((nuxtApp) => {
 	function syncScripts() {
 		if (config.public.plausibleEnabled && preferences.value.analytics) {
 			ensurePlausibleQueue();
-			injectScript(scriptIds.plausible, 'https://plausible.io/js/script.manual.js', {
-				'data-domain': config.public.plausibleDomain,
-			});
+			window.plausible?.init?.({ autoCapturePageviews: false });
+
+			const plausibleAttributes = String(config.public.plausibleScriptSrc).includes('/script')
+				? { 'data-domain': config.public.plausibleDomain }
+				: {};
+
+			injectScript(
+				scriptIds.plausible,
+				config.public.plausibleScriptSrc,
+				plausibleAttributes,
+			);
 		}
 
 		if (config.public.adsenseEnabled && preferences.value.ads) {
