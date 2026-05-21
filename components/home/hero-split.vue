@@ -14,7 +14,7 @@
 					The job board for <span class="hero-split__italic">frontend</span> developers.
 				</h1>
 				<p class="hero-split__subtitle">
-					Browse frontend roles across React, Vue, Angular, Svelte, and the modern web. Salary ranges are visible before you apply, with remote-friendly filters and zero filler.
+					Hand-picked frontend roles. Salaries up front, no recruiter spam.
 				</p>
 				<div class="hero-split__search-row">
 					<div class="hero-split__search-input">
