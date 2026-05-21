@@ -58,7 +58,10 @@
 			class="post-job__checkout"
 		>
 			<div class="post-job__checkout-grid">
-				<section class="post-job__tier-panel">
+				<section
+					v-if="!promo.active"
+					class="post-job__tier-panel"
+				>
 					<div class="post-job__section-label">
 						Choose visibility
 					</div>
@@ -76,6 +79,28 @@
 						</span>
 						<span class="post-job__tier-description">{{ tier.description }}</span>
 					</button>
+				</section>
+
+				<section
+					v-else
+					class="post-job__tier-panel"
+				>
+					<div class="post-job__section-label">
+						What's included
+					</div>
+					<div class="post-job__promo-info">
+						<div class="post-job__promo-info-title">
+							30-day Standard listing
+						</div>
+						<ul class="post-job__promo-info-list">
+							<li>Live in the regular job feed</li>
+							<li>Email alerts on every application</li>
+							<li>Edit anytime from your dashboard</li>
+						</ul>
+						<div class="post-job__promo-info-note">
+							Featured and Spotlight placements return after launch.
+						</div>
+					</div>
 				</section>
 
 				<section class="post-job__preview-panel">
@@ -387,6 +412,12 @@ watch(isEditingPublishedJob, (isEditingPaidListing) => {
 });
 
 onMounted(() => {
+	// During the launch promo we only offer the Standard tier, so force-reset
+	// any draft that has Featured/Spotlight selected (e.g. from a stale draft).
+	if (promo.active && jobOpportunitiesStore.draftJobOpportunity && selectedTier.value.key !== 'standard') {
+		selectTier('standard');
+	}
+
 	track('Post Job Started', {
 		props: {
 			has_draft: Boolean(jobOpportunitiesStore.draftJobOpportunity),
@@ -471,6 +502,28 @@ onMounted(() => {
     @apply rounded-xl p-6 flex flex-col gap-4;
     background: var(--fj-surface);
     border: 1px solid var(--fj-border);
+  }
+
+  &__promo-info {
+    @apply flex flex-col gap-3 rounded-lg p-3;
+    border: 1px solid var(--fj-border);
+    background: var(--fj-surface-muted);
+  }
+
+  &__promo-info-title {
+    @apply text-sm font-semibold;
+    color: var(--fj-text);
+  }
+
+  &__promo-info-list {
+    @apply flex flex-col gap-1.5 text-sm pl-4 list-disc;
+    color: var(--fj-text-muted);
+  }
+
+  &__promo-info-note {
+    @apply text-xs italic pt-2 mt-1;
+    color: var(--fj-text-muted);
+    border-top: 1px solid var(--fj-border);
   }
 
   &__tier-option {
