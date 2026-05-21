@@ -78,6 +78,7 @@ import * as Yup from 'yup';
 import type { InferType } from 'yup';
 import type { FormSubmitEvent } from '#ui/types';
 import FjIcon from '~/components/shared/fj-icon.vue';
+import { useLaunchPromo } from '~/composables/use-launch-promo';
 import { useAuthStore } from '~/store/authentication';
 
 const authStore = useAuthStore();
@@ -86,8 +87,9 @@ const router = useRouter();
 
 type Schema = InferType<typeof schema>;
 
+const promo = useLaunchPromo();
 const benefits = [
-	'Plans from $99 per 30-day post',
+	promo.active ? promo.registerBenefit : 'Plans from $99 per 30-day post',
 	'No subscription',
 	'Email alerts on every application',
 ];

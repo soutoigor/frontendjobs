@@ -86,8 +86,8 @@
 						label="Per page"
 					/>
 					<StatCard
-						value="$99+"
-						label="Post from"
+						:value="promo.active ? promo.heroStatValue : '$99+'"
+						:label="promo.active ? promo.heroStatLabel : 'Post from'"
 					/>
 				</div>
 			</div>
@@ -99,7 +99,10 @@
 import SearchJobInput from '~/components/shared/search-job-input.vue';
 import StatCard from '~/components/shared/stat-card.vue';
 import { useFilterOptions } from '~/composables/use-filter-options';
+import { useLaunchPromo } from '~/composables/use-launch-promo';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
+
+const promo = useLaunchPromo();
 
 const store = useJobOpportunitiesStore();
 const { track } = useAnalytics();

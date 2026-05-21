@@ -1,4 +1,5 @@
 <template>
+	<LaunchBanner />
 	<AppToolbar
 		v-if="showToolbar"
 	/>
@@ -19,6 +20,7 @@
 <script setup lang="ts">
 import AppToolbar from '~/components/toolbar/app-toolbar.vue';
 import AppFooter from '~/components/shared/app-footer.vue';
+import LaunchBanner from '~/components/shared/launch-banner.vue';
 import PrivacyPreferences from '~/components/shared/privacy-preferences.vue';
 import { useAuthStore } from '~/store/authentication';
 

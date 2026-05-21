@@ -103,15 +103,25 @@
 					</div>
 					<div class="post-job__checkout-row">
 						<span class="post-job__checkout-muted">{{ selectedTier.label }} listing</span>
-						<span class="post-job__checkout-value">{{ selectedTierPrice }}</span>
+						<span class="post-job__checkout-value">
+							<span
+								v-if="promo.active"
+								class="post-job__checkout-strike"
+							>{{ selectedTierPrice }}</span>
+							{{ promo.active ? promo.orderSummaryPrice : selectedTierPrice }}
+						</span>
 					</div>
 					<div class="post-job__checkout-total">
 						<span class="post-job__checkout-total-label">Total</span>
-						<span class="post-job__checkout-total-value">{{ selectedTierPrice }}</span>
+						<span class="post-job__checkout-total-value">
+							{{ promo.active ? promo.orderSummaryPrice : selectedTierPrice }}
+						</span>
 					</div>
 					<div class="post-job__checkout-note">
 						<strong>Live in seconds.</strong>
-						Payment confirmation publishes your post and uses your company Application email for the receipt.
+						{{ promo.active
+							? promo.orderSummaryNote
+							: 'Payment confirmation publishes your post and uses your company Application email for the receipt.' }}
 					</div>
 				</section>
 			</div>
@@ -141,11 +151,11 @@
 			<UButton
 				v-if="currentStep === 3"
 				size="lg"
-				icon="i-heroicons-lock-closed-20-solid"
+				:icon="promo.active ? 'i-heroicons-sparkles' : 'i-heroicons-lock-closed-20-solid'"
 				:loading="isSubmitting"
 				@click="submitAndCheckout"
 			>
-				Pay {{ selectedTierPrice }} with Stripe
+				{{ promo.active ? promo.publishButtonLabel : `Pay ${selectedTierPrice} with Stripe` }}
 			</UButton>
 		</div>
 	</div>
@@ -161,6 +171,7 @@ import { useCompaniesStore } from '~/store/companies';
 import type { Company } from '~/types/companies';
 import type { JobOpportunity, JobOpportunityDraft, JobPostingTier } from '~/types/job-opportunities';
 import { getPostingTier, postingTiers } from '~/utils/posting-tiers';
+import { useLaunchPromo } from '~/composables/use-launch-promo';
 
 definePageMeta({
 	layout: 'company',
@@ -171,6 +182,7 @@ const companiesStore = useCompaniesStore();
 const toast = useToast();
 const router = useRouter();
 const { track } = useAnalytics();
+const promo = useLaunchPromo();
 const currentStep = ref(1);
 const isSubmitting = ref(false);
 
@@ -209,9 +221,13 @@ const stepSubtitles = computed(() => {
 	}
 
 	return [
-		'Fill the listing once — preview before publishing. Plans start at $99 for a 30-day post.',
+		promo.active
+			? promo.postJobSubtitle
+			: 'Fill the listing once — preview before publishing. Plans start at $99 for a 30-day post.',
 		'This is exactly how candidates will see your role.',
-		'Choose visibility, preview the homepage card, then pay once through Stripe.',
+		promo.active
+			? 'Review your selection and publish — no payment needed during launch.'
+			: 'Choose visibility, preview the homepage card, then pay once through Stripe.',
 	];
 });
 const currentStepTitle = computed(() => stepTitles.value[currentStep.value - 1]);
@@ -534,6 +550,11 @@ onMounted(() => {
   &__checkout-value {
     @apply font-mono text-sm;
     color: var(--fj-text);
+  }
+
+  &__checkout-strike {
+    @apply mr-2 line-through;
+    color: var(--fj-text-muted);
   }
 
   &__checkout-total-label {

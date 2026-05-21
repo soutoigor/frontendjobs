@@ -10,11 +10,11 @@
 		<UAlert
 			v-if="!isEditingPublishedJob"
 			class="preview__checkout-note"
-			icon="i-heroicons-credit-card"
+			:icon="promo.active ? 'i-heroicons-sparkles' : 'i-heroicons-credit-card'"
 			color="primary"
 			variant="soft"
-			:title="`${selectedTier.label} listing: ${selectedTierPrice} for 30 days`"
-			description="The next step opens Stripe Checkout. After payment succeeds, the job is published automatically and you return to your company dashboard."
+			:title="promo.active ? promo.previewAlertTitle : `${selectedTier.label} listing: ${selectedTierPrice} for 30 days`"
+			:description="promo.active ? promo.previewAlertDescription : 'The next step opens Stripe Checkout. After payment succeeds, the job is published automatically and you return to your company dashboard.'"
 		/>
 		<UContainer class="preview__actions-wrapper">
 			<UButton
@@ -43,6 +43,7 @@
 import JobOpportunityContent from '~/components/job-opportunities/job-opportunity-content.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import { useCompaniesStore } from '~/store/companies';
+import { useLaunchPromo } from '~/composables/use-launch-promo';
 import { getPostingTier } from '~/utils/posting-tiers';
 
 definePageMeta({
@@ -53,6 +54,7 @@ const router = useRouter();
 const toast = useToast();
 const jobOpportunitiesStore = useJobOpportunitiesStore();
 const companiesStore = useCompaniesStore();
+const promo = useLaunchPromo();
 
 const draft = computed(() => jobOpportunitiesStore.draftJobOpportunity);
 const isEditingPublishedJob = computed(() => Boolean(draft.value?.id && draft.value.status === 'published'));
