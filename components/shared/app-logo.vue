@@ -22,7 +22,7 @@ const sizeClass = computed(() => `app-logo--${props.size}`);
 <style scoped>
 .app-logo {
   @apply font-bold tracking-tight inline-flex items-center;
-  font-family: 'Geist', sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   letter-spacing: -0.4px;
 
   &--sm {

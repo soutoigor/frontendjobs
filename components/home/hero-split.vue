@@ -317,11 +317,38 @@ function searchTag(tag: string) {
 
 @media (max-width: 1023px) {
   .hero-split {
-    @apply px-6 py-12;
+    @apply px-6 py-10;
   }
 
   .hero-split__container {
     @apply grid-cols-1;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-split {
+    @apply px-6;
+    padding-top: 36px;
+    padding-bottom: 30px;
+  }
+
+  .hero-split__pulse {
+    @apply mb-4;
+  }
+
+  .hero-split__heading {
+    font-size: 38px;
+    letter-spacing: 0;
+    line-height: 1.03;
+  }
+
+  .hero-split__subtitle {
+    @apply mb-5;
+    font-size: 15.5px;
+  }
+
+  .hero-split__search-row {
+    @apply flex-col;
   }
 }
 </style>

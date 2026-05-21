@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const apiOrigin = process.env.API_BASE_URL ? new URL(process.env.API_BASE_URL).origin : undefined;
+
 export default defineNuxtConfig({
 	modules: [
 		'@nuxt/ui',
@@ -24,9 +26,8 @@ export default defineNuxtConfig({
 					: []),
 			],
 			link: [
-				{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-				{ rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-				{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap' },
+				...(apiOrigin ? [{ rel: 'preconnect', href: apiOrigin }] : []),
+				{ rel: 'preconnect', href: 'https://res.cloudinary.com' },
 				{ rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
 				{ rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
 				{ rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },

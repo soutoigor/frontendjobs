@@ -402,6 +402,16 @@ function openJobOpportunity() {
       grid-column: 1 / -1;
       @apply flex-row items-center justify-between;
     }
+
+    .job-card__title {
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .job-card__tags {
+      max-height: 26px;
+      overflow: hidden;
+    }
   }
 }
 </style>

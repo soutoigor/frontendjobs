@@ -66,8 +66,10 @@ await useFetch<IndexJobOpportunitiesResponse>(
 	'job_opportunities',
 	{
 		baseURL: config.public.baseURL,
-		key: 'job-opportunities-total',
+		key: 'job-opportunities-initial',
+		params: { page: 1 },
 		onResponse: ({ response }) => {
+			store.setJobOpportunities(response._data);
 			store.setTotalJobOpportunities(response._data.total);
 		},
 	},
@@ -79,7 +81,7 @@ await useFetch<IndexJobOpportunitiesResponse>(
   @apply flex flex-col min-h-screen;
 
   &__content {
-    @apply max-w-7xl mx-auto w-full px-8 pb-20;
+    @apply max-w-7xl mx-auto w-full px-6 md:px-8 pb-20;
   }
 
   &__heading {
@@ -101,6 +103,23 @@ await useFetch<IndexJobOpportunitiesResponse>(
     @apply font-mono;
     color: var(--fj-text-muted);
     font-size: 11.5px;
+  }
+}
+
+@media (max-width: 767px) {
+  .index {
+    &__heading {
+      @apply py-4;
+    }
+
+    &__count {
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    &__updated {
+      display: none;
+    }
   }
 }
 </style>

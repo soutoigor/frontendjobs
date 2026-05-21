@@ -9,8 +9,8 @@ export default <Partial<Config>>{
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['Geist', ...defaultTheme.fontFamily.sans],
-				mono: ['"JetBrains Mono"', ...defaultTheme.fontFamily.mono],
+				sans: ['Inter', 'ui-sans-serif', 'system-ui', ...defaultTheme.fontFamily.sans],
+				mono: ['"SFMono-Regular"', '"Roboto Mono"', ...defaultTheme.fontFamily.mono],
 			},
 			colors: {
 				surface: {

@@ -38,13 +38,24 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from 'lodash-es';
+import { useDebounceFn } from '@vueuse/core';
 import { useJobOpportunitiesStore, type UseFetchReturn } from '~/store/job-opportunities';
 import JobOpportunityCard from '~/components/job-opportunities/job-opportunity-card.vue';
 import JobOpportunityCardSkeleton from '~/components/job-opportunities/job-opportunity-card-skeleton.vue';
 
 const store = useJobOpportunitiesStore();
 const config = useRuntimeConfig();
+const hasInitialJobOpportunities = computed(() => {
+	return !!store.jobOpportunities
+		&& store.filters.page === 1
+		&& !store.filters.search
+		&& !store.filters.location
+		&& !store.filters.remote
+		&& !store.filters.salary_minimum
+		&& !store.filters.employment_type
+		&& !store.filters.seniority
+		&& store.filters.technologies.length === 0;
+});
 
 const filters = computed(() => Object.fromEntries(
 	Object.entries(store.filters).filter(([, value]) => {
@@ -63,6 +74,7 @@ const { error, pending } = await useFetch<UseFetchReturn>(
 	{
 		baseURL: config.public.baseURL,
 		params: filters,
+		immediate: !hasInitialJobOpportunities.value,
 		watch: [() => store.filters],
 		onResponse: ({ response }) => {
 			if (store.jobOpportunities && store.filters.page && store.filters.page > previousPage) {
@@ -82,7 +94,7 @@ const { error, pending } = await useFetch<UseFetchReturn>(
 	},
 );
 
-const handleScroll = debounce(() => {
+const handleScroll = useDebounceFn(() => {
 	const bottomOfWindow = window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 100;
 	const hasMore = (store.jobOpportunities?.current_page ?? 1) < (store.jobOpportunities?.last_page ?? 1);
 
