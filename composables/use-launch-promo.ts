@@ -4,7 +4,7 @@
  */
 const config = {
 	active: true,
-	bannerMessage: 'Launch special — free job posts while we get rolling.',
+	bannerMessage: 'Free job posts for our first companies.',
 	bannerCta: 'Post a job',
 	bannerCtaTo: '/company/post-job',
 	heroStatLabel: 'Post during launch',
