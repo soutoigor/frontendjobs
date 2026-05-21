@@ -19,16 +19,18 @@ export interface UseFetchReturn {
 	refresh: () => void;
 }
 
-const initialFilters: IndexJobOpportunitiesParams = {
-	search: '',
-	location: '',
-	remote: false,
-	technologies: [],
-	salary_minimum: '',
-	employment_type: '',
-	seniority: '',
-	page: 1,
-};
+function createInitialFilters(): IndexJobOpportunitiesParams {
+	return {
+		search: '',
+		location: '',
+		remote: false,
+		technologies: [],
+		salary_minimum: '',
+		employment_type: '',
+		seniority: '',
+		page: 1,
+	};
+}
 
 const initialJobOpportunity: JobOpportunity = {
 	id: '',
@@ -65,7 +67,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	const draftJobOpportunity = ref<JobOpportunityDraft>();
 	const validationErrors = ref<JobOpportunityValidationErrors>({});
 	const isSavingJobOpportunity = ref(false);
-	const filters = ref({ ...initialFilters });
+	const filters = ref(createInitialFilters());
 	const filtersLabel = computed(() => {
 		let _filtersLabel = [
 			filters.value.location,
@@ -84,7 +86,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 			_filtersLabel = _filtersLabel.filter(x => x !== 'Remote');
 		}
 
-		return _filtersLabel.filter(x => x !== ''); ;
+		return _filtersLabel.filter((x): x is string => Boolean(x));
 	});
 
 	// ##region Filters
@@ -93,7 +95,7 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 	}
 
 	function resetFilters() {
-		filters.value = initialFilters;
+		filters.value = createInitialFilters();
 	}
 
 	function setJobOpportunities(newJobOpportunities: IndexJobOpportunitiesResponse) {
@@ -111,7 +113,11 @@ export const useJobOpportunitiesStore = defineStore('job-opportunities', () => {
 			newFilters.remote = false;
 		}
 		else {
-			newFilters.technologies = newFilters.technologies.filter(tech => tech !== selectedFilter);
+			newFilters.technologies = newFilters.technologies.filter((technologyId) => {
+				const technology = technologies.value.find(({ id }) => id === technologyId);
+
+				return technologyId !== selectedFilter && technology?.name !== selectedFilter;
+			});
 			newFilters.location = newFilters.location === selectedFilter ? '' : newFilters.location;
 			newFilters.seniority = newFilters.seniority === selectedFilter ? '' : newFilters.seniority;
 			newFilters.employment_type = newFilters.employment_type === selectedFilter ? '' : newFilters.employment_type;

@@ -61,10 +61,16 @@ const featuredTechnologies = computed(
 
 function selectTechnology(technologyId: string) {
 	if (store.filters.technologies.includes(technologyId)) {
-		store.filters.technologies = store.filters.technologies.filter(tech => tech !== technologyId);
+		store.updateFilters({
+			technologies: store.filters.technologies.filter(tech => tech !== technologyId),
+			page: 1,
+		});
 	}
 	else {
-		store.filters.technologies.push(technologyId);
+		store.updateFilters({
+			technologies: [...store.filters.technologies, technologyId],
+			page: 1,
+		});
 	}
 }
 </script>

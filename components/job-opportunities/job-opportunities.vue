@@ -47,14 +47,7 @@ const store = useJobOpportunitiesStore();
 const config = useRuntimeConfig();
 const hasInitialJobOpportunities = computed(() => {
 	return !!store.jobOpportunities
-		&& store.filters.page === 1
-		&& !store.filters.search
-		&& !store.filters.location
-		&& !store.filters.remote
-		&& !store.filters.salary_minimum
-		&& !store.filters.employment_type
-		&& !store.filters.seniority
-		&& store.filters.technologies.length === 0;
+		&& store.filters.page === 1;
 });
 
 const filters = computed(() => Object.fromEntries(

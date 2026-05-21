@@ -33,11 +33,11 @@
 					<span class="hero-split__popular-label">Popular:</span>
 					<button
 						v-for="tag in popularTags"
-						:key="tag"
+						:key="tag.label"
 						class="hero-split__popular-tag"
 						@click="searchTag(tag)"
 					>
-						{{ tag }}
+						{{ tag.label }}
 					</button>
 				</div>
 			</div>
@@ -98,14 +98,22 @@
 <script setup lang="ts">
 import SearchJobInput from '~/components/shared/search-job-input.vue';
 import StatCard from '~/components/shared/stat-card.vue';
+import { useFilterOptions } from '~/composables/use-filter-options';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 
 const store = useJobOpportunitiesStore();
 const { track } = useAnalytics();
+const { technologies } = useFilterOptions();
 
 const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
 const search = ref(store.filters.search);
-const popularTags = ['React', 'Vue', 'TypeScript', 'Next.js', 'Remote'];
+const popularTags = [
+	{ label: 'React', filter: 'React' },
+	{ label: 'Vue', filter: 'Vue.js' },
+	{ label: 'TypeScript', filter: 'TypeScript' },
+	{ label: 'Next.js', filter: 'Next.js' },
+	{ label: 'Remote', filter: 'Remote' },
+];
 const terminalLines = [
 	{ label: 'Stack, seniority, and location filters', value: 'Live' },
 	{ label: 'Salary ranges shown before applying', value: 'Required' },
@@ -123,8 +131,8 @@ function submitSearch() {
 	});
 }
 
-function searchTag(tag: string) {
-	if (tag === 'Remote') {
+function searchTag(tag: { label: string; filter: string }) {
+	if (tag.filter === 'Remote') {
 		store.updateFilters({ remote: true, page: 1 });
 		track('Filter Change', {
 			props: {
@@ -135,11 +143,22 @@ function searchTag(tag: string) {
 		});
 	}
 	else {
-		search.value = tag;
-		store.updateFilters({ search: tag, page: 1 });
-		track('Search', {
+		const technology = technologies.value.find(({ name }) => name === tag.filter);
+
+		if (!technology) {
+			return;
+		}
+
+		store.updateFilters({
+			technologies: store.filters.technologies.includes(technology.id)
+				? store.filters.technologies
+				: [...store.filters.technologies, technology.id],
+			page: 1,
+		});
+		track('Filter Change', {
 			props: {
-				query: tag,
+				filter: 'technology',
+				value: technology.name,
 				source: 'popular-tag',
 			},
 		});

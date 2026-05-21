@@ -13,7 +13,7 @@ export function useFilterOptions() {
 	const isLoadingTechnologies = ref(false);
 
 	onMounted(async () => {
-		if (!isInitialized.value) {
+		if (!isInitialized.value || !technologies.value.length) {
 			await fetchTechnologies();
 		}
 	});
@@ -29,8 +29,6 @@ export function useFilterOptions() {
 	};
 
 	async function fetchTechnologies() {
-		isInitialized.value = true;
-
 		try {
 			isLoadingTechnologies.value = true;
 			const response = await $fetch('/technologies', {
@@ -38,10 +36,14 @@ export function useFilterOptions() {
 			}) as { technologies: Technology[] };
 
 			technologies.value = response.technologies;
-			isLoadingTechnologies.value = false;
+			isInitialized.value = true;
 		}
 		catch (err) {
+			isInitialized.value = false;
 			console.error('Error fetching technologies:', err);
+		}
+		finally {
+			isLoadingTechnologies.value = false;
 		}
 	}
 }

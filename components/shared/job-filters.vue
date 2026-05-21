@@ -2,16 +2,17 @@
 	<div class="job-filters">
 		<div class="job-filters__row">
 			<div class="job-filters__dropdowns">
-				<USelectMenu
-					v-model="store.filters.technologies"
+				<UInputMenu
+					v-model="selectedTechnology"
+					v-model:query="technologyQuery"
 					class="job-filters__filter"
 					aria-label="Filter by technology stack"
-					:options="technologies"
-					multiple
+					:options="availableTechnologies"
 					placeholder="Stack"
 					:loading="isLoadingTechnologies"
 					value-attribute="id"
 					option-attribute="name"
+					@change="addTechnologyFilter"
 				/>
 				<UInputMenu
 					v-model="store.filters.location"
@@ -108,6 +109,26 @@ const {
 	seniorities,
 	technologies,
 } = useFilterOptions();
+
+const selectedTechnology = ref('');
+const technologyQuery = ref('');
+const availableTechnologies = computed(() =>
+	technologies.value.filter(({ id }) => !store.filters.technologies.includes(id)),
+);
+
+function addTechnologyFilter(technologyId?: string) {
+	if (!technologyId || store.filters.technologies.includes(technologyId)) {
+		return;
+	}
+
+	store.updateFilters({
+		technologies: [...store.filters.technologies, technologyId],
+		page: 1,
+	});
+
+	selectedTechnology.value = '';
+	technologyQuery.value = '';
+}
 
 watch(
 	() => ({ ...store.filters }),

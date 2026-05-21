@@ -22,7 +22,7 @@ import TrustStrip from '~/components/home/trust-strip.vue';
 import JobFilters from '~/components/shared/job-filters.vue';
 import JobOpportunities from '~/components/job-opportunities/job-opportunities.vue';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
-import type { IndexJobOpportunitiesResponse } from '~/types/job-opportunities';
+import type { IndexJobOpportunitiesParams, IndexJobOpportunitiesResponse } from '~/types/job-opportunities';
 
 import { defaultMetaTags } from '~/utils/meta-tags';
 
@@ -30,8 +30,12 @@ useHead(defaultMetaTags);
 
 const store = useJobOpportunitiesStore();
 const config = useRuntimeConfig();
+const route = useRoute();
+const router = useRouter();
 const totalJobs = computed(() => store.totalJobOpportunities ?? store.jobOpportunities?.total ?? 0);
 const siteUrl = config.public.siteUrl;
+
+store.updateFilters(filtersFromQuery(route.query));
 
 useHead({
 	script: [
@@ -62,18 +66,124 @@ useHead({
 	],
 });
 
+const initialFetchParams = computed(() => activeFilters(store.filters));
+
 await useFetch<IndexJobOpportunitiesResponse>(
 	'job_opportunities',
 	{
 		baseURL: config.public.baseURL,
 		key: 'job-opportunities-initial',
-		params: { page: 1 },
+		params: initialFetchParams,
 		onResponse: ({ response }) => {
 			store.setJobOpportunities(response._data);
 			store.setTotalJobOpportunities(response._data.total);
 		},
 	},
 );
+
+watch(
+	() => route.query,
+	(query) => {
+		if (queriesMatch(queryFromFilters(store.filters), query)) {
+			return;
+		}
+
+		store.updateFilters(filtersFromQuery(query));
+	},
+	{ deep: true },
+);
+
+watch(
+	() => ({
+		...store.filters,
+		technologies: [...store.filters.technologies],
+	}),
+	(filters) => {
+		const query = queryFromFilters(filters);
+
+		if (queriesMatch(query, route.query)) {
+			return;
+		}
+
+		router.replace({ query });
+	},
+	{ deep: true },
+);
+
+function filtersFromQuery(query: typeof route.query): IndexJobOpportunitiesParams {
+	return {
+		search: queryString(query.search),
+		location: queryString(query.location),
+		remote: queryString(query.remote) === '1' || queryString(query.remote) === 'true',
+		technologies: queryList(query.stack),
+		salary_minimum: queryString(query.salary_minimum),
+		employment_type: queryString(query.employment_type),
+		seniority: queryString(query.seniority),
+		page: 1,
+	};
+}
+
+function queryFromFilters(filters: IndexJobOpportunitiesParams) {
+	const query: Record<string, string> = {};
+
+	if (filters.search) {
+		query.search = filters.search;
+	}
+	if (filters.location) {
+		query.location = filters.location;
+	}
+	if (filters.remote) {
+		query.remote = '1';
+	}
+	if (filters.technologies.length) {
+		query.stack = filters.technologies.join(',');
+	}
+	if (filters.salary_minimum) {
+		query.salary_minimum = filters.salary_minimum;
+	}
+	if (filters.employment_type) {
+		query.employment_type = filters.employment_type;
+	}
+	if (filters.seniority) {
+		query.seniority = filters.seniority;
+	}
+	return query;
+}
+
+function activeFilters(filters: IndexJobOpportunitiesParams) {
+	return Object.fromEntries(
+		Object.entries(filters).filter(([, value]) => {
+			if (Array.isArray(value)) {
+				return value.length > 0;
+			}
+
+			return value !== '' && value !== false && value !== null && value !== undefined;
+		}),
+	);
+}
+
+function queriesMatch(left: Record<string, string>, right: typeof route.query) {
+	return JSON.stringify(sortQuery(left)) === JSON.stringify(sortQuery(Object.fromEntries(
+		Object.entries(right)
+			.map(([key, value]) => [key, queryString(value)])
+			.filter(([, value]) => value !== ''),
+	)));
+}
+
+function sortQuery(query: Record<string, string>) {
+	return Object.fromEntries(Object.entries(query).sort(([left], [right]) => left.localeCompare(right)));
+}
+
+function queryString(value: typeof route.query[string]) {
+	return Array.isArray(value) ? value[0] || '' : value || '';
+}
+
+function queryList(value: typeof route.query[string]) {
+	return queryString(value)
+		.split(',')
+		.map(item => item.trim())
+		.filter(Boolean);
+}
 </script>
 
 <style scoped>
