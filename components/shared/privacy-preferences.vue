@@ -14,8 +14,7 @@
 					Privacy preferences
 				</h2>
 				<p class="privacy-preferences__text">
-					Frontend Jobs uses essential storage for login and saved job drafts. Plausible analytics helps us understand pages and core actions without cookies.
-					<span v-if="adsPreferencesEnabled">Ads stay off unless ads are enabled and you allow them.</span>
+					We use essential storage for login, security, saved drafts, and this choice. Optional analytics and ads stay off unless you allow them.
 				</p>
 				<NuxtLink
 					to="/privacy"
@@ -50,7 +49,7 @@
 					size="sm"
 					@click="reject"
 				>
-					Reject optional
+					Essential only
 				</UButton>
 				<UButton
 					color="white"
@@ -64,7 +63,7 @@
 					size="sm"
 					@click="accept"
 				>
-					Accept recommended
+					Accept optional
 				</UButton>
 			</div>
 		</div>
@@ -84,7 +83,7 @@ const config = useRuntimeConfig();
 const showBanner = ref(false);
 const adsPreferencesEnabled = computed(() => config.public.adsenseEnabled);
 const draft = reactive({
-	analytics: true,
+	analytics: false,
 	ads: false,
 });
 
@@ -107,7 +106,9 @@ function save() {
 }
 
 function accept() {
-	acceptRecommended();
+	acceptRecommended({
+		ads: adsPreferencesEnabled.value,
+	});
 	showBanner.value = false;
 }
 

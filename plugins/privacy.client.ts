@@ -34,6 +34,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 		document.head.appendChild(script);
 	}
 
+	function removeScript(id: string) {
+		document.getElementById(id)?.remove();
+	}
+
 	function trackPageview() {
 		if (!config.public.plausibleEnabled || !preferences.value.analytics) {
 			return;
@@ -58,6 +62,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 				plausibleAttributes,
 			);
 		}
+		else {
+			removeScript(scriptIds.plausible);
+		}
 
 		if (config.public.adsenseEnabled && preferences.value.ads) {
 			injectScript(
@@ -65,6 +72,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 				`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${config.public.adsenseClient}`,
 				{ crossorigin: 'anonymous' },
 			);
+		}
+		else {
+			removeScript(scriptIds.adsense);
 		}
 	}
 

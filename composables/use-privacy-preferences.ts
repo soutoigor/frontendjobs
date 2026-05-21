@@ -6,7 +6,7 @@ export interface PrivacyPreferences {
 
 const STORAGE_KEY = 'frontendjobs-privacy-preferences';
 const DEFAULT_PREFERENCES: PrivacyPreferences = {
-	analytics: true,
+	analytics: false,
 	ads: false,
 	acknowledged: false,
 };
@@ -63,10 +63,11 @@ export function usePrivacyPreferences() {
 		});
 	}
 
-	function acceptRecommended() {
+	function acceptRecommended(nextPreferences: Partial<PrivacyPreferences> = {}) {
 		savePreferences({
 			analytics: true,
 			ads: false,
+			...nextPreferences,
 		});
 	}
 

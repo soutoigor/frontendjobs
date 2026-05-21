@@ -18,6 +18,7 @@ export const useCompaniesStore = defineStore('companies', () => {
 	const company = ref<Company>();
 	const loadingCompany = ref(false);
 	const savingCompany = ref(false);
+	const deletingCompany = ref(false);
 	const loadingCompanies = ref(false);
 
 	async function fetchCompanies(filters: CompanyFilters) {
@@ -110,16 +111,37 @@ export const useCompaniesStore = defineStore('companies', () => {
 		}
 	}
 
+	async function deleteCompanyAccount(id: string) {
+		try {
+			deletingCompany.value = true;
+			await $fetch(`/companies/${id}`, {
+				method: 'delete',
+				baseURL: config.public.baseURL,
+				headers: {
+					Authorization: `Bearer ${token.value}`,
+				},
+			});
+
+			company.value = undefined;
+			userCompany.value = undefined;
+		}
+		finally {
+			deletingCompany.value = false;
+		}
+	}
+
 	return {
 		companies,
 		company,
 		userCompany,
 		loadingCompany,
 		savingCompany,
+		deletingCompany,
 		loadingCompanies,
 
 		createCompany,
 		updateCompany,
+		deleteCompanyAccount,
 		fetchCompanies,
 		fetchUserCompany,
 	};

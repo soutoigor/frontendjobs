@@ -58,7 +58,7 @@
 				4. Cookies and preferences
 			</h2>
 			<p>
-				Essential storage is required for login, security, privacy preferences, and saving unfinished job drafts. Plausible analytics is cookie-free, but you can disable analytics in Cookie settings. Ads are not presented as a choice unless the advertising integration is enabled.
+				Essential storage is required for login, security, privacy preferences, and saving unfinished job drafts. Optional analytics and advertising scripts are disabled by default and only load after consent. You can change or withdraw your choices at any time.
 			</p>
 			<button
 				type="button"
@@ -83,7 +83,7 @@
 				6. Data retention and deletion
 			</h2>
 			<p>
-				We retain account, company, job, payment status, and application records while needed to operate the service, resolve disputes, comply with legal obligations, and maintain business records. To request access, correction, or deletion, contact
+				Companies can delete their account from the dashboard. This removes the login, company profile, job posts, application records, and active sessions from Frontend Jobs. Some payment records may remain with Stripe or in business records where needed for tax, dispute, fraud prevention, or legal obligations. To request access, correction, or deletion help, contact
 				<a
 					:href="`mailto:${CONTACT_EMAIL}`"
 					v-text="CONTACT_EMAIL"
@@ -114,7 +114,7 @@
 </template>
 
 <script lang="ts" setup>
-const LAST_UPDATE = 'May 19, 2026';
+const LAST_UPDATE = 'May 21, 2026';
 const CONTACT_EMAIL = 'igor_souto@outlook.com';
 
 definePageMeta({

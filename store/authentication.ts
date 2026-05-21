@@ -87,10 +87,16 @@ export const useAuthStore = defineStore('auth', () => {
 			});
 		}
 		finally {
-			authenticated.value = false;
-			token.value = null;
-			user.value = undefined;
+			clearLocalSession();
 		}
+	}
+
+	function clearLocalSession() {
+		const token = useCookie('token', cookieOptions);
+
+		authenticated.value = false;
+		token.value = null;
+		user.value = undefined;
 	}
 
 	return {
@@ -102,5 +108,6 @@ export const useAuthStore = defineStore('auth', () => {
 		register,
 		refresh,
 		logUserOut,
+		clearLocalSession,
 	};
 });

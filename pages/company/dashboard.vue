@@ -65,6 +65,65 @@
 
 		<!-- Job posts -->
 		<CompanyJobs />
+
+		<section
+			v-if="companiesStore.userCompany"
+			class="dashboard__danger"
+		>
+			<div>
+				<h2 class="dashboard__danger-title">
+					Delete company account
+				</h2>
+				<p class="dashboard__danger-copy">
+					Permanently delete your login, company profile, job posts, application records, and active sessions.
+				</p>
+			</div>
+			<UButton
+				color="red"
+				variant="soft"
+				icon="i-heroicons-trash-20-solid"
+				@click="openDeleteModal"
+			>
+				Delete account
+			</UButton>
+		</section>
+
+		<UModal v-model="deleteModalOpen">
+			<div class="dashboard__delete-modal">
+				<h2 class="dashboard__delete-title">
+					Delete {{ companiesStore.userCompany?.name }}?
+				</h2>
+				<p class="dashboard__delete-copy">
+					This permanently removes your account, company profile, job posts, application data, and active login sessions. Paid records may still exist in Stripe for tax, dispute, and payment compliance.
+				</p>
+				<UFormGroup :label="`Type ${companyName} to confirm`">
+					<UInput
+						v-model="deleteConfirmation"
+						:placeholder="companyName"
+						autocomplete="off"
+					/>
+				</UFormGroup>
+				<div class="dashboard__delete-actions">
+					<UButton
+						color="gray"
+						variant="ghost"
+						:disabled="companiesStore.deletingCompany"
+						@click="deleteModalOpen = false"
+					>
+						Cancel
+					</UButton>
+					<UButton
+						color="red"
+						icon="i-heroicons-trash-20-solid"
+						:disabled="!deleteConfirmed"
+						:loading="companiesStore.deletingCompany"
+						@click="deleteAccount"
+					>
+						Delete permanently
+					</UButton>
+				</div>
+			</div>
+		</UModal>
 	</div>
 </template>
 
@@ -72,6 +131,7 @@
 import CompanyCard from '~/components/companies/company-card.vue';
 import CompanyJobs from '~/components/companies/company-jobs.vue';
 import StatCard from '~/components/shared/stat-card.vue';
+import { useAuthStore } from '~/store/authentication';
 import { useCompaniesStore } from '~/store/companies';
 import { useJobOpportunitiesStore } from '~/store/job-opportunities';
 import { formatAmountCents, getPostingTier } from '~/utils/posting-tiers';
@@ -81,10 +141,13 @@ definePageMeta({
 });
 
 const companiesStore = useCompaniesStore();
+const authStore = useAuthStore();
 const jobOpportunitiesStore = useJobOpportunitiesStore();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+const deleteModalOpen = ref(false);
+const deleteConfirmation = ref('');
 
 const totalViews = computed(() => {
 	const jobs = companiesStore.userCompany?.job_opportunities || [];
@@ -130,6 +193,44 @@ const accountEmail = computed(() => companiesStore.userCompany?.account_email ||
 const notificationEmailSource = computed(() => {
 	return companiesStore.userCompany?.socials?.email ? 'company Application email' : 'account login email fallback';
 });
+
+const companyName = computed(() => companiesStore.userCompany?.name || '');
+const deleteConfirmed = computed(() => deleteConfirmation.value === companyName.value);
+
+function openDeleteModal() {
+	deleteConfirmation.value = '';
+	deleteModalOpen.value = true;
+}
+
+async function deleteAccount() {
+	if (!companiesStore.userCompany || !deleteConfirmed.value) {
+		return;
+	}
+
+	try {
+		await companiesStore.deleteCompanyAccount(companiesStore.userCompany.id);
+		authStore.clearLocalSession();
+		jobOpportunitiesStore.clearDraftJobOpportunity();
+		deleteModalOpen.value = false;
+
+		toast.add({
+			id: 'company-deleted',
+			color: 'green',
+			title: 'Company account deleted',
+			description: 'Your company account and related data were removed.',
+		});
+
+		await router.push('/');
+	}
+	catch {
+		toast.add({
+			id: 'company-delete-failed',
+			color: 'rose',
+			title: 'Could not delete account',
+			description: 'Please try again or contact support if this continues.',
+		});
+	}
+}
 
 onMounted(async () => {
 	if (route.query.payment === 'success') {
@@ -190,6 +291,36 @@ onMounted(async () => {
 
   &__stats {
     @apply grid grid-cols-2 md:grid-cols-4 gap-3.5;
+  }
+
+  &__danger {
+    @apply flex flex-col gap-4 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-red-950 md:flex-row md:items-center md:justify-between dark:border-red-900 dark:bg-red-950/20 dark:text-red-100;
+  }
+
+  &__danger-title {
+    @apply text-sm font-semibold;
+  }
+
+  &__danger-copy {
+    @apply mt-1 max-w-2xl text-sm text-red-800 dark:text-red-200;
+  }
+
+  &__delete-modal {
+    @apply flex flex-col gap-5 p-6;
+  }
+
+  &__delete-title {
+    @apply text-lg font-semibold;
+    color: var(--fj-text);
+  }
+
+  &__delete-copy {
+    @apply text-sm;
+    color: var(--fj-text-soft);
+  }
+
+  &__delete-actions {
+    @apply flex flex-col-reverse gap-2 sm:flex-row sm:justify-end;
   }
 }
 </style>
